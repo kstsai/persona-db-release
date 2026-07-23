@@ -1,24 +1,51 @@
-services:
-  # ─── Hermes Agent ───
-  hermes:
-    image: ${HERMES_IMAGE:-192.168.1.178:31631/hermes-agent:latest}
-    container_name: hermes
-    restart: unless-stopped
-    user: "${HERMES_UID:-1000}:${HERMES_GID:-1000}"
-    network_mode: host
-    volumes:
-      - /home/ubuntu/.hermes:/opt/data
-    entrypoint: ["/bin/sh", "-c", "sleep infinity"]
+# Persona DB — Docker Compose
+# ============================================================
+# Deploys both Hermes Agent + Persona DB API with shared volume.
+#
+# Prerequisites:
+#   1. Set PERSONA_DB_DATA to the extracted tarball directory
+#   2. Set HERMES_HOME to the Hermes config directory
+#
+# Usage:
+#   PERSONA_DB_DATA=/srv/persona-db-data docker compose up -d
+# ============================================================
 
-  # ─── Persona DB API ───
+services:
+
+  # ── Hermes Agent ──────────────────────────────────────────
+  hermes:
+    image: nousresearch/hermes-agent:latest
+    container_name: hermes
+    network_mode: host
+    restart: unless-stopped
+    entrypoint: ["/bin/sh", "-c", "sleep infinity"]
+    volumes:
+      # Hermes config (skills, sessions, memories)
+      - ${HERMES_HOME:-/home/ubuntu/.hermes}:/opt/data
+      # Shared persona-db data (so `hermes chat` can run QA/tools)
+      - ${PERSONA_DB_DATA:-/srv/persona-db-data}:/root/persona-db
+
+  # ── Persona DB API ────────────────────────────────────────
   persona-db-api:
     build:
-      context: /tmp/persona-db-rel-1.0
+      context: ${PERSONA_DB_DATA:-/srv/persona-db-data}
+      dockerfile: Dockerfile
     image: persona-db-api:latest
     container_name: persona-db-api
-    restart: unless-stopped
     ports:
-      - "8000:8000"
-    env_file: /home/ubuntu/.env
+      - "${API_PORT:-8000}:8000"
+    restart: unless-stopped
+    env_file:
+      - ${PERSONA_DB_DATA:-/srv/persona-db-data}/.env
     volumes:
-      - /home/ubuntu/.hermes:/hermes-config:ro
+      # Shared persona-db data (same files Hermes sees at /root/persona-db)
+      - ${PERSONA_DB_DATA:-/srv/persona-db-data}:/app
+      # Hermes config (read-only, for LLM provider detection)
+      - ${HERMES_HOME:-/home/ubuntu/.hermes}:/hermes-config:ro
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
