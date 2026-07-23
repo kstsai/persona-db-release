@@ -1,0 +1,149 @@
+# ─── 03-deploy-hermes-container.yml ───
+# 在已有的 Docker host 上部署 Hermes Agent container + persona-db
+# 
+# 甲方需求：只要自備 Docker host VM，跑這個 playbook 即可
+#
+# 用法:
+#   ansible-playbook -i <docker-host-ip>, playbooks/03-deploy-hermes-container.yml
+#
+# 前置:
+#   1. 目標 VM 已安裝 Docker Engine（可用 cloud-init 或手動裝）
+#   2. SSH 可用（ssh ubuntu@<ip>）
+#   3. 本機有 hermesa3-clone-v1-sanitized.tar.gz
+
+- name: Deploy Hermes Container + Persona DB on Docker Host
+  hosts: all
+  gather_facts: false
+  vars:
+    # ansible_user not set — uses current SSH user automatically
+    ansible_ssh_common_args: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+    tarball_src: "{{ playbook_dir }}/hermesa3-clone-v1-sanitized.tar.gz"
+    container_name: hermes
+    image: nousresearch/hermes-agent:latest
+    hermes_home: /home/ubuntu/.hermes
+
+  tasks:
+    - name: Wait for SSH
+      wait_for_connection:
+        timeout: 120
+
+    - name: Verify Docker is installed
+      shell: docker --version
+      register: docker_ver
+
+    - name: Fail if Docker not found
+      fail:
+        msg: "Docker Engine not found. Install Docker first."
+      when: "'Docker version' not in docker_ver.stdout"
+
+    - name: Create ~/.hermes directory structure
+      file:
+        path: "{{ hermes_home }}/{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - skills
+        - persona
+        - persona-tools
+        - sessions
+        - memories
+        - cron
+
+    - name: Write Hermes config
+      copy:
+        dest: "{{ hermes_home }}/config.yaml"
+        content: |
+          agent:
+            max_turns: 90
+          terminal:
+            backend: local
+          delegation:
+            max_iterations: 50
+          memory:
+            memory_enabled: true
+            user_profile_enabled: true
+          display:
+            interface: tui
+
+    - name: Copy sanitized tarball to target
+      copy:
+        src: "{{ tarball_src }}"
+        dest: /tmp/hermesa3-clone-v1-sanitized.tar.gz
+
+    - name: Extract tarball
+      shell: tar xzf /tmp/hermesa3-clone-v1-sanitized.tar.gz -C /tmp
+
+    - name: Pull Hermes Agent Docker image
+      shell: docker pull {{ image }}
+      timeout: 300
+
+    - name: Remove existing container if any
+      shell: docker rm -f {{ container_name }} 2>/dev/null || true
+
+    - name: Start Hermes container
+      shell: |
+        docker run -d --name {{ container_name }} --restart unless-stopped \
+          --network host \
+          -v {{ hermes_home }}:/opt/data \
+          --entrypoint /bin/sh \
+          {{ image }} \
+          -c "sleep infinity"
+      timeout: 30
+
+    - name: Copy skills into container
+      shell: |
+        docker cp /tmp/clone-output/skills/. {{ container_name }}:/opt/data/skills/
+
+    - name: Copy persona DB and tools into container
+      shell: |
+        docker exec {{ container_name }} mkdir -p /opt/data/persona /opt/data/persona-tools
+        docker cp /tmp/clone-output/persona/. {{ container_name }}:/opt/data/persona/
+        docker cp /tmp/clone-output/persona-tools/. {{ container_name }}:/opt/data/persona-tools/
+
+    - name: Fix permissions inside container
+      shell: docker exec {{ container_name }} chown -R hermes:hermes /opt/data/ 2>/dev/null
+
+    - name: Register persona skills
+      shell: |
+        # Use GITHUB_TOKEN if available (avoids API rate limiting), skip if not
+        GH_TOKEN=""
+        if [ -f /home/kstsai/.config/gh/hosts.yml ]; then
+          GH_TOKEN=$(grep oauth_token /home/kstsai/.config/gh/hosts.yml 2>/dev/null | head -1 | awk '{print $2}')
+        fi
+        for skill in research/tw-persona-db productivity/persona-db-billing data-science/persona-driven-evaluation; do
+          if [ -n "$GH_TOKEN" ]; then
+            docker exec -e GITHUB_TOKEN="$GH_TOKEN" hermes hermes skills install /opt/data/skills/$skill 2>/dev/null
+          else
+            docker exec hermes hermes skills install /opt/data/skills/$skill 2>/dev/null
+          fi
+        done
+        echo "Persona skills registered: $(docker exec {{ container_name }} hermes skills list 2>/dev/null | grep -c persona || echo 0)"
+      register: reg_result
+      timeout: 60
+
+    - name: Clean temp files
+      shell: rm -rf /tmp/clone-output /tmp/hermesa3-clone-v1-sanitized.tar.gz
+
+    - name: Verify
+      shell: |
+        echo "=== Container ==="
+        docker ps --filter name={{ container_name }} --format '{{"{{.Names}}"}} {{"{{.Status}}"}}'
+        echo "=== Hermes ==="
+        docker exec {{ container_name }} hermes --version 2>&1 | head -1
+        echo "=== Skills ==="
+        echo "Filesystem: $(docker exec {{ container_name }} find /opt/data/skills -name SKILL.md | wc -l)"
+        echo "Registered: $(docker exec {{ container_name }} hermes skills list 2>/dev/null | grep -c '│')"
+        docker exec {{ container_name }} hermes skills list 2>/dev/null | grep persona || true
+        echo "=== Tools ==="
+        echo "Persona tools: $(docker exec {{ container_name }} ls /opt/data/persona-tools/ | wc -l)"
+        echo "Persona DB: $(docker exec {{ container_name }} ls /opt/data/persona/ 2>/dev/null)"
+      register: verify
+
+    - name: Print result
+      debug:
+        msg: |
+          ✅ Hermes Container + Persona DB deployed
+            {{ verify.stdout_lines | select('match', '^.{3,50}$') | first | default('') }}
+            Next:
+              docker exec -it {{ container_name }} hermes model
+              docker exec -it {{ container_name }} hermes chat -q "你好"

@@ -1,0 +1,24 @@
+services:
+  # ─── Hermes Agent ───
+  hermes:
+    image: ${HERMES_IMAGE:-192.168.1.178:31631/hermes-agent:latest}
+    container_name: hermes
+    restart: unless-stopped
+    user: "${HERMES_UID:-1000}:${HERMES_GID:-1000}"
+    network_mode: host
+    volumes:
+      - /home/ubuntu/.hermes:/opt/data
+    entrypoint: ["/bin/sh", "-c", "sleep infinity"]
+
+  # ─── Persona DB API ───
+  persona-db-api:
+    build:
+      context: /tmp/persona-db-rel-1.0
+    image: persona-db-api:latest
+    container_name: persona-db-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file: /home/ubuntu/.env
+    volumes:
+      - /home/ubuntu/.hermes:/hermes-config:ro
