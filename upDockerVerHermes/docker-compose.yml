@@ -18,6 +18,7 @@ services:
     container_name: hermes
     network_mode: host
     restart: unless-stopped
+    user: root
     entrypoint: ["/bin/sh", "-c", "sleep infinity"]
     volumes:
       # Hermes config (skills, sessions, memories)

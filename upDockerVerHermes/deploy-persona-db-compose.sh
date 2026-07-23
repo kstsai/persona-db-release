@@ -78,6 +78,10 @@ else
   echo "  ✅ .env exists"
 fi
 
+# Fix permissions — Hermes container (v3.13) writes to /opt/data/ as root
+# but mounted volume may not have the right owner
+sudo chmod -R 777 "${HERMES_HOME}" 2>/dev/null || true
+
 sudo chown "$(whoami)" "${HERMES_HOME}/.env" "${HERMES_HOME}/config.yaml" 2>/dev/null || true
 echo "  ✅ Hermes home ready"
 
