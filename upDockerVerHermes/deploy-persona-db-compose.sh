@@ -192,8 +192,13 @@ echo ""
 echo "【2/5】Setting up shared data directory..."
 if [ ! -f "${PERSONA_DB_DATA}/tw_persona_1069.json" ]; then
   if [ -f "$TARBALL" ]; then
-    mkdir -p "${PERSONA_DB_DATA}" 2>/dev/null || true
-    tar xzf "$TARBALL" -C "${PERSONA_DB_DATA}" --strip-components=1
+    # /srv/ may need sudo; try both ways
+    mkdir -p "${PERSONA_DB_DATA}" 2>/dev/null || sudo mkdir -p "${PERSONA_DB_DATA}" 2>/dev/null || true
+    if tar xzf "$TARBALL" -C "${PERSONA_DB_DATA}" --strip-components=1 2>/dev/null; then
+      :  # ok
+    else
+      sudo tar xzf "$TARBALL" -C "${PERSONA_DB_DATA}" --strip-components=1
+    fi
     if [ -f "${PERSONA_DB_DATA}/tw_persona_1069.json" ]; then
       echo "  ✅ Extracted tarball to ${PERSONA_DB_DATA}"
     else
