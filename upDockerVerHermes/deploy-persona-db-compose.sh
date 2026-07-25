@@ -393,7 +393,7 @@ if [ "$SKIP_HERMES" = false ]; then
     -v "${HERMES_HOME}:/opt/data" \
     -v "${PERSONA_DB_DATA}:/opt/data/persona-db" \
     nousresearch/hermes-agent:latest \
-    /bin/sh -c "sleep infinity"
+    /bin/sh -c "ln -sf /opt/data/persona-db /root/persona-db && sleep infinity"
   echo "  ✅ Hermes container started"
 fi
 
