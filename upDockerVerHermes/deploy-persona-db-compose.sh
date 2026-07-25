@@ -285,6 +285,10 @@ LLM_BASE_URL=${SRC_URL:-https://api.deepseek.com}
 ENVEOF
 echo "  ✅ .env written for persona-db API (from ~/.env)"
 
+# Write correct VERSION (overwrite tarball's default)
+echo "v3.7" > "${PERSONA_DB_DATA}/VERSION"
+echo "  ✅ VERSION set to v3.7"
+
 # ── Step 3: Inject persona-db skills ────────────────────
 echo ""
 echo "【3/5】Injecting persona-db skills..."
