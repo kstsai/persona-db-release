@@ -171,16 +171,45 @@ memory:
   user_profile_enabled: true
 display:
   interface: tui
+_config_version: 33
+
+custom_providers:
+  - name: deepseek-pro
+    base_url: https://api.deepseek.com
+    api_key_env: LLM_API_KEY
+
+model:
+  default: deepseek-v4-flash
+  provider: custom:deepseek-pro
 CONFEOF
   echo "  ✅ config.yaml created"
 else
   echo "  ✅ config.yaml exists"
+  # Ensure custom_providers is present (might be an older config)
+  if ! grep -q "custom_providers:" "${HERMES_HOME}/config.yaml" 2>/dev/null; then
+    cat >> "${HERMES_HOME}/config.yaml" << 'CONFEOF'
+
+# ── Custom Provider: DeepSeek ──────────────────────────
+custom_providers:
+  - name: deepseek-pro
+    base_url: https://api.deepseek.com
+    api_key_env: LLM_API_KEY
+
+model:
+  default: deepseek-v4-flash
+  provider: custom:deepseek-pro
+CONFEOF
+    echo "  ✅ custom_providers appended"
+  fi
 fi
 
-# Ensure .env exists (Hermes 3.13+ requires it)
+# Ensure .env exists (Hermes 3.13+ requires it) with LLM_API_KEY for custom provider
 if [ ! -f "${HERMES_HOME}/.env" ]; then
-  touch "${HERMES_HOME}/.env"
-  echo "  ✅ .env created (empty)"
+  cat > "${HERMES_HOME}/.env" << 'ENVEOF'
+# Hermes Agent — API keys (loaded as env vars for custom providers)
+# LLM_API_KEY=your-deepseek-api-key
+ENVEOF
+  echo "  ✅ .env created with LLM_API_KEY placeholder"
 else
   echo "  ✅ .env exists"
 fi
@@ -322,6 +351,7 @@ if [ "$SKIP_HERMES" = false ]; then
     --name hermes \
     --network host \
     --restart unless-stopped \
+    --env-file "${HERMES_HOME}/.env" \
     -v "${HERMES_HOME}:/opt/data" \
     -v "${PERSONA_DB_DATA}:/root/persona-db" \
     nousresearch/hermes-agent:latest \
