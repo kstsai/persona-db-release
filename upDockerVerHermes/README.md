@@ -227,3 +227,93 @@ model:
   default: deepseek-v4-flash
   provider: custom:deepseek-pro
 ```
+
+---
+
+## A3 克隆 SOP — 從零部署 persona-db-release 到新 VM
+
+此 SOP 記錄從一台全新 Ubuntu VM 上完整部署 Hermes + Persona DB API 的標準流程。
+
+### 前置作業
+
+| 項目 | 需求 |
+|:----|:-----|
+| **OS** | Ubuntu 22.04+ |
+| **磁碟** | 完整部署需 ≥10GB，API-only 需 ≥3GB |
+| **網路** | 需能連 Docker Hub、GitHub、DeepSeek API |
+| **Docker** | 24+ (建議使用 Ubuntu 內建 `docker.io`) |
+| **API Key** | DeepSeek API key（寫入 `~/.env`） |
+
+### Step-by-Step
+
+```bash
+# 1. 安裝 Docker + 加入 docker group
+sudo apt update && sudo apt install -y docker.io
+sudo usermod -aG docker $USER
+newgrp docker   # 或重新登入
+
+# 2. 設定 DeepSeek API Key
+cat > ~/.env << 'EOF'
+LLM_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+LLM_MODEL=deepseek-v4-flash
+LLM_BASE_URL=https://api.deepseek.com
+EOF
+
+# 3. 克隆 repo
+git clone https://github.com/kstsai/persona-db-release.git
+cd ~/persona-db-release/upDockerVerHermes
+
+# 4. 部署（完整版含 Hermes container）
+bash deploy-hermes-personadb-containers.sh
+
+# 5. 測試 API
+bash test-persona-db-api.sh
+```
+
+### 部署模式
+
+| 模式 | 指令 | 用途 |
+|:----|:------|:------|
+| **完整部署** | `bash deploy-hermes-personadb-containers.sh` | 含 Hermes CLI + API，適合完整交付 |
+| **API-only** | `bash deploy-hermes-personadb-containers.sh --skip-hermes` | 僅 API，適合 edge VM 或空間有限 |
+| **清除** | `bash undeploy.sh` | 停止容器 + 刪除資料 |
+
+### 驗收檢查
+
+每項結果都應為 ✅：
+
+```bash
+# (1) 容器狀態
+docker ps --format 'table {{.Names}}\t{{.Status}}'
+
+# (2) API 健康檢查
+curl -s http://localhost:8000/health
+
+# (3) API 完整狀態
+curl -s http://localhost:8000/personadb/status
+
+# (4) LLM 篩選測試
+curl -s --get "http://localhost:8000/personadb/candidates" \
+  --data-urlencode "questions=TESLA的目標客戶" \
+  --data-urlencode "top_k=3" \
+  --data-urlencode "opMode=僅篩選"
+
+# (5) Hermes 自訂 provider 確認
+docker exec hermes hermes config get model
+# → default: deepseek-v4-flash, provider: custom:deepseek-pro
+
+# (6) Hermes 對話測試
+docker exec -it hermes hermes chat -q "persona-db status"
+# → 應顯示 1069 personas, QA 23 rules ALL PASS, Version v3.7
+```
+
+### 已知注意事項
+
+| # | 事項 | 說明 |
+|:--|:-----|:------|
+| 1 | **`~/.env` 必須事先存在** | deploy 腳本會從這裡讀取 API key 注入 container |
+| 2 | **磁碟空間** | `docker pull hermes-agent:latest` 約 3.8GB，API build 約 500MB |
+| 3 | **Container 啟動順序** | API → 等 3s healthcheck → Hermes → 建立 symlink |
+| 4 | **Hermes container 重新啟動** | `undeploy.sh` 再重新 deploy，或手動 `docker rm -f hermes; docker run ...` |
+| 5 | **uid 10000 問題** | 如果 `.hermes/` 檔案變成 uid 10000，執行 `sudo chown -R ubuntu:ubuntu ~/.hermes/` |
+| 6 | **Sudo 密碼** | 若 VM 無 passwordless sudo，設 `export SUDO_PASSWORD=...` 再執行 deploy |
