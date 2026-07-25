@@ -19,7 +19,7 @@ services:
     network_mode: host
     restart: unless-stopped
     user: root
-    entrypoint: ["/bin/sh", "-c", "ln -sf /opt/data/persona-db /root/persona-db && sleep infinity"]
+    entrypoint: ["/bin/sh", "-c", "sleep infinity"]
     volumes:
       # Hermes config (skills, sessions, memories)
       - ${HERMES_HOME:-/home/ubuntu/.hermes}:/opt/data

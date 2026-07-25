@@ -389,12 +389,16 @@ if [ "$SKIP_HERMES" = false ]; then
     --name hermes \
     --network host \
     --restart unless-stopped \
+    --user 0:0 \
     --env-file "${HERMES_HOME}/.env" \
     -v "${HERMES_HOME}:/opt/data" \
     -v "${PERSONA_DB_DATA}:/opt/data/persona-db" \
     nousresearch/hermes-agent:latest \
-    /bin/sh -c "ln -sf /opt/data/persona-db /root/persona-db && sleep infinity"
+    /bin/sh -c "sleep infinity"
   echo "  ✅ Hermes container started"
+  # Create ~/persona-db symlink so root shell can find the data
+  docker exec hermes ln -sf /opt/data/persona-db /root/persona-db 2>/dev/null || true
+  echo "  ✅ ~/persona-db symlink created"
 fi
 
 # ── Step 5: Verify ──────────────────────────────────────
