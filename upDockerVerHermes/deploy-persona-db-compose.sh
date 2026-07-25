@@ -396,9 +396,11 @@ if [ "$SKIP_HERMES" = false ]; then
     nousresearch/hermes-agent:latest \
     /bin/sh -c "sleep infinity"
   echo "  ✅ Hermes container started"
-  # Create ~/persona-db symlink so root shell can find the data
+  # Create ~/persona-db symlinks so AI can find the data
   docker exec hermes ln -sf /opt/data/persona-db /root/persona-db 2>/dev/null || true
-  echo "  ✅ ~/persona-db symlink created"
+  # Terminal tool resolves ~ as /opt/data/home/ — add symlink there too
+  docker exec hermes sh -c "mkdir -p /opt/data/home && ln -sf /opt/data/persona-db /opt/data/home/persona-db" 2>/dev/null || true
+  echo "  ✅ ~/persona-db symlinks created"
 fi
 
 # ── Step 5: Verify ──────────────────────────────────────
