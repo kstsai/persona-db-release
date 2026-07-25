@@ -273,6 +273,14 @@ if [ -d "${SKILL_SRC}/research/tw-persona-db" ]; then
   cp -r "${SKILL_SRC}/research/tw-persona-db" "${SKILLS_DIR}/research/"
   SKILL_COUNT=$((SKILL_COUNT+1))
   echo "  ✅ tw-persona-db skill injected"
+  # Copy references/ from skill into shared data volume (for skill assessment in container)
+  SKILL_REF="${SKILLS_DIR}/research/tw-persona-db/references"
+  if [ -d "$SKILL_REF" ]; then
+    mkdir -p "${PERSONA_DB_DATA}/references"
+    cp "$SKILL_REF"/*.md "${PERSONA_DB_DATA}/references/" 2>/dev/null
+    REF_COUNT=$(ls "${PERSONA_DB_DATA}/references/"*.md 2>/dev/null | wc -l)
+    echo "  ✅ ${REF_COUNT} reference files copied to shared data"
+  fi
 fi
 if [ -d "${SKILL_SRC}/productivity/persona-db-billing" ]; then
   cp -r "${SKILL_SRC}/productivity/persona-db-billing" "${SKILLS_DIR}/productivity/"
