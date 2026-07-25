@@ -272,23 +272,18 @@ fi
 # Set ownership on shared data dir if possible
 _try_sudo "chown shared data" chown -R "$(whoami)" "${PERSONA_DB_DATA}" 2>/dev/null || true
 
-# Create .env for persona-db-api — inject key from ~/.env
-if [ ! -f "${PERSONA_DB_DATA}/.env" ]; then
-  # Get MODEL from ~/.env too
-  SRC_MODEL=$(grep '^LLM_MODEL=' ~/.env 2>/dev/null | head -1 | cut -d= -f2-)
-  SRC_URL=$(grep '^LLM_BASE_URL=' ~/.env 2>/dev/null | head -1 | cut -d= -f2-)
-  SRC_KEY=$(grep '^LLM_API_KEY=' ~/.env 2>/dev/null | head -1 | cut -d= -f2-)
-  
-  cat > "${PERSONA_DB_DATA}/.env" << ENVEOF
+# Always write .env for persona-db-api — inject keys from ~/.env (overwrites tarball's default)
+SRC_MODEL=$(grep '^LLM_MODEL=' ~/.env 2>/dev/null | head -1 | cut -d= -f2-)
+SRC_URL=$(grep '^LLM_BASE_URL=' ~/.env 2>/dev/null | head -1 | cut -d= -f2-)
+SRC_KEY=$(grep '^LLM_API_KEY=' ~/.env 2>/dev/null | head -1 | cut -d= -f2-)
+
+cat > "${PERSONA_DB_DATA}/.env" << ENVEOF
 # Persona DB API Configuration
 LLM_API_KEY=${SRC_KEY:-your-deepseek-api-key}
 LLM_MODEL=${SRC_MODEL:-deepseek-v4-flash}
 LLM_BASE_URL=${SRC_URL:-https://api.deepseek.com}
 ENVEOF
-  echo "  ✅ .env created for persona-db API with LLM key"
-else
-  echo "  ✅ .env exists for persona-db API"
-fi
+echo "  ✅ .env written for persona-db API (from ~/.env)"
 
 # ── Step 3: Inject persona-db skills ────────────────────
 echo ""
@@ -377,6 +372,7 @@ docker rm -f hermes 2>/dev/null || true
 docker run -d \
   --name persona-db-api \
   -p ${API_PORT}:8000 \
+  --env-file "${PERSONA_DB_DATA}/.env" \
   -v "${PERSONA_DB_DATA}:/app" \
   -v "${HERMES_HOME}:/hermes-config:ro" \
   persona-db-api:latest
