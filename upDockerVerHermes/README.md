@@ -162,3 +162,68 @@ cat /srv/persona-db-data/.env
 | 所需磁碟空間 | ~5GB | ~1GB |
 | 功能 | Hermes CLI + API | 僅 REST API |
 | 部署時間 | 變數（取決於網路） | ~2 分鐘 |
+
+---
+
+## Hermes Container — 甲方啟用指南
+
+Hermes container 啟動後預設已設定好 **custom:deepseek-pro** provider（指向 DeepSeek API）。甲方可選擇以下兩種方式啟用對話功能：
+
+### 選項 A：使用 DeepSeek API Key（最簡單）
+
+```bash
+# 1. 將自己的 DeepSeek API Key 寫入 Hermes .env
+echo "LLM_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" | sudo tee /home/ubuntu/.hermes/.env
+
+# 2. 重啟 Hermes container 載入新 key
+docker restart hermes
+
+# 3. 開始對話
+docker exec -it hermes hermes chat
+```
+
+### 選項 B：使用 Nous Portal 訂閱（OAuth）
+
+若甲方已有 Nous Research 的 Portal 訂閱，可透過 OAuth 登入使用：
+
+```bash
+# 1. 登入 Nous Portal（會印出一組 URL）
+docker exec -it hermes hermes auth add nous
+#    → Open: https://portal.nousresearch.com/manage-subscription?user_code=XXXX-XXXX
+#       （在自己電腦的瀏覽器打開此 URL，登入授權）
+
+# 2. 選取 provider 與 model
+docker exec -it hermes hermes model --no-browser
+#    → 選單會列出所有可用 provider（含 Nous Portal、DeepSeek 等）
+#       方向鍵選擇，Enter 確認
+
+# 3. 開始對話
+docker exec -it hermes hermes chat
+```
+
+### 切換 provider
+
+```bash
+# 查看目前 provider 與 model
+docker exec hermes hermes config get model
+
+# 切到其他 provider（例如從 custom:deepseek-pro 改回 Nous）
+docker exec hermes hermes config set model.default <model-name>
+docker exec hermes hermes config set model.provider <provider-name>
+docker restart hermes
+```
+
+### 內建已設定的 custom provider
+
+部署腳本會自動在 config.yaml 寫入以下設定，讓 Hermes container 開箱即用 DeepSeek：
+
+```yaml
+custom_providers:
+  - name: deepseek-pro
+    base_url: https://api.deepseek.com
+    api_key_env: LLM_API_KEY
+
+model:
+  default: deepseek-v4-flash
+  provider: custom:deepseek-pro
+```
