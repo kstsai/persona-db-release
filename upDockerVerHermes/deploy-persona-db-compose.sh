@@ -140,9 +140,21 @@ if [ "$SKIP_HERMES" = false ]; then
   fi
 fi
 
-# ── Step 1: Prepare Hermes home ─────────────────────────
+# Step 1: Prepare Hermes home
 echo ""
 echo "【1/5】Preparing Hermes config directory..."
+
+# Fix ownership if .hermes/ exists but is owned by wrong UID (e.g. Docker container uid)
+if [ -d "${HERMES_HOME}" ]; then
+  DIR_OWNER=$(stat -c '%u' "${HERMES_HOME}" 2>/dev/null)
+  MY_UID=$(id -u)
+  if [ "$DIR_OWNER" != "$MY_UID" ] 2>/dev/null; then
+    echo "  ⚠️ .hermes/ owned by uid $DIR_OWNER, fixing..."
+    sudo chown -R "$(whoami)" "${HERMES_HOME}" 2>/dev/null
+    sudo chmod 755 "${HERMES_HOME}" 2>/dev/null
+    echo "  ✅ Ownership fixed"
+  fi
+fi
 
 # Create required subdirectories — try with sudo, fall back to mkdir
 SUBDIRS="cron sessions memories skills persona persona-tools logs shared cache audio_cache image_cache hooks pairing lazy-packages"
@@ -207,11 +219,25 @@ fi
 if [ ! -f "${HERMES_HOME}/.env" ]; then
   cat > "${HERMES_HOME}/.env" << 'ENVEOF'
 # Hermes Agent — API keys (loaded as env vars for custom providers)
-# LLM_API_KEY=your-deepseek-api-key
+LLM_API_KEY=
 ENVEOF
-  echo "  ✅ .env created with LLM_API_KEY placeholder"
+  echo "  ✅ .env created"
 else
   echo "  ✅ .env exists"
+fi
+
+# 🔑 Inject LLM_API_KEY from ~/.env into Hermes .env
+if [ -f ~/.env ]; then
+  SRC_KEY=$(grep '^LLM_API_KEY=' ~/.env | head -1 | cut -d= -f2-)
+  if [ -n "$SRC_KEY" ]; then
+    # Replace or add LLM_API_KEY in Hermes .env
+    if grep -q '^LLM_API_KEY=' "${HERMES_HOME}/.env"; then
+      sed -i "s|^LLM_API_KEY=.*|LLM_API_KEY=$SRC_KEY|" "${HERMES_HOME}/.env"
+    else
+      echo "LLM_API_KEY=$SRC_KEY" >> "${HERMES_HOME}/.env"
+    fi
+    echo "  🔑 LLM_API_KEY injected into Hermes .env"
+  fi
 fi
 
 echo "  ✅ Hermes home ready"
@@ -246,16 +272,20 @@ fi
 # Set ownership on shared data dir if possible
 _try_sudo "chown shared data" chown -R "$(whoami)" "${PERSONA_DB_DATA}" 2>/dev/null || true
 
-# Create .env for persona-db-api
+# Create .env for persona-db-api — inject key from ~/.env
 if [ ! -f "${PERSONA_DB_DATA}/.env" ]; then
-  cat > "${PERSONA_DB_DATA}/.env" << 'ENVEOF'
-# Persona DB API
-# LLM_API_KEY=your-deepseek-api-key
-# LLM_MODEL=deepseek-chat
-# LLM_BASE_URL=https://api.deepseek.com
+  # Get MODEL from ~/.env too
+  SRC_MODEL=$(grep '^LLM_MODEL=' ~/.env 2>/dev/null | head -1 | cut -d= -f2-)
+  SRC_URL=$(grep '^LLM_BASE_URL=' ~/.env 2>/dev/null | head -1 | cut -d= -f2-)
+  SRC_KEY=$(grep '^LLM_API_KEY=' ~/.env 2>/dev/null | head -1 | cut -d= -f2-)
+  
+  cat > "${PERSONA_DB_DATA}/.env" << ENVEOF
+# Persona DB API Configuration
+LLM_API_KEY=${SRC_KEY:-your-deepseek-api-key}
+LLM_MODEL=${SRC_MODEL:-deepseek-v4-flash}
+LLM_BASE_URL=${SRC_URL:-https://api.deepseek.com}
 ENVEOF
-  echo "  📄 .env created for persona-db API. Edit to add LLM key:"
-  echo "     nano ${PERSONA_DB_DATA}/.env"
+  echo "  ✅ .env created for persona-db API with LLM key"
 else
   echo "  ✅ .env exists for persona-db API"
 fi
