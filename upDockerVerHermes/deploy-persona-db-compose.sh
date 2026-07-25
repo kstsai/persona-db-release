@@ -387,7 +387,7 @@ if [ "$SKIP_HERMES" = false ]; then
     --restart unless-stopped \
     --env-file "${HERMES_HOME}/.env" \
     -v "${HERMES_HOME}:/opt/data" \
-    -v "${PERSONA_DB_DATA}:/root/persona-db" \
+    -v "${PERSONA_DB_DATA}:/opt/data/persona-db" \
     nousresearch/hermes-agent:latest \
     /bin/sh -c "sleep infinity"
   echo "  ✅ Hermes container started"

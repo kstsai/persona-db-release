@@ -24,7 +24,7 @@ services:
       # Hermes config (skills, sessions, memories)
       - ${HERMES_HOME:-/home/ubuntu/.hermes}:/opt/data
       # Shared persona-db data (so `hermes chat` can run QA/tools)
-      - ${PERSONA_DB_DATA:-/srv/persona-db-data}:/root/persona-db
+      - ${PERSONA_DB_DATA:-/srv/persona-db-data}:/opt/data/persona-db
 
   # ── Persona DB API ────────────────────────────────────────
   persona-db-api:
