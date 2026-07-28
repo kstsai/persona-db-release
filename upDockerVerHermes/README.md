@@ -27,7 +27,8 @@ upDockerVerHermes/
 ├── docker-compose.yml             # Docker Compose（可選，腳本已內建邏輯）
 ├── test-persona-db-api.sh         # API 測試腳本
 ├── pocDemo.env                    # Demo 環境變數範本
-├── persona-db-rel-1.0.tar.gz      # Persona DB 資料 + API 程式碼壓縮檔
+├── persona-db-rel-v3.2.tar.gz      # Versioned release (persona-db-rel-<VERSION>.tar.gz)
+├── RELEASE-VERSION                 # Current release tag (e.g., v3.2)
 └── deploy-persona-db-api.sh       # 舊版單容器部署腳本
 ```
 
@@ -304,7 +305,7 @@ docker exec hermes hermes config get model
 
 # (6) Hermes 對話測試
 docker exec -it hermes hermes chat -q "persona-db status"
-# → 應顯示 1069 personas, QA 23 rules ALL PASS, Version v3.7
+# → 應顯示 1069 personas, QA 23 rules ALL PASS, Version (read from data)
 ```
 
 ### 已知注意事項
@@ -317,3 +318,51 @@ docker exec -it hermes hermes chat -q "persona-db status"
 | 4 | **Hermes container 重新啟動** | `undeploy.sh` 再重新 deploy，或手動 `docker rm -f hermes; docker run ...` |
 | 5 | **uid 10000 問題** | 如果 `.hermes/` 檔案變成 uid 10000，執行 `sudo chown -R ubuntu:ubuntu ~/.hermes/` |
 | 6 | **Sudo 密碼** | 若 VM 無 passwordless sudo，設 `export SUDO_PASSWORD=...` 再執行 deploy |
+
+---
+
+## Release 版本管理
+
+### Tarball 命名規則
+
+```
+persona-db-rel-<VERSION>.tar.gz     # e.g., persona-db-rel-v3.2.tar.gz
+```
+
+`VERSION` 來自 source repo 的 `hermesa3/persona/VERSION`，與 persona 資料版本同步。
+
+### 發佈新版本流程
+
+```bash
+# 1. 在 persona-db repo 更新資料或 bump 版號
+cd ~/persona-db
+echo "v3.3" > VERSION
+
+# 2. 打包（會自動讀取 VERSION）
+bash pack-persona-db-release.sh
+# → 產出 persona-db-rel-v3.3.tar.gz + RELEASE-VERSION
+
+# 3. 複製到 persona-db-release repo
+cp persona-db-rel-v3.3.tar.gz ~/persona-db-release/upDockerVerHermes/
+cp RELEASE-VERSION ~/persona-db-release/upDockerVerHermes/
+# 移除舊版 tarball（可選）
+rm ~/persona-db-release/upDockerVerHermes/persona-db-rel-v3.2.tar.gz
+
+# 4. Commit + push
+cd ~/persona-db-release
+git add -A
+git commit -m "release: persona-db v3.3"
+git push origin main
+
+# 5. dh5 或其他部署端更新
+cd ~/persona-db-release && git pull origin main
+# deploy 腳本會自動找到最新 tarball
+bash upDockerVerHermes/deploy-hermes-personadb-containers.sh
+```
+
+### Deploy 腳本行為
+
+- 自動掃描 `upDockerVerHermes/` 下所有 `persona-db-rel-*.tar.gz`
+- 若有多個，選 **版本號最高** 的那個
+- 顯示選擇的 tarball 名稱與版本標籤
+- 不再 hardcode VERSION — 版本完全由 tarball 內的資料決定

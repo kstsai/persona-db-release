@@ -42,7 +42,20 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PERSONA_DB_DATA="${PERSONA_DB_DATA:-/srv/persona-db-data}"
 HERMES_HOME="${HERMES_HOME:-/home/ubuntu/.hermes}"
 API_PORT="${API_PORT:-8000}"
-TARBALL="${SCRIPT_DIR}/persona-db-rel-1.0.tar.gz"
+# ── Auto-detect latest versioned tarball ─────────────────
+_TARBALL_GLOB=(${SCRIPT_DIR}/persona-db-rel-*.tar.gz)
+if [ ${#_TARBALL_GLOB[@]} -eq 0 ]; then
+  echo "❌ No persona-db-rel-*.tar.gz found in ${SCRIPT_DIR}"
+  echo "   Run pack-persona-db-release.sh in the persona-db repo first."
+  exit 1
+elif [ ${#_TARBALL_GLOB[@]} -eq 1 ]; then
+  TARBALL="${_TARBALL_GLOB[0]}"
+else
+  # Sort by version (highest last), pick the last one
+  TARBALL=$(printf '%s\n' "${_TARBALL_GLOB[@]}" | sort -V | tail -1)
+fi
+TARBALL_TAG=$(basename "$TARBALL" | sed 's/persona-db-rel-//; s/\.tar\.gz$//')
+echo "  📦 Using tarball: $(basename $TARBALL) [${TARBALL_TAG}]"
 
 # ── Helper: sudo with optional password ─────────────────
 SUDO_CMD="sudo"
