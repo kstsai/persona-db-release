@@ -111,7 +111,18 @@ echo "【0/5】Pre-flight checks..."
 
 # 0a. Docker
 command -v docker >/dev/null || { echo "  ❌ docker not found. Install: sudo apt install docker.io"; exit 1; }
-docker compose version >/dev/null 2>&1 || { echo "  ❌ docker compose plugin not found"; exit 1; }
+docker compose version >/dev/null 2>&1 || {
+  echo "  ⚠️  docker compose plugin not found — attempting to install..."
+  if command -v apt-get >/dev/null 2>&1; then
+    sudo apt-get install -y docker-compose-v2 >/dev/null 2>&1 || sudo apt-get install -y docker-compose-plugin >/dev/null 2>&1
+  fi
+  if ! docker compose version >/dev/null 2>&1; then
+    echo "  ❌ docker compose plugin still missing. Install manually:"
+    echo "     sudo apt-get install -y docker-compose-v2"
+    exit 1
+  fi
+  echo "  ✅ docker compose plugin installed"
+}
 echo "  ✅ $(docker --version)"
 echo "  ✅ $(docker compose version)"
 
@@ -286,13 +297,27 @@ fi
 _try_sudo "chown shared data" chown -R "$(whoami)" "${PERSONA_DB_DATA}" 2>/dev/null || true
 
 # Always write .env for persona-db-api — inject keys from ~/.env (overwrites tarball's default)
+# 💡 若 ~/.env 不存在，自動 fallback 到同目錄的 pocDemo.env（內含 demo key）
+if [ ! -f ~/.env ]; then
+  if [ -f "${SCRIPT_DIR}/pocDemo.env" ]; then
+    echo "  ⚠️  ~/.env not found — using pocDemo.env as template"
+    cp "${SCRIPT_DIR}/pocDemo.env" ~/.env
+    chmod 600 ~/.env
+    echo "  ✅ ~/.env created from pocDemo.env"
+  else
+    echo "  ⚠️  ~/.env not found and no pocDemo.env — will use placeholder (LLM features disabled)"
+  fi
+fi
 SRC_MODEL=$(grep '^LLM_MODEL=' ~/.env 2>/dev/null | head -1 | cut -d= -f2-)
 SRC_URL=$(grep '^LLM_BASE_URL=' ~/.env 2>/dev/null | head -1 | cut -d= -f2-)
 SRC_KEY=$(grep '^LLM_API_KEY=' ~/.env 2>/dev/null | head -1 | cut -d= -f2-)
+if [ -z "$SRC_KEY" ] || echo "$SRC_KEY" | grep -q "your-deepseek"; then
+  echo "  ⚠️  LLM_API_KEY missing or placeholder — LLM 分析功能會失敗，僅篩選模式仍可用"
+fi
 
 cat > "${PERSONA_DB_DATA}/.env" << ENVEOF
 # Persona DB API Configuration
-LLM_API_KEY=${SRC_KEY:-your-deepseek-api-key}
+LLM_API_KEY=${SRC_KEY:-}
 LLM_MODEL=${SRC_MODEL:-deepseek-v4-flash}
 LLM_BASE_URL=${SRC_URL:-https://api.deepseek.com}
 ENVEOF
