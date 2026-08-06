@@ -309,6 +309,7 @@ if [ ! -f ~/.env ]; then
   fi
 fi
 SRC_MODEL=$(grep '^LLM_MODEL=' ~/.env 2>/dev/null | head -1 | cut -d= -f2-)
+SRC_ANALYSIS_MODEL=$(grep '^LLM_ANALYSIS_MODEL=' ~/.env 2>/dev/null | head -1 | cut -d= -f2-)
 SRC_URL=$(grep '^LLM_BASE_URL=' ~/.env 2>/dev/null | head -1 | cut -d= -f2-)
 SRC_KEY=$(grep '^LLM_API_KEY=' ~/.env 2>/dev/null | head -1 | cut -d= -f2-)
 if [ -z "$SRC_KEY" ] || echo "$SRC_KEY" | grep -q "your-deepseek"; then
@@ -319,6 +320,7 @@ cat > "${PERSONA_DB_DATA}/.env" << ENVEOF
 # Persona DB API Configuration
 LLM_API_KEY=${SRC_KEY:-}
 LLM_MODEL=${SRC_MODEL:-deepseek-v4-flash}
+LLM_ANALYSIS_MODEL=${SRC_ANALYSIS_MODEL:-}
 LLM_BASE_URL=${SRC_URL:-https://api.deepseek.com}
 ENVEOF
 echo "  ✅ .env written for persona-db API (from ~/.env)"
