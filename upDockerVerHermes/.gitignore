@@ -1,0 +1,6 @@
+# Test output JSONs (runtime artifacts)
+*.json
+
+# Only keep the latest tarball + RELEASE-VERSION
+persona-db-rel-*.tar.gz
+!persona-db-rel-v*.tar.gz
