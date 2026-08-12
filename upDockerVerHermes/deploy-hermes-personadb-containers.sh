@@ -296,35 +296,7 @@ fi
 # Set ownership on shared data dir if possible
 _try_sudo "chown shared data" chown -R "$(whoami)" "${PERSONA_DB_DATA}" 2>/dev/null || true
 
-# Always write .env for persona-db-api — inject keys from ~/.env (overwrites tarball's default)
-# 💡 若 ~/.env 不存在，自動 fallback 到同目錄的 pocDemo.env（內含 demo key）
-if [ ! -f ~/.env ]; then
-  if [ -f "${SCRIPT_DIR}/pocDemo.env" ]; then
-    echo "  ⚠️  ~/.env not found — using pocDemo.env as template"
-    cp "${SCRIPT_DIR}/pocDemo.env" ~/.env
-    chmod 600 ~/.env
-    echo "  ✅ ~/.env created from pocDemo.env"
-  else
-    echo "  ⚠️  ~/.env not found and no pocDemo.env — will use placeholder (LLM features disabled)"
-  fi
-fi
-SRC_MODEL=$(grep '^LLM_MODEL=' ~/.env 2>/dev/null | head -1 | cut -d= -f2-)
-SRC_ANALYSIS_MODEL=$(grep '^LLM_ANALYSIS_MODEL=' ~/.env 2>/dev/null | head -1 | cut -d= -f2-)
-SRC_URL=$(grep '^LLM_BASE_URL=' ~/.env 2>/dev/null | head -1 | cut -d= -f2-)
-SRC_KEY=$(grep '^LLM_API_KEY=' ~/.env 2>/dev/null | head -1 | cut -d= -f2-)
-if [ -z "$SRC_KEY" ] || echo "$SRC_KEY" | grep -q "your-deepseek"; then
-  echo "  ⚠️  LLM_API_KEY missing or placeholder — LLM 分析功能會失敗，僅篩選模式仍可用"
-fi
-
-cat > "${PERSONA_DB_DATA}/.env" << ENVEOF
-# Persona DB API Configuration
-LLM_API_KEY=${SRC_KEY:-}
-LLM_MODEL=${SRC_MODEL:-deepseek-v4-flash}
-LLM_ANALYSIS_MODEL=${SRC_ANALYSIS_MODEL:-}
-LLM_BASE_URL=${SRC_URL:-https://api.deepseek.com}
-ENVEOF
-echo "  ✅ .env written for persona-db API (from ~/.env)"
-
+$(cat /tmp/new_block.txt)
 # Read VERSION from extracted tarball (no hardcode — use what the data says)
 READ_VERSION=$(cat "${PERSONA_DB_DATA}/VERSION" 2>/dev/null || echo "unknown")
 echo "  ✅ VERSION from data: ${READ_VERSION}"
