@@ -36,3 +36,31 @@ time curl --get "http://localhost:8000/personadb/candidates" \
           --data-urlencode "questions=時尚服裝設計師的目標客戶" \
             --data-urlencode "top_k=10" \
               --data-urlencode "opMode=僅篩選" | jq > fashion_closing.json
+
+
+echo ""
+echo "=== 4. 房貸優惠 — 房仲業者 ==="
+time curl -s --get "http://localhost:8000/personadb/candidates" \
+          --data-urlencode "questions=房貸優惠方案" \
+          --data-urlencode "role=房仲業者" \
+          --data-urlencode "top_k=5" \
+          --data-urlencode "opMode=僅篩選" | tee /tmp/role_fangzhong.json
+
+echo ""
+echo "=== 5. 房貸優惠 — 銀行業者 ==="
+time curl -s --get "http://localhost:8000/personadb/candidates" \
+          --data-urlencode "questions=房貸優惠方案" \
+          --data-urlencode "role=銀行業者" \
+          --data-urlencode "top_k=5" \
+          --data-urlencode "opMode=僅篩選" | tee /tmp/role_banker.json
+
+echo ""
+echo "=== Role QA: diff check ==="
+FZ_TOP=$(python3 -c "import json; d=json.load(open('/tmp/role_fangzhong.json')); print(d['persona_ids'][0])" 2>/dev/null || echo "ERROR")
+BK_TOP=$(python3 -c "import json; d=json.load(open('/tmp/role_banker.json')); print(d['persona_ids'][0])" 2>/dev/null || echo "ERROR")
+echo "  房仲 top=$FZ_TOP, 銀行 top=$BK_TOP"
+if [ "$FZ_TOP" != "$BK_TOP" ]; then
+  echo "  ✅ DIFFERENT — role is working"
+else
+  echo "  ⚠️  SAME — role may not be differentiating on this query"
+fi
