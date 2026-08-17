@@ -1,0 +1,13 @@
+# dsh pod instance — spike skeleton (namespace)
+# 目的：dsh1 的 DeepSeek Harness pod 執行環境，獨立 namespace 以利 RBAC/protected 隔離
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dsh
+  labels:
+    app.kubernetes.io/managed-by: lzc-cp
+    lzc-cp/protected: "true"
+  annotations:
+    lzc-cp/protected: "true"
+    lzc-cp/backup: "daily"
+    lzc-cp/owner: "dsh1"

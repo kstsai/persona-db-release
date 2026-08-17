@@ -1,0 +1,116 @@
+# dsh nginx reverse proxy pod — HTTPS (self-signed) + HTTP redirect
+# =============================================================
+# 架構：Client → tailnet/網路 → <K8S_NODE_IP>:443 (HTTPS, nginx pod hostNetwork)
+#         └──► 127.0.0.1:<PF_PORT> (port-forward svc) → dsh pod
+#   <PF_PORT> 預設 13082（見 README 的 port-forward systemd service 設定）
+#
+# 為什麼 HTTPS：dsh UI 用 crypto.randomUUID()，只在 secure context 可用
+#   （localhost 或 HTTPS）。nginx 走 HTTP → Client 非 localhost → randomUUID 不存在
+#
+# 憑證：自簽 (openssl)，瀏覽器首次要「進階 → 繼續前往」
+# =============================================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dsh-nginx-conf
+  namespace: dsh
+  labels:
+    app: dsh-nginx
+    protected: "true"
+data:
+  nginx.conf: |
+    events {}
+    http {
+      # HTTP → HTTPS redirect
+      server {
+        listen 13080;
+        return 301 https://$host$request_uri;
+      }
+
+      # HTTPS (self-signed)
+      server {
+        listen 443 ssl;
+        ssl_certificate     /etc/nginx/certs/dsh-cert.pem;
+        ssl_certificate_key /etc/nginx/certs/dsh-key.pem;
+
+        location / {
+          proxy_pass http://127.0.0.1:13082;
+          proxy_set_header Host $host;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+        }
+      }
+    }
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dsh-nginx-certs
+  namespace: dsh
+  labels:
+    app: dsh-nginx
+    protected: "true"
+type: Opaque
+stringData:
+  dsh-cert.pem: |
+    PLACEHOLDER_REPLACED_BY_SCRIPT
+  dsh-key.pem: |
+    PLACEHOLDER_REPLACED_BY_SCRIPT
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dsh-nginx
+  namespace: dsh
+  labels:
+    app: dsh-nginx
+    protected: "true"
+    lzc-cp/protected: "true"
+  annotations:
+    lzc-cp/protected: "true"
+    lzc-cp/note: "reverse proxy：遠端經 nginx HTTPS 存取 dsh UI"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dsh-nginx
+  template:
+    metadata:
+      labels:
+        app: dsh-nginx
+        protected: "true"
+        lzc-cp/protected: "true"
+    spec:
+      hostNetwork: true
+      containers:
+        - name: nginx
+          image: nginx:alpine
+          ports:
+            - name: http
+              containerPort: 13080
+              hostPort: 13080
+            - name: https
+              containerPort: 443
+              hostPort: 443
+          volumeMounts:
+            - name: conf
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+            - name: certs
+              mountPath: /etc/nginx/certs
+              readOnly: true
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+      volumes:
+        - name: conf
+          configMap:
+            name: dsh-nginx-conf
+        - name: certs
+          secret:
+            secretName: dsh-nginx-certs

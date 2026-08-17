@@ -1,0 +1,24 @@
+# dsh pod instance — PVC (local-path 5Gi)
+# 掛 /harness-home：SessionEvent log / profiles / storages / skills / cordis.patch.yml 全部持久化
+# 選型：單節點 lab → local-path（k3s 內建，WaitForFirstConsumer）
+# 未來擴多節點 → 換 storageClassName: longhorn，PVC spec 其餘不動
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dsh-home-pvc
+  namespace: dsh
+  labels:
+    app: dsh
+    protected: "true"
+    lzc-cp/protected: "true"
+  annotations:
+    lzc-cp/protected: "true"
+    lzc-cp/backup: "daily"
+    lzc-cp/note: "殺 pod 沒關係，殺 PVC 才有事 — 資料在這"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 5Gi

@@ -1,0 +1,107 @@
+# dsh pod instance — Deployment (deliverable v2)
+# Type 1 / k8s native pod，node:24（dsh 要求 node ^22.19 / >=24）
+#
+# 啟動策略（解決 npx 冷安裝 5-10 分鐘被 liveness 殺的問題）：
+#   initContainer「dsh-install」— 預先 npx 下載安裝（無 probe 干擾，慢慢裝）
+#   main container「dsh」— 起來時套件已在 PVC cache → 秒開
+#   第一次 apply 後，initContainer 會跑 5-10 分鐘（正常），之後 restart 都快
+#
+# 防誤殺（討論過的需求）：
+#   1. terminationGracePeriodSeconds 120s — 誤刪時給 dsh 時間 flush session log
+#   2. protected label + lzc-cp/protected annotation — 讓 destroy 腳本/agent 認得
+#   3. HOME=/harness-home → ~/.dsh 落進 PVC，pod 無狀態（殺 pod ≠ 殺資料）
+#   (4. finalizer / RBAC — 正式化時補，見 dsh/README.md)
+#
+# 交付方式：
+#   kubectl apply -f 00-namespace.yaml -f 10-pvc.yaml -f 20-secret.yaml
+#   kubectl apply -f 30-deployment.yaml -f 40-service.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dsh-web
+  namespace: dsh
+  labels:
+    app: dsh
+    protected: "true"
+    lzc-cp/protected: "true"
+  annotations:
+    lzc-cp/protected: "true"
+    lzc-cp/backup: "daily"
+    lzc-cp/owner: "dsh1"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dsh
+  template:
+    metadata:
+      labels:
+        app: dsh
+        protected: "true"
+        lzc-cp/protected: "true"
+    spec:
+      terminationGracePeriodSeconds: 120
+      initContainers:
+        - name: dsh-install
+          image: node:24
+          imagePullPolicy: IfNotPresent
+          # 預熱 npm cache 到 PVC — 讓 main container 的 npx 秒起
+          # --yes 避免互動 prompt；失敗時 initContainer 重試（k8s 自動）
+          command: ["sh", "-c", "HOME=/harness-home npx --yes @deepseek-ai/dsh --version || HOME=/harness-home npx --yes @deepseek-ai/dsh --help"]
+          volumeMounts:
+            - name: dsh-home
+              mountPath: /harness-home
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 2Gi
+      containers:
+        - name: dsh
+          image: node:24
+          imagePullPolicy: IfNotPresent
+          # HOME 指到 PVC 掛載點 → ~/.dsh = /harness-home/.dsh，全部資料持久化
+          # npx --yes 避免互動 prompt 卡住；cache 已被 initContainer 預熱 → 秒起
+          # ⚠️ dsh 刻意不支援 --host 0.0.0.0（RCE 安全考量，只綁 127.0.0.1）
+          # 存取方式：kubectl port-forward svc/dsh-web 3080:3080（安全 tunnel）
+          # --trusted-host: /api browser-trust fence 要接受瀏覽器的 origin
+          #   localhost = port-forward；把 <YOUR_TAILSCALE_HOSTNAME> / <YOUR_NODE_IP> 換成你的
+          command: ["sh", "-c", "HOME=/harness-home npx --yes @deepseek-ai/dsh web --trusted-host localhost --trusted-host <YOUR_TAILSCALE_HOSTNAME> --trusted-host <YOUR_NODE_IP>"]
+          ports:
+            - name: web
+              containerPort: 3080
+          env:
+            - name: DEEPSEEK_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: dsh-api-key
+                  key: DEEPSEEK_API_KEY
+          volumeMounts:
+            - name: dsh-home
+              mountPath: /harness-home
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+          # ⚠️ probe 不能用 tcpSocket（打 pod IP:3080 永遠失敗）— dsh 只綁 127.0.0.1，
+          #    tcp probe 連的是 pod IP，被 dsh 拒絕 → pod 顯示 0/1、svc endpoints 空
+          #    改用 exec curl 打 127.0.0.1:3080（e2e 實證容器內有 curl，HTTP 200）
+          readinessProbe:
+            exec:
+              command: ["curl", "-sf", "http://127.0.0.1:3080/"]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command: ["curl", "-sf", "http://127.0.0.1:3080/"]
+            initialDelaySeconds: 60
+            periodSeconds: 20
+      volumes:
+        - name: dsh-home
+          persistentVolumeClaim:
+            claimName: dsh-home-pvc
