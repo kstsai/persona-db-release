@@ -7,7 +7,7 @@
 # 依賴: kubectl, 本目錄的 yaml 檔（00/10/20/30/40/50）
 #
 # ⚠️ 甲方必改（3 個值）:
-#   1. NODE_HOSTNAME / NODE_IP — 你的機器 hostname / IP（nginx HTTPS 存取用）
+#   1. BROWSER_ACCESS_HOSTNAME / BROWSER_ACCESS_IP — 瀏覽器開的網址 host（nginx HTTPS 存取用）
 #   2. 20-secret.yaml 的 DEEPSEEK_API_KEY（或用 --skip-key + 手動 patch）
 # =============================================================
 set -euo pipefail
@@ -15,9 +15,9 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DSH_DIR="$SCRIPT_DIR"
 NS="dsh"
-NODE_PORT_HOST="13082"   # 本機 port-forward 用的 localhost port
-NODE_HOSTNAME="YOUR_HOSTNAME"   # ← 改成你的 hostname（如 mynode.corp.net）
-NODE_IP="YOUR_NODE_IP"          # ← 改成你的 k8s node IP
+NODE_PORT_HOST="13082"          # 本機 port-forward 用的 localhost port
+BROWSER_ACCESS_HOSTNAME="YOUR_HOSTNAME"   # ← 瀏覽器開的 hostname（如 mynode.corp.net；沒有就留空）
+BROWSER_ACCESS_IP="YOUR_NODE_IP"          # ← 瀏覽器開的 IP（如 https://10.0.0.5/ 就填 10.0.0.5）
 DO_APPLY="yes"
 DO_KEY="yes"
 
@@ -102,11 +102,11 @@ else
   CERT_DIR="$SCRIPT_DIR/../certs"
   if [ ! -f "$CERT_DIR/dsh-cert.pem" ]; then
     mkdir -p "$CERT_DIR"
-    echo "  產生自簽憑證 (CN=${NODE_HOSTNAME})..."
+    echo "  產生自簽憑證 (CN=${BROWSER_ACCESS_HOSTNAME})..."
     openssl req -x509 -nodes -newkey rsa:2048 -days 365 \
       -keyout "$CERT_DIR/dsh-key.pem" -out "$CERT_DIR/dsh-cert.pem" \
-      -subj "/CN=${NODE_HOSTNAME}" \
-      -addext "subjectAltName=DNS:${NODE_HOSTNAME},IP:${NODE_IP},IP:127.0.0.1" 2>/dev/null
+      -subj "/CN=${BROWSER_ACCESS_HOSTNAME}" \
+      -addext "subjectAltName=DNS:${BROWSER_ACCESS_HOSTNAME},IP:${BROWSER_ACCESS_IP},IP:127.0.0.1" 2>/dev/null
     echo "  OK 憑證產生"
   fi
   # 注入憑證 secret（delete + create，避免 placeholder merge 問題）
@@ -127,7 +127,7 @@ echo
 echo "======================================================"
 echo " OK dsh setup 完成"
 echo "    本機:         http://localhost:$NODE_PORT_HOST/"
-echo "    遠端 (tailnet/內網):  https://${NODE_IP}/"
+echo "    遠端 (tailnet/內網):  https://${BROWSER_ACCESS_IP}/"
 echo "                  （自簽憑證首次按「進階 -> 繼續前往」）"
 echo "    UI 填 key:    Settings -> Models -> DeepSeek（或已由 secret 注入）"
 echo "======================================================"

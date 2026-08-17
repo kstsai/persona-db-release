@@ -67,8 +67,11 @@ spec:
           # ⚠️ dsh 刻意不支援 --host 0.0.0.0（RCE 安全考量，只綁 127.0.0.1）
           # 存取方式：kubectl port-forward svc/dsh-web 3080:3080（安全 tunnel）
           # --trusted-host: /api browser-trust fence 要接受瀏覽器的 origin
-          #   localhost = port-forward；把 <YOUR_TAILSCALE_HOSTNAME> / <YOUR_NODE_IP> 換成你的
-          command: ["sh", "-c", "HOME=/harness-home npx --yes @deepseek-ai/dsh web --trusted-host localhost --trusted-host <YOUR_TAILSCALE_HOSTNAME> --trusted-host <YOUR_NODE_IP>"]
+          #   填「你瀏覽器實際打的網址 host」— 不是 pod IP！
+          #   localhost（永遠留，port-forward 用）
+          #   <BROWSER_ACCESS_HOSTNAME> = 瀏覽器開的 hostname（如 mynode.corp.net，沒有就刪掉這參數）
+          #   <BROWSER_ACCESS_IP>       = 瀏覽器開的 IP（如 https://10.0.0.5/ 就填 10.0.0.5）
+          command: ["sh", "-c", "HOME=/harness-home npx --yes @deepseek-ai/dsh web --trusted-host localhost --trusted-host <BROWSER_ACCESS_HOSTNAME> --trusted-host <BROWSER_ACCESS_IP>"]
           ports:
             - name: web
               containerPort: 3080

@@ -34,9 +34,11 @@ kubectl patch secret dsh-api-key -n dsh --type merge \
   -p '{"stringData":{"DEEPSEEK_API_KEY":"<YOUR_REAL_KEY>"}}'
 
 # ② 30-deployment.yaml 的 --trusted-host（browser-trust fence 要認得你的存取網址）
-#    把 <YOUR_TAILSCALE_HOSTNAME> 和 <YOUR_NODE_IP> 換成你的（例如:
-#    --trusted-host localhost --trusted-host mynode.corp.net --trusted-host 10.0.0.5
-#    最少留 localhost，只本機 port-forward 用）
+#    填「你瀏覽器實際打的網址 host」— 不是 pod IP！
+#    - localhost（永遠留，本機 port-forward 用）
+#    - <BROWSER_ACCESS_HOSTNAME> = 瀏覽器開的 hostname（如 mynode.corp.net；沒有就刪掉這參數）
+#    - <BROWSER_ACCESS_IP>       = 瀏覽器開的 IP（如 https://10.0.0.5/ 就填 10.0.0.5）
+#    例: 瀏覽器開 https://mynode.corp.net/ → --trusted-host localhost --trusted-host mynode.corp.net
 
 # ③ 若要遠端存取（非本機）→ 50-nginx-reverse-proxy.yaml 的憑證 CN 改你的 hostname
 ```
