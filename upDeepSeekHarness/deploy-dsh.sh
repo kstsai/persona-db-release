@@ -40,7 +40,7 @@ if [ "$DO_APPLY" = "no" ]; then
 else
   kubectl apply -f "$DSH_DIR/00-namespace.yaml"
   kubectl apply -f "$DSH_DIR/10-pvc.yaml" -f "$DSH_DIR/20-secret.yaml"
-  kubectl apply -f "$DSH_DIR/30-deployment.yaml" -f "$DSH_DIR/40-service.yaml"
+  kubectl apply -f "$DSH_DIR/30-deployment.client.yaml" -f "$DSH_DIR/40-service.yaml"
   echo "OK apply 完成"
 fi
 

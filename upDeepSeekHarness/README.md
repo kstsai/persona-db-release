@@ -10,7 +10,7 @@
 | `00-namespace.yaml` | namespace `dsh`（protected） | 不用 |
 | `10-pvc.yaml` | PVC 5Gi（local-path）掛 `/harness-home` | 容量可改 |
 | `20-secret.yaml` | **DEEPSEEK_API_KEY（填你的 LLM key）** | **必改 ①** |
-| `30-deployment.yaml` | Deployment（initContainer 預裝 + protected） | **改 ②**（trusted-host） |
+| `30-deployment.client.yaml` | Deployment（initContainer 預裝 + protected）— **⚠️ 範本，編輯後才能 apply** | **改 ②**（trusted-host） |
 | `40-service.yaml` | Service（3080） | 不用 |
 | `50-nginx-reverse-proxy.yaml` | nginx pod（HTTPS 自簽，遠端存取） | 看情境 |
 
@@ -33,7 +33,7 @@ bash deploy-dsh.sh
 kubectl patch secret dsh-api-key -n dsh --type merge \
   -p '{"stringData":{"DEEPSEEK_API_KEY":"<YOUR_REAL_KEY>"}}'
 
-# ② 30-deployment.yaml 的 --trusted-host（browser-trust fence 要認得你的存取網址）
+# ② 30-deployment.client.yaml 的 --trusted-host（browser-trust fence 要認得你的存取網址）
 #    填「你瀏覽器實際打的網址 host」— 不是 pod IP！
 #    - localhost（永遠留，本機 port-forward 用）
 #    - <BROWSER_ACCESS_HOSTNAME> = 瀏覽器開的 hostname（如 mynode.corp.net；沒有就刪掉這參數）
@@ -48,7 +48,7 @@ kubectl patch secret dsh-api-key -n dsh --type merge \
 ```bash
 kubectl apply -f 00-namespace.yaml
 kubectl apply -f 10-pvc.yaml -f 20-secret.yaml
-kubectl apply -f 30-deployment.yaml -f 40-service.yaml
+kubectl apply -f 30-deployment.client.yaml -f 40-service.yaml
 kubectl get pods -n dsh -w
 # → 第一次 initContainer 安裝 dsh 需 5-10 分鐘（正常），之後秒起
 ```
@@ -120,7 +120,7 @@ terminationGracePeriod 120s + protected label + PVC 獨立 + RBAC（正式化補
   `http://<node>:<nodePort>/` 連不上是**預期行為**。存取一律 port-forward 或 nginx 反向代理
 - **為什麼要 HTTPS**：dsh UI 用 `crypto.randomUUID()`，只在 secure context（HTTPS/localhost）可用
 - **browser-trust fence**：/api 檢查 Host + Origin + sec-fetch-site。新增存取 hostname 時，
-  要加進 `--trusted-host`（30-deployment.yaml），否則 UI fetch 回 403
+  要加進 `--trusted-host`（30-deployment.client.yaml），否則 UI fetch 回 403
 - dsh 仍在 **developer preview**（breaking changes 風險）
 - initContainer 首次安裝需外網（npm registry）；離線環境需先 build image
 
@@ -128,7 +128,7 @@ terminationGracePeriod 120s + protected label + PVC 獨立 + RBAC（正式化補
 
 - **pod 0/1**：probe 必須 exec 型（tcpSocket 打 pod IP 會被 dsh 拒）。確認 deployment 的 readinessProbe 是 `curl -sf http://127.0.0.1:3080/`
 - **添加工作區失敗 `crypto.randomUUID`**：你走 HTTP 了 → 用 HTTPS（nginx pod）或 localhost
-- **UI fetch 403**：trusted-host 沒包含你的 hostname → 補進 30-deployment
+- **UI fetch 403**：trusted-host 沒包含你的 hostname → 補進 30-deployment.client.yaml
 - **nginx pod Pending（no free ports）**：舊 pod 佔 host port → `kubectl delete pod --force --grace-period=0`
 
 ## 來源

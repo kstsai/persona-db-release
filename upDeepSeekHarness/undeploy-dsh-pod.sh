@@ -7,7 +7,7 @@
 #
 # ⚠️ 警告（防誤殺設計，刻意要你確認）:
 #   1. 這會刪掉 namespace dsh（含 PVC）→ dsh1 的 session / skills / credentials 全部清除！
-#   2. 真 key 在 lab-riscv/dsh-secret.yaml（gitignored）→ 不會被刪，fresh 後可重新注入
+#   2. 真 key 在你自己的 secret 管理處（gitignored 的 dsh-secret.yaml 或你 patch 的）→ 不會被刪，fresh 後可重新注入
 #   3. 備份: 若要保留資料，先 kubectl exec ... tar /harness-home 再跑本 script
 # =============================================================
 set -euo pipefail

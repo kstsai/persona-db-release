@@ -1,4 +1,12 @@
-# dsh pod instance — Deployment (deliverable v2)
+# ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
+# ⚠️  IMPORTANT — 本檔是「範本」，編輯後才能 apply！
+# ⚠️  直接 apply 會 CrashLoopBackOff（<BROWSER_ACCESS_*> 的 < > 是 shell 語法錯誤）
+# ⚠️  必須先改:
+# ⚠️    - <BROWSER_ACCESS_HOSTNAME> → 你瀏覽器實際開的 hostname（沒有就刪掉這參數）
+# ⚠️    - <BROWSER_ACCESS_IP>       → 你瀏覽器實際開的 IP
+# ⚠️  例: 瀏覽器開 https://mynode.corp.net/ → --trusted-host mynode.corp.net
+# ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
+# dsh pod instance — Deployment (client template)
 # Type 1 / k8s native pod，node:24（dsh 要求 node ^22.19 / >=24）
 #
 # 啟動策略（解決 npx 冷安裝 5-10 分鐘被 liveness 殺的問題）：
