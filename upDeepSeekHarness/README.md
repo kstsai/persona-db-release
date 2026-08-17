@@ -16,7 +16,17 @@
 
 ## 快速開始（甲方）
 
-### 改 3 個值
+### 一鍵 script（最快）
+
+```bash
+# 改 deploy-dsh.sh 頂部 3 個值（NODE_HOSTNAME / NODE_IP / 20-secret.yaml 的 key）
+bash deploy-dsh.sh
+# → 自動: apply 套件 + 注入 key + port-forward service + nginx HTTPS
+```
+
+### 手動方式（了解每一步）
+
+改 3 個值：
 
 ```bash
 # ① 你的 LLM API key
