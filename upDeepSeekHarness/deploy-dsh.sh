@@ -100,11 +100,21 @@ else
   if [ ! -f "$CERT_DIR/dsh-cert.pem" ]; then
     mkdir -p "$CERT_DIR"
     echo "  產生自簽憑證 (CN=${BROWSER_ACCESS_HOSTNAME})..."
+    # ⚠️ SAN 只在變數「真的設了」才加 — YOUR_* 佔位字串會讓 openssl -addext 失敗
+    SAN="IP:127.0.0.1"
+    [ -n "$BROWSER_ACCESS_HOSTNAME" ] && [ "$BROWSER_ACCESS_HOSTNAME" != "YOUR_HOSTNAME" ] \
+      && SAN="DNS:${BROWSER_ACCESS_HOSTNAME},${SAN}"
+    [ -n "$BROWSER_ACCESS_IP" ] && [ "$BROWSER_ACCESS_IP" != "YOUR_NODE_IP" ] \
+      && SAN="IP:${BROWSER_ACCESS_IP},${SAN}"
     openssl req -x509 -nodes -newkey rsa:2048 -days 365 \
       -keyout "$CERT_DIR/dsh-key.pem" -out "$CERT_DIR/dsh-cert.pem" \
       -subj "/CN=${BROWSER_ACCESS_HOSTNAME}" \
-      -addext "subjectAltName=DNS:${BROWSER_ACCESS_HOSTNAME},IP:${BROWSER_ACCESS_IP},IP:127.0.0.1" 2>/dev/null
-    echo "  OK 憑證產生"
+      -addext "subjectAltName=${SAN}" 2>&1 | tail -2
+    if [ ! -f "$CERT_DIR/dsh-cert.pem" ]; then
+      echo "  ❌ 憑證產生失敗（openssl 錯誤如上）"
+      exit 1
+    fi
+    echo "  OK 憑證產生 (SAN=${SAN})"
   fi
   # 注入憑證 secret（delete + create，避免 placeholder merge 問題）
   kubectl delete secret dsh-nginx-certs -n $NS --ignore-not-found >/dev/null 2>&1
