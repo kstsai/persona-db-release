@@ -42,21 +42,8 @@ data:
       }
     }
 ---
-apiVersion: v1
-kind: Secret
-metadata:
-  name: dsh-nginx-certs
-  namespace: dsh
-  labels:
-    app: dsh-nginx
-    protected: "true"
-type: Opaque
-stringData:
-  dsh-cert.pem: |
-    PLACEHOLDER_REPLACED_BY_SCRIPT
-  dsh-key.pem: |
-    PLACEHOLDER_REPLACED_BY_SCRIPT
----
+# ⚠️ 憑證 Secret 不在此檔 — 用 deploy-dsh.sh 的 kubectl create secret 注入真憑證
+# （yaml 內嵌 placeholder 會被 apply merge 蓋掉真憑證，導致 nginx PEM read failed）
 apiVersion: apps/v1
 kind: Deployment
 metadata:
