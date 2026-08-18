@@ -121,6 +121,7 @@ terminationGracePeriod 120s + protected label + PVC 獨立 + RBAC（正式化補
 - **為什麼要 HTTPS**：dsh UI 用 `crypto.randomUUID()`，只在 secure context（HTTPS/localhost）可用
 - **browser-trust fence**：/api 檢查 Host + Origin + sec-fetch-site。新增存取 hostname 時，
   要加進 `--trusted-host`（30-deployment.client.yaml），否則 UI fetch 回 403
+- **⚠️ Known issue：「設置 → 模型」頁面經遠端存取會 403**（`/api/settings.describe`）— dsh 設計上 settings API 是 **loopback-only**（安全考量，防遠端窺探 API key / 改設定）。**不是故障，不修**。UI 對話/agent 功能正常（key 已由 secret 注入）。模型設定請在本機（port-forward localhost）操作
 - dsh 仍在 **developer preview**（breaking changes 風險）
 - initContainer 首次安裝需外網（npm registry）；離線環境需先 build image
 
