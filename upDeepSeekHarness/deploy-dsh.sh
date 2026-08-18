@@ -44,21 +44,18 @@ else
   echo "OK apply 完成"
 fi
 
-echo "=== [3/5] API key 注入 (k8s secret) ==="
+echo "=== [3/5] API key 確認（讀 20-secret.yaml — 你改的那個）==="
 if [ "$DO_KEY" = "no" ]; then
   echo "  (--skip-key，跳過)"
 else
-  # 從 gitignored 的 dsh-secret.yaml 讀真 key（若有）
-  REAL_KEY=""
-  if [ -f "$SCRIPT_DIR/../dsh-secret.yaml" ]; then
-    REAL_KEY=$(grep '^  DEEPSEEK_API_KEY:' "$SCRIPT_DIR/../dsh-secret.yaml" | head -1 | awk '{print $2}' | tr -d '"')
-  fi
-  if [ -z "$REAL_KEY" ] || [ "$REAL_KEY" = "REPLACE_ME_WHEN_KEY_ARRIVES" ]; then
-    echo "  ! 無真 key（dsh-secret.yaml 缺或 placeholder），跳過注入"
-    echo "     kubectl patch secret dsh-api-key -n dsh --type merge -p '{\"stringData\":{\"DEEPSEEK_API_KEY\":\"<YOUR_KEY>\"}}'"
+  # public 版: key 在 20-secret.yaml（甲方改的），[2/5] apply 已注入 k8s secret
+  # 這裡只做驗證，不再 patch（避免 lab 版路徑 bug）
+  SECRET_LEN="$(kubectl get secret dsh-api-key -n $NS -o jsonpath='{.data.DEEPSEEK_API_KEY}' 2>/dev/null | base64 -d 2>/dev/null | wc -c)"
+  if [ "$SECRET_LEN" -gt 0 ] 2>/dev/null; then
+    echo "  OK k8s secret 已有 key（len=${SECRET_LEN}）— 由 20-secret.yaml apply 注入"
   else
-    kubectl patch secret dsh-api-key -n $NS --type merge -p "{\"stringData\":{\"DEEPSEEK_API_KEY\":\"$REAL_KEY\"}}" >/dev/null
-    echo "  OK k8s secret patched (len=${#REAL_KEY})"
+    echo "  ! k8s secret 無 key — 請在 20-secret.yaml 填入 DEEPSEEK_API_KEY 後重新 apply:"
+    echo "     kubectl apply -f 20-secret.yaml"
   fi
 fi
 
