@@ -303,15 +303,18 @@ if [ ! -f ~/.env ] && [ -f "${SCRIPT_DIR}/pocDemo.env" ]; then
   chmod 600 ~/.env
   echo "  ✅ ~/.env created from pocDemo.env"
 fi
-# Read from pocDemo.env as canonical source; ~/.env overrides if present
-SRC_FILE="${SCRIPT_DIR}/pocDemo.env"
-if [ -f ~/.env ]; then
-  SRC_FILE=~/.env
+# LLM config（MODEL/ANALYSIS_MODEL/BASE_URL）一律從 pocDemo.env 讀（真 canonical）。
+# ~/.env 只提供 LLM_API_KEY（user secret 才允許覆蓋），避免 stale ~/.env 蓋掉 config（issue #26）。
+CANON="${SCRIPT_DIR}/pocDemo.env"
+SRC_MODEL=$(grep '^LLM_MODEL=' "$CANON" 2>/dev/null | head -1 | cut -d= -f2-)
+SRC_ANALYSIS_MODEL=$(grep '^LLM_ANALYSIS_MODEL=' "$CANON" 2>/dev/null | head -1 | cut -d= -f2-)
+SRC_URL=$(grep '^LLM_BASE_URL=' "$CANON" 2>/dev/null | head -1 | cut -d= -f2-)
+# API key：~/.env 優先（user secret），否則回退 pocDemo.env
+KEY_SRC="$CANON"
+if [ -f ~/.env ] && grep -q '^LLM_API_KEY=' ~/.env 2>/dev/null; then
+  KEY_SRC=~/.env
 fi
-SRC_MODEL=$(grep '^LLM_MODEL=' "$SRC_FILE" 2>/dev/null | head -1 | cut -d= -f2-)
-SRC_ANALYSIS_MODEL=$(grep '^LLM_ANALYSIS_MODEL=' "$SRC_FILE" 2>/dev/null | head -1 | cut -d= -f2-)
-SRC_URL=$(grep '^LLM_BASE_URL=' "$SRC_FILE" 2>/dev/null | head -1 | cut -d= -f2-)
-SRC_KEY=$(grep '^LLM_API_KEY=' "$SRC_FILE" 2>/dev/null | head -1 | cut -d= -f2-)
+SRC_KEY=$(grep '^LLM_API_KEY=' "$KEY_SRC" 2>/dev/null | head -1 | cut -d= -f2-)
 if [ -z "$SRC_KEY" ] || echo "$SRC_KEY" | grep -q "your-deepseek"; then
   echo "  ⚠️  LLM_API_KEY missing or placeholder — LLM 分析功能會失敗，僅篩選模式仍可用"
 fi

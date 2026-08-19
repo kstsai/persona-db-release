@@ -8,5 +8,6 @@ docker stop persona-db-api 2>/dev/null || true
 docker rm persona-db-api 2>/dev/null || true
 sudo rm -rf /srv/persona-db-data/
 sudo rm -rf ~/.hermes/
+rm -f ~/.env
 echo "✅ Undeploy complete"
 
