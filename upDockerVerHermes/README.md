@@ -19,6 +19,10 @@ bash deploy-persona-db-compose.sh --skip-hermes
 bash test-persona-db-api.sh
 ```
 
+## 產品文件
+
+- [persona-db.md](persona-db.md) — 產品規格與版本演進（1069 人設 / 19 維度 / 23 QA rules，v3.7 → v4.9.1）
+
 ## 目錄結構
 
 ```
@@ -27,6 +31,7 @@ upDockerVerHermes/
 ├── docker-compose.yml             # Docker Compose（可選，腳本已內建邏輯）
 ├── test-persona-db-api.sh         # API 測試腳本
 ├── pocDemo.env                    # Demo 環境變數範本
+├── persona-db.md                  # 產品文件（規格 + 版本演進）
 ├── persona-db-rel-v3.2.tar.gz      # Versioned release (persona-db-rel-<VERSION>.tar.gz)
 ├── RELEASE-VERSION                 # Current release tag (e.g., v3.2)
 └── deploy-persona-db-api.sh       # 舊版單容器部署腳本
