@@ -55,6 +55,14 @@ time curl -s --get "http://localhost:8000/personadb/candidates" \
           --data-urlencode "opMode=僅篩選" | tee /tmp/role_banker.json
 
 echo ""
+echo "=== 6. 醫美診所的目標客戶（dimension 20: aesthetic_procedure）==="
+time curl -s --get "http://localhost:8000/personadb/candidates" \
+          --data-urlencode "questions=醫美診所的目標客戶" \
+          --data-urlencode "role=醫美診所行銷主管" \
+          --data-urlencode "top_k=10" \
+          --data-urlencode "opMode=僅篩選" | tee /tmp/aesthetic_closing.json
+
+echo ""
 echo "=== Role QA: diff check ==="
 FZ_TOP=$(python3 -c "import json; d=json.load(open('/tmp/role_fangzhong.json')); print(d['persona_ids'][0])" 2>/dev/null || echo "ERROR")
 BK_TOP=$(python3 -c "import json; d=json.load(open('/tmp/role_banker.json')); print(d['persona_ids'][0])" 2>/dev/null || echo "ERROR")
