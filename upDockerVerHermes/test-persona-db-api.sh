@@ -63,6 +63,14 @@ time curl -s --get "http://localhost:8000/personadb/candidates" \
           --data-urlencode "opMode=僅篩選" | tee /tmp/aesthetic_closing.json
 
 echo ""
+echo "=== 7. 債務整合的目標客戶（dimension 21: debt_status）==="
+time curl -s --get "http://localhost:8000/personadb/candidates" \
+          --data-urlencode "questions=債務整合貸款方案的目標客戶" \
+          --data-urlencode "role=銀行債務整合專員" \
+          --data-urlencode "top_k=10" \
+          --data-urlencode "opMode=僅篩選" | tee /tmp/debt_closing.json
+
+echo ""
 echo "=== Role QA: diff check ==="
 FZ_TOP=$(python3 -c "import json; d=json.load(open('/tmp/role_fangzhong.json')); print(d['persona_ids'][0])" 2>/dev/null || echo "ERROR")
 BK_TOP=$(python3 -c "import json; d=json.load(open('/tmp/role_banker.json')); print(d['persona_ids'][0])" 2>/dev/null || echo "ERROR")
