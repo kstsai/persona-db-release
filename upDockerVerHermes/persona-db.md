@@ -1,10 +1,10 @@
-> 產品文件（來源：kstsai/linkEazyCenter wiki `entities/persona-db.md`，更新 2026-08-19）
+> 產品文件（來源：kstsai/linkEazyCenter wiki `entities/persona-db.md`，更新 2026-09-09）
 > 進度看板：GitHub issues（kstsai/persona-db）為 ground truth。
 
 
 # Persona DB — 台灣人口加權合成人設資料庫
 
-> 1069 筆，19 維度，23 條 QA 規則。DGBAS 主計總處真實資料驅動，全自動生成 + 驗證 + 部署。
+> 1069 筆，22 維度，23 條 QA 規則。DGBAS 主計總處真實資料驅動，全自動生成 + 驗證 + 部署。
 
 > 📊 進度追蹤：見 Persona-DB 進度看板（GitHub issues 對照）。
 
@@ -13,7 +13,7 @@
 | 項目 | 數值 |
 |------|:---:|
 | 總筆數 | 1069 |
-| 維度 | 19 |
+| 維度 | 22 |
 | QA 規則 | 23（ALL PASS） |
 | 生成種子 | 42（可重現） |
 | 縣市覆蓋 | 22/22 |
@@ -22,7 +22,7 @@
 | API | FastAPI `/personadb/candidates`（LLM 分析→篩選人設） |
 | 部署 | lzcdh5 / lzc-dh1（Docker containers） |
 
-## 19 維度
+## 22 維度
 
 | # | 維度 | 值域 | 資料源 |
 |:-:|:----|:-----|:-------|
@@ -45,6 +45,9 @@
 | 17 | 居住負擔率 | 低/中/高 | 計算值 |
 | 18 | 通勤方式 | 5 選項 | 交通部 2024 |
 | 19 | 服飾消費 | 5-tier | DGBAS 衣著支出 |
+| 20 | 醫美療程經歷 | 無/有 | ISAPS Global Survey 2024（甲方提供） |
+| 21 | 債務背貸狀態 | 無/有房貸/有信貸或卡債/多重 | JCIC 聯徵中心（2026-03/04） |
+| 22 | 從業身分 | 受僱/雇主/自營作業者/無酬家屬/不適用 | DGBAS 人力資源（表48） |
 
 ## 演進歷程（v3.7→v4.4.3 馬拉松）
 
@@ -69,6 +72,11 @@
 | v4.8.2 | broadening loop max_tokens 修復 | 08/13 |
 | v4.9.0 | LLM Retry 防火牆 4 層落地（#24），省 40%+ token | 08/14 |
 | v4.9.1 | broadening overshoot fix（#25）+ deploy env 鏈根治（#26） | 08/14 |
+| v4.9.2 | coherence 三連修（#27 房貸套小孩 / #28 R-01 缺 fi / #29 未成年高服飾） | 08/19 |
+| v4.9.3 | R-03/R-08 ordering 修復（#30：fam1_fi_cap 在規則之前） | 08/27 |
+| v5.0 | dimension 20 醫美療程經歷（in-place annotation + L2 filterable）+ #31 regen 確定性修復 | 09/02 |
+| v5.1 | dimension 21 債務背貸狀態（JCIC 聯徵資料，A3 混合：房貸 derive + 消費債 annotate + L2 filterable） | 09/03 |
+| v5.2 | dimension 22 從業身分（occupation 自營退役 + full regen，issue #32） | 09/09 |
 
 ## API 品質演進（v4.3.2→v4.4.3）
 
@@ -136,6 +144,68 @@ v4.9.0 落地後跑 pre-release SOP，**LLM verify 在 lzcdh5 抓到 2 個問題
 
 另遇 402（DeepSeek api key 餘額不足，甲方測試用 key）→ 儲值重跑全綠。issue sync 完成（persona-db ↔ persona-db-release，#1-26 全關）。
 
+## v4.9.2 — coherence 三連修（#27/#28/#29，2026-08-19）
+
+起因：kstsai 在 role_5xx.json 看到 TW-P-0134 vs TW-P-0158「像同一人設」→ 追出 3 個 coherence bug（設計坑詳見 Coherence Rule 設計）：
+
+1. **#27 「房貸早就還完了」套到小孩/學生/租客**（170 筆）：`HOUSING_BURDEN_LOW` 的房貸片段隱含自有住宅，卻隨機套到所有 burden=低 的人。修：非屋主（0-24 歲/學生/無收入/租屋）改用「住家裡不用付房租」/「房租不貴」。驗證 0-18 歲 46→0、學生 56→0、租客矛盾 13→0。
+2. **#28 R-01 未考慮 family_income**：housing_burden 高是**比值**不是「窮」——高所得「高房貸+高消費」是合理組合。修：R-01 只對低所得（<1萬/1-3萬）開火 + 移到 burden 重算後。驗證低所得殘留 0。
+3. **#29 未成年高服飾**（22 筆）：19/22 是高所得（佔比合理，kstsai 確認後不修），但 fs=3 漏洞（R-06/R-07 合併補） + 5 筆 >5000 語意瑕疵要修。0-18 歲 clothing cap 1500~3000（>5000 是成人語意）。驗證低所得高服飾 0、0-18 高服飾 0。
+
+**QA**：lzcdh5 fresh deploy — 5 domains 全綠 + Role QA DIFFERENT（1062 vs 382）+ #27/#29 spot-check 0 殘留。release v4.9.2 後不需再進版。
+
+## v4.9.3 — R-03/R-08 ordering bug（issue #30，2026-08-27）
+
+v4.9.2 contradiction-hunt 首跑抓到的 10 筆殘留（R-03×3 + R-08×7）確認是 **ordering bug**（跟 #28/#29 同類）：
+
+- `fam1_fi_cap`（L1109）把 fs=1 的 family_income cap 到「1-3萬」，但排在 R-03（L1060）/R-08（L1073）**之後** → 這些 persona 檢查時 fi 還是 3-5萬（不觸發）、cap 完才落 1-3萬 → 重新落入低所得矛盾
+- **修法**：R-03/R-08 純搬移到 `fam1_fi_cap` 之後（與 R-06/R-07 並列），condition 不變、不改機率分布
+- **驗證**：R-03 3→0、R-08 7→0；#27/#28/#29 無回歸；QA 23 規則 ALL PASS；lzcdh1 pre-release SOP + LLM verify 全綠 → 定版
+
+**通用教訓（第三次踩同坑）**：任何會改 `family_income` 的步驟（adjust/floor/cap）都必須在依賴其最終值的 coherence rule **之前**。設計坑詳見 Coherence Rule 設計。
+
+## v5.0 — dimension 20 醫美療程經歷 + regen SOP（2026-09-02）
+
+新增 dimension 20「醫美療程經歷」（二元：無/有），用**甲方提供的 ISAPS Global Survey 2024**（p24 Chinese Taipei）資料升級：
+
+- **原始資料**: persona-db repo `isaps-global-survey-2024.pdf`（commit 04e5ee6 起，repo 根目錄）
+
+- **語意**：過去 12 個月有進行至少一次醫美療程（注射或手術型）。台灣年療程 658,320（手術 257,480 / 非手術 400,840）→ 全年齡年盛行率 ~2.8%（procedures ≠ patients，是上界）
+- **實作路線 = in-place annotation（非 full regen）**：`_annotate_aesthetic.py` 在 v4.9.3 基礎上加標記（segment quota 制：rate × eligible 取整 + seed 42 確定性），不重抽 — 16/1069「有」（1.50%）；0-18 與無收入硬性排除
+- **Segment rates（甲方確認）**：女19-24 2% / 女25-44 6% / 女45-64 3% / 女65+ 0.5% / 男 0.5%
+- **API**：L2 filterable — 醫美 query → `applied_filters` 含 `aesthetic_procedure:[有]`，LLM 自發使用（case 6 驗證 top 全「有」、1-5 無回歸）
+- **#31 regen 確定性修復**：`pick_hobbies` 排序非確定性 bug → `sorted(chosen)`；驗證時資料被覆寫（`/tmp/gen_fixed.py` 沒帶 PERSONA_OUTPUT），v5.0 base 採納 sorted 版（可被現行 code 重現）。隱藏變更：14 筆科技業次要 hobby 內容改變（occ 調整保留、良性）
+- **regen SOP 文件化**：docs/regen-sop.md（dryrun → determinism gate（同 code 兩次跑 0 差異）→ regen → QA）+ qa_validate 支援傳檔
+- **小 segment 限制**：女19-24（20 eligible × 2% = 0.4 → quota 0）無法表示 2%
+
+**核心教訓**：新增維度不一定要 full regen — in-place annotation 保住 persona 身份穩定（甲方認識的丹尼爾還是丹尼爾）+ QA 只驗新維度 + 可稽核（v4.9.3 + annotation script v1 + seed X）。兩路線決策框架詳見 In-place Annotation。
+
+## v5.1 — dimension 21 債務背貸狀態 + JCIC 資料教訓（2026-09-03）
+
+新增 dimension 21「債務背貸狀態」（4 tiers：無 / 有房貸 / 有信貸或卡債 / 房貸+消費債多重），用 **JCIC 聯徵中心個人授信統計**（2026-03/04）資料升級：
+
+- **資料源**：信貸借款人 188 萬 by 年齡×性別、房貸 226 萬、房貸×信貸交叉（房貸族 18.7% 也有信貸）
+- **原始資料**: persona-db repo `sources/jcic/`（11 CSV + README fid 對應表，commit ce969c1）— 下載頁 https://www.jcic.org.tw/main_ch/download_page.aspx?uid=213&pid=190
+- **實作 = A3 混合**：房貸 tier **derive**（BG 短語顯性化，不重抽）+ 消費債 tier **annotate**（JCIC rates，seed 42）→ 無 961 / 有房貸 39 / 有信貸或卡債 60 / 多重 9
+- **API**：L2 filterable（債務整合 query → `debt_status:[有房貸, 房貸+消費債]`，LLM 自發使用）
+- **JCIC 資料教訓**：檔案實際是 CSV；「人數」by 年齡×性別 可靠可算盛行率（優於 ISAPS 療程數）；人均金額不可靠（大額拉高）；基數=信用系統參與者
+- **已知限制**：persona 房貸盛行率 5.8% < JCIC 11.6%（A3 接受，不動既有欄位）
+
+> 📌 **原始參考資料位置（dimension 20/21 共通）**: persona-db repo（private）— ISAPS: `isaps-global-survey-2024.pdf`；JCIC: `sources/jcic/`。wiki 不另存原始檔。
+
+
+## v5.2 — dimension 22 從業身分 + issue #32（2026-09-09）
+
+kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根因是**職業 vs 從業身分概念錯位**（詳見 職業 vs 從業身分）：
+
+- **修法（X3+Y1+R1）**：新增獨立 employment_status 維度（不改 occupation 比率）+ occupation=自營 退役 + full regen（dim 20/21 annotation 重跑補回）
+- **資料源**：DGBAS 113 年報 表48（就業者教育程度與年齡—按從業身分分，性別×5年帶，驗證誤差 <2 千人）→ rates 存 persona-db repo `references/employment-status-dgbas-2024.md`（wiki 不另存）
+- **實作**：OCC_PROB 7 cells 移除自營（mass 分製造/服務/其他）+ EMP_STATUS_PROB 原生指派 + 收入連動（無酬家屬=無薪、雇主 >8萬 55%、自營兩極化）
+- **結果**：受僱 467 / 自營 53 / 雇主 20 / 無酬 11 / 不適用 518 → 雇主+自營 = **13.2% 就業者**（vs 舊 0.37%，DGBAS ~15%）；occupation=自營 0；QA 23 rules + dim22 專屬規則 ALL PASS
+- **API**：L2 filterable — 攤商/老闆 query → `employment_status:[自營作業者, 雇主]`（lzcdh1 case 8，LLM 自發使用）
+- **表52 鐵證**：主管/經理人員 83% 是**受僱的專業經理人** — 職業「主管」≠ 老闆（同時錯兩邊的映射陷阱）
+- **已知限制**：無酬家屬 2.0% < DGBAS 4%（55-64 女多為家管非就業 — 職業模型限制）
+
 ## LLM 模型決策
 
 - **analysis model = deepseek-v4-pro**（reasoning，85-90s/題，需 8000 tokens，5/5 合法 JSON，主動補消費維度）
@@ -181,7 +251,13 @@ v4.9.0 落地後跑 pre-release SOP，**LLM verify 在 lzcdh5 抓到 2 個問題
 - LLM Retry 防火牆 — issue #24 RFC
 - Pre-release SOP — 部署驗證流程
 - Deploy Env 鏈 — ~/.env vs pocDemo.env 的坑（issue #26）
+- Coherence Rule 設計 — 比值 vs 絕對值 + 規則順序（#28/#29 歸納）
+- In-place Annotation — 新增維度兩路線（full regen vs in-place），dim 20 決策教訓（v5.0）
 - v4.8.x 週報摘要
 - v4.8.x session 摘要
 - v4.9.1 週報摘要
 - v4.9.1 session 摘要
+- v5.0 release 摘要
+- v5.1 release 摘要
+- 職業 vs 從業身分 — occupation≠employment status（issue #32 根因）
+- v5.2 release 摘要
