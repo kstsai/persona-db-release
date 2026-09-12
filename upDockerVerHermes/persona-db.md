@@ -1,10 +1,10 @@
-> 產品文件（來源：kstsai/linkEazyCenter wiki `entities/persona-db.md`，更新 2026-09-09）
+> 產品文件（來源：kstsai/linkEazyCenter wiki `entities/persona-db.md`，更新 2026-09-12）
 > 進度看板：GitHub issues（kstsai/persona-db）為 ground truth。
 
 
 # Persona DB — 台灣人口加權合成人設資料庫
 
-> 1069 筆，22 維度，23 條 QA 規則。DGBAS 主計總處真實資料驅動，全自動生成 + 驗證 + 部署。
+> 1069 筆，25 個維度 key（filterable 19 / 計分 18），23 條 QA 規則。DGBAS 主計總處真實資料驅動，全自動生成 + 驗證 + 部署。
 
 > 📊 進度追蹤：見 Persona-DB 進度看板（GitHub issues 對照）。
 
@@ -13,16 +13,18 @@
 | 項目 | 數值 |
 |------|:---:|
 | 總筆數 | 1069 |
-| 維度 | 22 |
+| 維度 | 25 keys（filterable 19 / 計分 18） |
 | QA 規則 | 23（ALL PASS） |
 | 生成種子 | 42（可重現） |
 | 縣市覆蓋 | 22/22 |
 | 性別比 | 男 49.7% / 女 50.3% |
 | Repos | `kstsai/persona-db`（source）+ `kstsai/persona-db-release`（delivery） |
 | API | FastAPI `/personadb/candidates`（LLM 分析→篩選人設） |
-| 部署 | lzcdh5 / lzc-dh1（Docker containers） |
+| 部署 | lzcdh5（v5.3.1）/ lzc-dh1（v5.2 baseline）（Docker containers） |
 
 ## 22 維度
+
+> **維度計數校正（v5.3.1 實測，2026-09-12）**：per-persona dimension keys = **25**（下表 22 個編號維度 + `city_price_tier` / `city_income_tier` 等由 residence 推導的城市屬性）；**filterable**（`persona_matcher.valid_dims`）= **19**；**計分**（`dim_weights.json` = `SCORED_DIMS`）= **18**（`politics` / `media_diet` filterable 但刻意不計分）。
 
 | # | 維度 | 值域 | 資料源 |
 |:-:|:----|:-----|:-------|
@@ -77,6 +79,8 @@
 | v5.0 | dimension 20 醫美療程經歷（in-place annotation + L2 filterable）+ #31 regen 確定性修復 | 09/02 |
 | v5.1 | dimension 21 債務背貸狀態（JCIC 聯徵資料，A3 混合：房貸 derive + 消費債 annotate + L2 filterable） | 09/03 |
 | v5.2 | dimension 22 從業身分（occupation 自營退役 + full regen，issue #32） | 09/09 |
+| v5.3 | **bug fix ×6**：#33 filter 值型別 500、#34 `employment_status` 未套用、#35 新維度 rarity 0 靜默不計分、#36 `aesthetic_procedure` 語意誤套、#37 broadening no-op 空轉、#41 **權重表自 v4.3.2 未重建**（latent） | 09/12 |
+| v5.3.1 | 交付包納入 `concepts/` 設計知識（14 頁 + README）；`references/` 仍排除（內部 review 紀錄） | 09/12 |
 
 ## API 品質演進（v4.3.2→v4.4.3）
 
@@ -206,6 +210,41 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 - **表52 鐵證**：主管/經理人員 83% 是**受僱的專業經理人** — 職業「主管」≠ 老闆（同時錯兩邊的映射陷阱）
 - **已知限制**：無酬家屬 2.0% < DGBAS 4%（55-64 女多為家管非就業 — 職業模型限制）
 
+## v5.3 — 六項修復與三個可靠性教訓（2026-09-12）
+
+**背景**：從檢查 lzcdh5 API 狀況（v4.9.2）出發 → 讀 dsh agent 的 lzc-dh1-1（v5.2）跨版本驗證報告 → 開 8 張 issue（5 bug + 3 known-limitation #38-40）→ 修 6 張 → lzcdh5 fresh-install QA 通過。
+
+| # | 症狀 | 修法 |
+|:--|:----|:----|
+| #33 | LLM 回 `family_size: [3,4]`（int）→ `.strip()` → **500** | `_coerce_filter_value()`：純量 coerce、非純量丟棄 |
+| #34 | `employment_status` 8/8 案例未套用 | prompt must-use 指引（**業主本人 vs 顧客**）+ domain_filters 補「業主/自營」+ 測試案例語意校正 |
+| #35 | 新維度不在權重表 → rarity **靜默乘 0**（能篩選、不影響排序） | `SCORED_DIMS` 15→18、fallback `0.0`→`1.0`、`dims_counted` 由實際計分集合 `scored_dims()` 產生 |
+| #36 | `aesthetic_procedure` 誤套藥妝語境 → matched **62 → 1** | prompt 負面約束 + 移除「美容」對應 + 稀有維度（<5%）放寬提示（只提示不硬刪） |
+| #37 | broadening 空轉率 17%→41% | no-op 偵測提前中止 + `no_op`/`filters_changed` 欄位 + 禁止數量預測 |
+| #41 | `dim_weights.json` 自 **v4.3.2** 未重建 → v4.4~v5.2 排序用舊分布 | 重跑 + `scripts/check_dim_weights.py` + **`do-release.sh` Step 0e gate** |
+
+**驗證**：程式級 30/30（決定性）· 本機 e2e 6/6 HTTP 200（0 次 500）· **lzcdh5 fresh-install QA 9/9 案例 200、0 traceback、Role QA DIFFERENT、資料 QA 23 rules ✅**
+
+### 三個可複用教訓
+
+1. **LLM JSON 純量型別不可信** —— 同族第三次（#14 / #42 D6 / #33）→ 型別與衍生產物安全
+2. **derived artifact 要機械化新鮮度檢查，文件提醒無效** —— 權重表 stale 潛伏 8 個版本，服務零異狀（#41）→ Dim Weights
+3. **新維度「可用」≠「用對語境」** —— 稀有維度誤套會讓候選池崩塌；測試案例語意要對準要驗的維度（#34/#36）→ 維度語意適用性
+
+### 行為變更（v5.3 起）
+
+- 權重表由 v4.3.2 分布更新為現行分布（12/15 既有維度值改變，例 `family_size=1` 0.7259→2.0）＋ 新維度正式計分 → **同一 query 的 top-k 與 score 與 v5.2 不同**；longitudinal 比較以 v5.3 為新基準。
+- `scoring_basis.dims_counted` 現在列出**所有實際計分維度**（含 `dim_importance`-only）；`broadening_attempts[]` 多 `no_op`/`filters_changed` 欄位。
+
+### 部署 / 交付現況（2026-09-12）
+
+| 項目 | 狀態 |
+|:----|:----|
+| lzcdh5 | **v5.3.1**（fresh install，QA 通過） |
+| lzc-dh1（lzc-dh1-1） | **v5.2**（kstsai 指定保留為跨版本 baseline，未動） |
+| 交付包 | v5.3.1 起含 `concepts/`（設計知識）；`references/` 仍為內部 |
+| QA host 慣例 | 由 kstsai 指定進版的那台跑 SOP，**另一台保留 baseline** |
+
 ## LLM 模型決策
 
 - **analysis model = deepseek-v4-pro**（reasoning，85-90s/題，需 8000 tokens，5/5 合法 JSON，主動補消費維度）
@@ -214,8 +253,9 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 
 ## 部署環境
 
-- **lzcdh1**（100.100.112.108）：deploy host，跑 Pre-release SOP
-- **lzcdh5**（100.96.79.33）：tailscale 測試 VM
+- **lzcdh1**（100.100.112.108）：deploy host，跑 Pre-release SOP — 目前 **v5.2**（跨版本 baseline）
+- **lzcdh5**（100.96.79.33）：tailscale 測試 VM — 目前 **v5.3.1**（2026-09-12 fresh install QA 通過）
+- QA host 慣例：由 kstsai 指定進版的那台跑完整 SOP，另一台保留 baseline
 
 ## QA 系統
 
@@ -261,3 +301,6 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 - v5.1 release 摘要
 - 職業 vs 從業身分 — occupation≠employment status（issue #32 根因）
 - v5.2 release 摘要
+- 型別與衍生產物安全 — LLM JSON 純量型別不可信 + derived artifact 新鮮度（#33/#35/#41）
+- 維度語意適用性 — 新維度「可用 ≠ 用對語境」（#34/#36）
+- v5.3 release 摘要
