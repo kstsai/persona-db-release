@@ -206,3 +206,18 @@ ok48 = ("BroadeningAttempt" in sch and "ScoringBasis" in sch
         and "score_scale" in sch["ScoringBasis"]["properties"])
 print(f"  #48 OpenAPI 有 BroadeningAttempt/ScoringBasis 且 properties 完整 → " + ("✅" if ok48 else "❌"))
 PYEOF
+echo ""
+echo "  --- v5.6 (#50) / 部署版本一致性 ---"
+# #50: 部署映像必須是含 finish_reason 診斷碼的版本（避免 stale 映像通過測試）
+DEPLOYED_VER=$(sudo docker exec persona-db-api cat /app/VERSION 2>/dev/null | tr -d '\r\n')
+REPO_VER=$(cat "$(dirname "$0")/RELEASE-VERSION" 2>/dev/null | tr -d '\r\n')
+if [ -n "$DEPLOYED_VER" ] && [ "$DEPLOYED_VER" = "$REPO_VER" ]; then
+  echo "  部署版本 == RELEASE-VERSION ($DEPLOYED_VER) → ✅"
+else
+  echo "  部署版本 ($DEPLOYED_VER) != RELEASE-VERSION ($REPO_VER) → ⚠️ 可能是 stale 映像"
+fi
+if sudo docker exec persona-db-api grep -q "finish_reason={fr}" /app/api/llm.py 2>/dev/null; then
+  echo "  #50 映像含 finish_reason 診斷碼（解析失敗 log 可直接判讀截斷）→ ✅"
+else
+  echo "  #50 映像缺 finish_reason 診斷碼 → ⚠️"
+fi
