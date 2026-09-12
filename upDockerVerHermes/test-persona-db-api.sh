@@ -171,4 +171,38 @@ sb = (aes.get('scoring_basis') or {})
 print(f"  #44 weight_version={sb.get('weight_version')} score_scale={sb.get('score_scale')} "
       f"score_schema={sb.get('score_schema')} → "
       + ("✅" if sb.get('weight_version') and sb.get('score_scale') == 'relative-within-version' else "❌ 缺欄位"))
+
+# ── v5.5 (#46/#47/#48/#49) 斷言（決定性、無 LLM 成本）──
+print("")
+print("  --- v5.5 (#47/#48/#49) ---")
+import urllib.request, urllib.error
+B = "http://localhost:8000"
+
+
+def _raw(url):
+    try:
+        with urllib.request.urlopen(url, timeout=30) as r:
+            return r.status, json.load(r)
+    except urllib.error.HTTPError as e:
+        return e.code, json.load(e)
+
+
+# #47: 錯誤回應必須是統一 ErrorResponse 形狀（不是 FastAPI 的 detail 包裝）
+st, d = _raw(B + "/personadb/candidates?questions=x&opMode=%E4%BA%82%E5%AF%AB")
+ok47 = st == 400 and isinstance(d.get("error"), dict) and "detail" not in d \
+       and d["error"].get("code") == "INVALID_OPMODE"
+print(f"  #47 400 錯誤形狀 status={st} code={(d.get('error') or {}).get('code')} 無 detail={('detail' not in d)} → "
+      + ("✅" if ok47 else "❌ 契約不符"))
+st, spec = _raw(B + "/openapi.json")
+# #49: opMode 的 default 必須是合法值（修復前是 '兩者皆可' → 省略即 400）
+opm = [p for p in spec["paths"]["/personadb/candidates"]["get"]["parameters"] if p["name"] == "opMode"][0]
+dflt = opm["schema"].get("default")
+print(f"  #49 opMode 預設值={dflt!r} 在合法清單內 → "
+      + ("✅" if dflt in ("僅篩選", "篩選+模擬", "模擬詢問") else "❌ 預設值不合法（省略 opMode 會 400）"))
+# #48: 可觀測性欄位要有機器可讀 schema
+sch = spec.get("components", {}).get("schemas", {})
+ok48 = ("BroadeningAttempt" in sch and "ScoringBasis" in sch
+        and "overshoot" in sch["BroadeningAttempt"]["properties"]
+        and "score_scale" in sch["ScoringBasis"]["properties"])
+print(f"  #48 OpenAPI 有 BroadeningAttempt/ScoringBasis 且 properties 完整 → " + ("✅" if ok48 else "❌"))
 PYEOF
