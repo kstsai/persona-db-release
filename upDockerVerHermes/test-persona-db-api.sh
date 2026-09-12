@@ -137,15 +137,38 @@ aes_med = (load('/tmp/aesthetic_closing.json').get('applied_filters') or {}).get
 print(f"  #36 藥妝零售 query aesthetic_procedure={aes_non} → " + ("✅ 未套用" if not aes_non else "❌ 誤套（matched 會被限縮）"))
 print(f"  #36 醫美 query aesthetic_procedure={aes_med} → " + ("✅ 正確套用" if aes_med else "❌ 未套用（修過頭）"))
 
-# ── #37: broadening_attempts 每筆都要有 no_op 欄位 ──
+# ── #37 / v5.4 #42: broadening_attempts 每筆都要有 no_op + overshoot 欄位 ──
 for name, path in (('owner', '/tmp/owner_closing.json'),
                    ('kangshimei', '/tmp/kangshimei.json'),
                    ('tesla', '/tmp/tesla.json'),
-                   ('aesthetic', '/tmp/aesthetic_closing.json')):
+                   ('aesthetic', '/tmp/aesthetic_closing.json'),
+                   ('debt', '/tmp/debt_closing.json')):
     d = load(path)
     ba = d.get('broadening_attempts')
     if ba is None:
         continue
-    ok = all('no_op' in b for b in ba)
-    print(f"  #37 {name}: {len(ba)} loops, no_op 欄位" + ("✅" if ok else "❌ 缺"))
+    ok = all(('no_op' in b and 'overshoot' in b) for b in ba)
+    print(f"  #37/#42 {name}: {len(ba)} loops, no_op+overshoot 欄位" + ("✅" if ok else "❌ 缺"))
+
+# ── v5.4 #42/#43/#44 斷言 ──
+print("")
+print("  --- v5.4 (#42/#43/#44) ---")
+debt = load('/tmp/debt_closing.json')
+af = debt.get('applied_filters') or {}
+s = debt.get('summary') or []
+have = [p for p in s if p.get('debt_status') in ('有房貸', '房貸+消費債', '有信貸或卡債')]
+ovs = [b.get('overshoot') for b in (debt.get('broadening_attempts') or [])]
+print(f"  #42 debt_status 保留={('debt_status' in af)} 符合率={len(have)}/{len(s)} overshoot={ovs} → "
+      + ("✅" if ('debt_status' in af and len(have) >= 9) else "⚠️ 檢查（可能被放寬或精度不足）"))
+aes = load('/tmp/aesthetic_closing.json')
+af_a = aes.get('applied_filters') or {}
+print(f"  #42 醫美硬篩選維持: sex={af_a.get('sex')} aesthetic={af_a.get('aesthetic_procedure')} → "
+      + ("✅" if af_a.get('aesthetic_procedure') else "⚠️"))
+print(f"  #43 案例06 returned={aes.get('returned')} pool_exhausted={aes.get('pool_exhausted')} "
+      f"len(summary)={len(aes.get('summary') or [])} → "
+      + ("✅" if aes.get('returned') == len(aes.get('summary') or []) else "❌ returned 與實際不符"))
+sb = (aes.get('scoring_basis') or {})
+print(f"  #44 weight_version={sb.get('weight_version')} score_scale={sb.get('score_scale')} "
+      f"score_schema={sb.get('score_schema')} → "
+      + ("✅" if sb.get('weight_version') and sb.get('score_scale') == 'relative-within-version' else "❌ 缺欄位"))
 PYEOF
