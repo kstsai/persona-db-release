@@ -230,7 +230,10 @@ OUT=/tmp/rerun BASE_URL=http://<node>:8000 bash run-test.sh
 ## 已知限制
 
 - **去識別化只涵蓋現行檔案，不含 git 歷史**：`git log -p` 仍可取得遮蔽前的原始值。
-  若要徹底移除，需改寫歷史（`git filter-repo`）+ force push —— 破壞性操作，**尚未執行**。
+  **✅ 已決策（2026-09-14，kstsai）：接受此狀態，不改寫歷史。**
+  理由：歷史改寫（`git filter-repo` + force push）為破壞性操作，且風險大於此處的暴露程度
+  （遮蔽目標主要為 tailscale CGNAT 位址，需 tailnet 成員身分才有意義）。
+  → **請勿再提議或執行歷史改寫**；若日後確實需要，須由 kstsai 明確指示。
 - 遮蔽後 `meta/*.meta` 的 `url_effective` 以代號呈現，**與當時實際請求字串已不同**；
   重跑請以各包 `README.md` 的 `BASE_URL` 參數帶入實際位址。
 
