@@ -20,8 +20,9 @@
 | 性別比 | 男 49.7% / 女 50.3% |
 | Repos | `kstsai/persona-db`（source）+ `kstsai/persona-db-release`（delivery） |
 | API | FastAPI `/personadb/candidates`（LLM 分析→篩選人設） |
-| 版本 | **v5.6**（`VERSION` / `RELEASE-VERSION` / `dim_weights._meta.version` 三者一致，由 `check_dim_weights.py` 守門） |
-| 部署 | **nodeA**（原 lzcdh5）/ **nodeB**（原 lzc-dh1）皆 **v5.6**（Docker containers；nodeA 另含 hermes 容器） |
+| 版本 | **v5.8**（`VERSION` / `RELEASE-VERSION` / `dim_weights._meta.version` 三者一致，由 `check_dim_weights.py` 守門） |
+| 部署 | **nodeB**（原 lzc-dh1）= **v5.8**；**nodeA**（原 lzcdh5）= **v5.6**（較早 baseline）（Docker containers；nodeA 另含 hermes 容器） |
+| per-request token 預算 | analysis 12000（重試 18000）+ 放寬 ≤3×8000 → `TOKEN_BUDGET` **40000** |
 
 ## 22 維度
 
@@ -85,6 +86,8 @@
 | **v5.4** | #42 稀有維度放寬護欄（rescue-only + 核心性排除 + 強制理由 + `broadening_attempts[].overshoot`）；#43 `returned` / `pool_exhausted`；#44 `scoring_basis.weight_version` / `score_scale` / `score_schema` | 09/12 |
 | **v5.5** | #47 **錯誤契約統一**（400/404/422/500/503 全為 `{status:error,error:{code,message,details}}`，不再回 FastAPI `detail` 包裝）；#46 解析失敗記 raw response + 重試帶變化 + `retryable`；#48 `BroadeningAttempt` / `ScoringBasis` 型別化；#49 `opMode` 預設值修正（省略不再 400） | 09/12 |
 | **v5.6** | #50 `finish_reason` 從 `call_llm` 傳到消費層（解析失敗 log 可一句話分辨「截斷 vs 格式問題」）；`content` 非空但被截斷在來源即告警 | 09/13 |
+| **v5.7** | #53 `summary` 補齊 7 個可篩維度（`sex`/`region`/`education`/`marriage`/`hobby`/`politics`/`media_diet` → `valid_dims ⊆ summary`）；#54 `housing_cost` prompt 指示使用但 `valid_dims` 缺、靜默丟棄修正 | 09/14 |
+| **v5.8** | #56 **放寬策略改善**（逐維度約束分析 `dim_constraint_report()` + 核心維度排除 + 連續 2 輪空轉即停 + `broadening_stop_reason`）；#55 失敗 log 帶例外型別；analysis 基礎預算 8000 → **12000**（重試 18000）、`TOKEN_BUDGET` 32000 → 40000 | 09/14 |
 
 ## API 品質演進（v4.3.2→v4.4.3）
 
@@ -261,23 +264,25 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 - **回傳數**：`returned == len(summary) == len(persona_ids)`，**可小於 `top_k`**（`pool_exhausted: true` 表示池子比要求的小；系統拒絕為湊數放寬核心維度）
 - **分數**：`score` 僅供**版本內相對排序**（`score_scale: "relative-within-version"`）；`weight_version` 可偵測尺度換版；`score_schema` 為分數定義版號（與資料版號脫鉤）
 - **`opMode` 可省略**，預設 `僅篩選`
+- **可篩維度可見（v5.7）**：`summary[].sex/region/education/marriage/hobby/politics/media_diet`（`valid_dims ⊆ summary`），消費端可從回應驗證 filter 生效
+- **`broadening_stop_reason`（v5.8）**：放寬停止原因（`target_reached` / `no_op_limit` / `loop_limit` / `budget_limit` / `llm_*`）；`loop_limit` + `total_matched < top_k` ⇒ 池子真的小
 
 ## 未解項（追蹤用）
 
 | issue | 類型 | 內容 |
 |:---|:---|:---|
 | #38 | known-limitation | 端點不可重現（filter 層同版本內即變動，見 抽樣變異 vs 版本效應） |
-| #39 | known-limitation | 延遲偏高（品質/成本刻意分離） |
-| #40 | known-limitation | 候選池頭部集中（第 7 輪量化：跨案例重複 top-3 persona **25%**） |
+| #39 | known-limitation | 延遲偏高；四個成分與可解/不可控區分見 LLM pipeline 延遲解剖 |
+| #40 | known-limitation | 候選池頭部集中（第 8 輪：跨案例重複 top-3 persona **19%**） |
 | #45 | bug（低） | `usage_suggestion` 失去區辨力（待 k=5 變異檢定） |
-| #53 | enhancement | `summary` 缺 7 個可篩維度（含 `region`）→ 消費端無法驗證 filter 生效 |
+| （新觀察） | 未開票 | TESLA 案例連續三輪放寬 `commute_mode`（語意核心）→ 語意判準與約束數學衝突（見 broadening 約束維度分析） |
 
-> 已關閉：#1–#37、#41–#44、#46–#52（含 v5.4–v5.6 全部修復）。
+> 已關閉：#1–#37、#41–#44、#46–#56（含 v5.4–v5.8 全部修復）。
 
 ## 部署環境
 
-- **lzc-dh1**（100.100.112.108）：deploy host，跑 Pre-release SOP — **nodeB，目前 v5.6**（2026-09-14 實查）
-- **lzcdh5**（100.96.79.33）：tailscale 測試 VM — **nodeA，目前 v5.6**（2026-09-14 實查；Docker 部署，另含 hermes 容器）
+- **lzc-dh1**（100.100.112.108）：deploy host，跑 Pre-release SOP — **nodeB，目前 v5.8**（2026-09-14 20:00 實查）
+- **lzcdh5**（100.96.79.33）：tailscale 測試 VM — **nodeA，目前 v5.6**（2026-09-14 20:00 實查；Docker 部署，另含 hermes 容器）
 - QA host 慣例：由 kstsai 指定進版的那台跑完整 SOP，另一台保留 baseline
 
 ## QA 系統
@@ -332,3 +337,7 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 - 用症狀歸因的陷阱 — 任何「對方有問題」的結論，先證明你的量測看得到那個問題
 - 覆蓋缺口 vs 產品缺陷 — 「測試集測不到」≠「產品沒做」（employment_status 0/8）
 - 抽樣變異 vs 版本效應 — 同版本同 query 變異 5×，N=1 跨版比較無統計意義
+- 第八輪 + v5.8 摘要 — 空轉率 60%→12%、延遲 34.5 分→15.1 分
+- broadening 約束維度分析 — 不告訴模型誰是真正的限制，等於讓它瞎猜（空轉 60%）
+- LLM pipeline 延遲解剖 — 把「慢」拆成四個成分的可複用取證流程
+- 預算算術的隱性耦合 — 改單次預算 → 所有加總上限跟著變（靜默降輪次）
