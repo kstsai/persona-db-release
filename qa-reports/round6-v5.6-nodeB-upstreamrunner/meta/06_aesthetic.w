@@ -1,0 +1,1 @@
+200	135.948847	4646	http://NODE-B:8000/personadb/candidates?questions=%e9%86%ab%e7%be%8e%e8%a8%ba%e6%89%80%e7%9a%84%e7%9b%ae%e6%a8%99%e5%ae%a2%e6%88%b6&role=%e9%86%ab%e7%be%8e%e8%a8%ba%e6%89%80%e8%a1%8c%e9%8a%b7%e4%b8%bb%e7%ae%a1&top_k=10&opMode=%e5%83%85%e7%af%a9%e9%81%b8

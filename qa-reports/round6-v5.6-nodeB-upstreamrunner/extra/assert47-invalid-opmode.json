@@ -1,0 +1,11 @@
+{
+  "status": 400,
+  "body": {
+    "status": "error",
+    "error": {
+      "code": "INVALID_OPMODE",
+      "message": "無效的 opMode: 亂寫",
+      "details": "有效值: 僅篩選, 篩選+模擬, 模擬詢問"
+    }
+  }
+}

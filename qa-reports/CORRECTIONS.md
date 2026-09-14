@@ -3,7 +3,7 @@
 > **用途**：本目錄的報告是「執行當時的判讀」，**原始證據與原文保留不動**（可追溯性）。
 > 若後續取得新證據推翻某一條判讀，統一記在這裡，並註明證據與對外使用建議。
 >
-> 維護：hermesa3 ｜ 起始：2026-09-14 ｜ 對象：第五輪報告 `personadb-dh1-v56-api-verify/ANALYSIS.md`
+> 維護：hermesa3 ｜ 起始：2026-09-14 ｜ 對象：第五輪報告 `round5-v5.6-nodeB-frozenrunner/ANALYSIS.md`
 
 ---
 
@@ -41,7 +41,7 @@
 | **修正** | 五輪**共用同一份凍結 runner**（`meta/script-provenance.txt`：`run-test.sh` sha 五輪相同、其「原腳本」副本為**第一輪**取得的 `33749d4e…`）。該 runner 的案例集**不含「業主本人」語意案例**；其中案例 08 是**顧客語意**（問攤商的顧客），依現行設計**本就不該**套 `employment_status=雇主`。→ 該指標在語意上不可能被觸發，**0/8 是覆蓋缺口，不是產品缺陷**。 |
 | 反證（同輪自有證據） | 同輪 `probe/outage_r1.json` 的回傳名單中即有 `employment_status: 雇主` 的 persona → 該維度在資料與計分中正常運作。 |
 | 正向證據 | 現行 upstream（`upDockerVerHermes/test-persona-db-api.sh`，sha `9a29a8ef…`）**已含**業主語意案例；部署環境實測：業主 query → `employment_status=['雇主','自營作業者']` ✅、顧客 query → 未套用 ✅（見 issue **#34**、`RELEASE-v5.4.md`） |
-| 裁示 | **2026-09-14 kstsai 定案：同步 upstream**（不再用凍結 runner；新 runner = 新 baseline）。已產出第六輪（`personadb-dh1-v56-upstream-api-verify/`），runner 由上游 `9a29a8ef` 改寫，請求參數／順序／斷言邏輯 100% 未變 |
+| 裁示 | **2026-09-14 kstsai 定案：同步 upstream**（不再用凍結 runner；新 runner = 新 baseline）。已產出第六輪（`round6-v5.6-nodeB-upstreamrunner/`），runner 由上游 `9a29a8ef` 改寫，請求參數／順序／斷言邏輯 100% 未變 |
 | 建議 | 下一輪 runner **同步 upstream**（或至少明訂「runner 凍結版 ≠ 上游版」並在報告標注），否則此指標每輪誤報；`#34` 的三次判讀修正 comment 已記錄同一件事。 |
 
 ---

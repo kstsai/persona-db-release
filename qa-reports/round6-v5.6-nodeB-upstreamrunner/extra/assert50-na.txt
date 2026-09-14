@@ -1,0 +1,3 @@
+assertion: #50 部署版本一致性 / finish_reason 診斷碼
+status: N/A（not executed)
+reason: 需要 host 端 'sudo docker exec'，遠端 runner 無此權限

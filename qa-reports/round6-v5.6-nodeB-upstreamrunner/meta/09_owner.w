@@ -1,0 +1,1 @@
+200	40.193081	5812	http://NODE-B:8000/personadb/candidates?questions=%e6%83%b3%e6%89%be%e4%bc%81%e6%a5%ad%e4%b8%bb%e6%88%96%e5%b7%a5%e5%bb%a0%e8%80%81%e9%97%86%e6%9c%ac%e4%ba%ba%e4%bd%9c%e7%82%baB2B%e5%95%8f%e5%8d%b7%e5%8f%97%e8%a8%aa%e8%80%85&top_k=10&opMode=%e5%83%85%e7%af%a9%e9%81%b8

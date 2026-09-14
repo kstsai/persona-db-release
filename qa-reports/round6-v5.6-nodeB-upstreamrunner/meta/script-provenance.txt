@@ -1,0 +1,12 @@
+=== upstream 來源 ===
+url: https://raw.githubusercontent.com/kstsai/persona-db-release/main/upDockerVerHermes/test-persona-db-api.sh
+sha256: 9a29a8ef3bc553a334b1865c792d4f0f17e60ce15f93a46fe9f8ac9b684edbd8  (223 行)
+取得日期: 2026-09-14
+
+=== 本輪 runner（由上游改寫）===
+sha256: 10e888d9ad575401363e70b61ffbf37d46da1ff90b6b9696853add6ed306e196
+改動紀律: 只改 base URL/輸出目錄/證據落盤/解析工具；請求參數、順序、斷言邏輯 100% 未變
+  （已用 diff 逐案例比對 --data-urlencode 全部相同且順序一致）
+
+=== 遠端限制 ===
+#50（部署版本一致性/finish_reason）需 host 端 sudo docker exec → 本輪 N/A，未執行

@@ -1,9 +1,0 @@
-=== upstream script provenance ===
-url: https://raw.githubusercontent.com/kstsai/persona-db-release/main/upDockerVerHermes/test-persona-db-api.sh
-33749d4e5218f3860f15f4296c5fc5ea90f0fa93f441bc4eba9faf2274dad2e3  meta/original-test-persona-db-api.sh
-
-=== adapted runner sha256 (identical to NODE-A run) ===
-ffc7b10642f72f4120a43b77848ed722c6cf865c23b3267a3eb87bd48c74695d  run-test.sh
-
-=== NODE-A counterpart (confirms same runner used) ===
-ffc7b10642f72f4120a43b77848ed722c6cf865c23b3267a3eb87bd48c74695d  ../personadb-NODE-A-api-verify/run-test.sh

@@ -1,0 +1,1 @@
+200	43.500723	4010	http://NODE-B:8000/personadb/candidates?questions=%e6%88%bf%e8%b2%b8%e5%84%aa%e6%83%a0%e6%96%b9%e6%a1%88&role=%e9%8a%80%e8%a1%8c%e6%a5%ad%e8%80%85&top_k=5&opMode=%e5%83%85%e7%af%a9%e9%81%b8

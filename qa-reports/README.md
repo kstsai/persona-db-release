@@ -19,37 +19,46 @@
 
 ---
 
-## 五輪一覽
+## 六輪一覽
 
-| # | 版本 | 節點 | 日期 | 契約 sha256(16) | 結果 | 該輪重點 |
-|:-:|:-----|:-----|:-----|:----------------|:-----|:---------|
-| 1 | **v4.9.2** | `NODE-A` | 2026-09-12 | `8ac54b95228d85fc` | 9/9 200 | 基線。發現 `aesthetic_procedure`/`debt_status`/`employment_status` 三維度**不存在** |
-| 2 | **v5.2** | `NODE-B` | 2026-09-12 | `8b869ae266992056` | 9/9 200 | **+3 維度**（25 維）並投入運作；但樣本變異達 **62×**、空轉率 41% |
-| 3 | **v5.3.1** | `NODE-A` | 2026-09-12 | `8b869ae266992056` | 9/9 200 | 純行為 patch（契約同 v5.2）。`dims_counted` 修正為 0 不一致；變異收斂到 1.3× |
-| 4 | **v5.4** | `NODE-B` | 2026-09-12 | `30a228782154bdce` | **8/9**（1×503） | 新增 `pool_exhausted`/`returned`/`no_op`/`overshoot`/`score_scale`；首見 503 且**該錯誤回應違反自身宣告 schema** |
-| 5 | **v5.6** | `NODE-B` | 2026-09-13 | `aafe647f46ee8abe` | 9/9 200 | **契約型別化**（`BroadeningAttempt`/`ScoringBasis`，落實第 4 輪建議）；延遲 **98.2s 全系列最快** |
+| # | 版本 | 節點 | runner | 日期 | 契約 sha256(16) | 結果 | 該輪重點 |
+|:-:|:-----|:-----|:-----|:-----|:----------------|:-----|:---------|
+| 1 | **v4.9.2** | `NODE-A` | 凍結 90 行 | 2026-09-12 | `8ac54b95228d85fc` | 9/9 | 基線。發現 `aesthetic_procedure`/`debt_status`/`employment_status` **不存在** |
+| 2 | **v5.2** | `NODE-B` | 凍結 | 2026-09-12 | `8b869ae266992056` | 9/9 | **+3 維度**（25 維）並投入運作；樣本變異達 **62×** |
+| 3 | **v5.3.1** | `NODE-A` | 凍結 | 2026-09-12 | `8b869ae266992056` | 9/9 | 純行為 patch（契約同 v5.2）；`dims_counted` 修正為 0 不一致 |
+| 4 | **v5.4** | `NODE-B` | 凍結 | 2026-09-12 | `30a228782154bdce` | **8/9** | +`pool_exhausted`/`returned`/`no_op`/`overshoot`/`score_scale`；首見 503 且**該回應違反自身宣告 schema** |
+| 5 | **v5.6** | `NODE-B` | 凍結 | 2026-09-13 | `aafe647f46ee8abe` | 9/9 | **契約型別化**（落實第 4 輪建議）；延遲 98.2s |
+| 6 | **v5.6** | `NODE-B` | **upstream 223 行** | 2026-09-14 | `aafe647f46ee8abe` | **10/10** | **結案 issue #51**（`employment_status` 實為量測工件）；負向測試**驗收 #47 已修復** |
 
-**共 4 種不同契約**（v5.2 與 v5.3.1 同 hash ⇒ 純行為 patch）。
+**共 4 種不同契約**（v5.2 與 v5.3.1 同 hash ⇒ 純行為 patch；第 5、6 輪同為最後一種）。
+
+> ⚠️ **第 5 輪與第 6 輪版本、契約完全相同，只差 runner**。兩輪案例 1–8 的 **query 與參數完全相同**
+> （已機械比對），故其差異**純屬 LLM 抽樣**、**不可歸因於 runner** —— 這組對照反而提供最乾淨的
+> 「同一版本純抽樣變異」樣本（案例 03：`21 → 105`，5×）。
 
 ---
 
-## 目錄（**刻意沿用原始目錄名**）
+## 目錄
 
 ```
 qa-reports/
-├── README.md                          ← 本檔（索引）
-├── personadb-NODE-A-api-verify/       ← 第 1 輪 v4.9.2
-├── personadb-dh1-api-verify/          ← 第 2 輪 v5.2
-├── personadb-NODE-A-v531-api-verify/  ← 第 3 輪 v5.3.1
-├── personadb-dh1-v54-api-verify/      ← 第 4 輪 v5.4
-└── personadb-dh1-v56-api-verify/      ← 第 5 輪 v5.6
+├── README.md                              ← 本檔（索引）
+├── CORRECTIONS.md                         ← 判讀修正紀錄（單一修正來源）
+├── round1-v4.9.2-nodeA/                   ← 第 1 輪
+├── round2-v5.2-nodeB/                     ← 第 2 輪
+├── round3-v5.3.1-nodeA/                   ← 第 3 輪
+├── round4-v5.4-nodeB/                     ← 第 4 輪
+├── round5-v5.6-nodeB-frozenrunner/        ← 第 5 輪（凍結 runner）
+└── round6-v5.6-nodeB-upstreamrunner/      ← 第 6 輪（upstream runner）
 ```
 
-> **為何不改成 `v5.6-NODE-B/` 這種更好讀的名字？**
-> 因為每包的 `README.md` 複驗指令與 `compare-nway.py` 都以**原始目錄名**互相引用
-> （例如「v5.4 vs v5.6」的對照指令寫死了 `../personadb-dh1-v54-api-verify`）。
-> **改名會讓那些已驗證過的指令全部失效** —— 違反本方法論「README 每條指令都要實跑過」的紀律。
-> 版本對照請看上面的表。
+> **命名 = `round<輪次>-v<版本>-node<代號>[-<runner 別>]`。** 三個理由：
+> 1. **輪次**在最前 → 目錄排序即時間順序（跨版本對照時不易搞混）
+> 2. **節點用代號** → 本 repo 為 public，不揭露實際節點（原以節點命名會直接洩漏）
+> 3. **第 5、6 輪同版本但 runner 不同** → 名稱必須區分，否則兩者的差異會被誤讀成版本差異
+>
+> 各包 `README.md` 的複驗指令以**相對路徑**互相引用，改名時已同步更新（21 檔），
+> 且所有指令均重新實跑驗證。
 
 ---
 
@@ -97,29 +106,33 @@ qa-reports/
 ### 最短路徑：讀主報告
 
 ```bash
-less qa-reports/personadb-dh1-v56-api-verify/ANALYSIS.md
+less qa-reports/round5-v5.6-nodeB-frozenrunner/ANALYSIS.md
 ```
 
 ### 抽驗原始證據（不重跑，零成本）
 
 ```bash
-cd qa-reports/personadb-dh1-v56-api-verify
+cd qa-reports/round5-v5.6-nodeB-frozenrunner
 cat raw/07_debt.body | jq .        # 位元組級證據
 cat meta/07_debt.meta              # HTTP code / 耗時 / curl 參數
 cat headers/07_debt.headers
 ```
 
-### 五版交叉對照（不需重跑，用已保存的證據）
+### 六輪交叉對照（不需重跑，用已保存的證據）
+
+> ⚠️ 以下指令**在 `round6-…/` 目錄內執行**（故用 `../` 指到其他輪）；從 `qa-reports/` 執行請去掉 `../`。
 
 ```bash
-cd qa-reports/personadb-dh1-v56-api-verify
+cd qa-reports/round6-v5.6-nodeB-upstreamrunner
 python3 compare-nway.py \
-  ../personadb-NODE-A-api-verify \
-  ../personadb-dh1-api-verify \
-  ../personadb-NODE-A-v531-api-verify \
-  ../personadb-dh1-v54-api-verify \
-  ../personadb-dh1-v56-api-verify
-# 註：會在最後一個目錄寫出 version-comparison-nway.csv
+  ../round1-v4.9.2-nodeA \
+  ../round2-v5.2-nodeB \
+  ../round3-v5.3.1-nodeA \
+  ../round4-v5.4-nodeB \
+  ../round5-v5.6-nodeB-frozenrunner \
+  .
+# 註 1：會在最後一個目錄（.）寫出 version-comparison-nway.csv
+# 註 2：只比較案例 1–8（round6 多出的案例 9「業主本人」沒有前輪 baseline）
 ```
 
 ### 各包自己的複驗指令
@@ -130,7 +143,7 @@ python3 compare-nway.py \
 ### 重跑整套（⚠️ 需連得到受測節點，約 13–30 分鐘／輪）
 
 ```bash
-cd qa-reports/personadb-dh1-v56-api-verify
+cd qa-reports/round5-v5.6-nodeB-frozenrunner
 OUT=/tmp/rerun BASE_URL=http://<node>:8000 bash run-test.sh
 ```
 
@@ -141,22 +154,38 @@ OUT=/tmp/rerun BASE_URL=http://<node>:8000 bash run-test.sh
 
 ## 跨輪重要發現（完整版見各包 ANALYSIS.md）
 
-### 已修正 ✅
-- **v5.2**：新增並實際使用 `aesthetic_procedure` / `debt_status`（第 1 輪報告指出它們不存在）
-- **v5.3.1**：`scoring_basis.dims_counted` 低報計分維度 → **不一致數 33 → 11 → 0**
-- **v5.4**：新增 `pool_exhausted` / `returned`（回應第 3 輪「回傳數 < top_k 是契約風險」）、`score_scale: "relative-within-version"`（回應第 3 輪「分數不可跨版本比較」）
-- **v5.6**：`BroadeningAttempt` / `ScoringBasis` **型別化** —— 直接落實第 4 輪「新欄位只寫在描述裡、codegen 看不到」的建議
-- **v5.6**：延遲降至 **98.2s**（前四輪 144–204s）；收入桶完全飽和案例降到 **2/8**（第 1 輪為 7/8）
+> **⚠️ 本節已於 2026-09-14 依 `CORRECTIONS.md` 全面更正** —— 原始判讀保留在各包 `ANALYSIS.md`（原文不動）。
 
-### 仍未解 ⚠️
-- **`employment_status` 連續五輪從未被套用（0/8）** —— 含案例 08，其標籤明載測試該維度
-- **ranking 層不可重現**：版本內 top-3 交集多為 0–1/3（filter 層在 v5.3.1 後趨穩，但未傳導到最終選擇）
+### 產品缺陷（3 條，皆已修復）✅
+- **v5.2**：新增並實際使用 `aesthetic_procedure` / `debt_status`（第 1 輪發現它們不存在）
+- **v5.3.1**：`scoring_basis.dims_counted` 低報計分維度 → **不一致數 33 → 11 → 0**
+- **v5.6 前後**：錯誤回應違反自身 `ErrorResponse` 宣告（第 4 輪發現）→ **第 6 輪以負向測試驗收修復** ✅
+
+### 契約可觀測性改善（回應本系列建議）
+- **v5.4**：新增 `pool_exhausted` / `returned`（回應第 3 輪「回傳數 < top_k 是契約風險」）、
+  `score_scale: "relative-within-version"`（回應第 3 輪「分數不可跨版本比較」）
+- **v5.6**：`BroadeningAttempt` / `ScoringBasis` **型別化** —— 落實第 4 輪「新欄位只寫在描述裡、codegen 看不到」
+- **v5.6**：延遲降至 **98.2s**（前四輪 144–204s）
+
+### ❌ 我的誤報（3 條，同源）**—— 與產品缺陷數量相同**
+| # | 我原本寫的 | 真相 | 出處 |
+|:-:|:---|:---|:---|
+| 1 | `employment_status` 0/8「橫貫五版的未解問題」，級別「證據」 | **量測工件**：凍結 runner 案例集不含業主語意案例。第 6 輪實測**運作正常** | `CORRECTIONS.md` ③ / issue #51 |
+| 2 | 探針 `http=000`「疑似伺服器錯誤處理退步」 | **客戶端／網路路徑**：server log 顯示請求**未達伺服器**、0 錯誤、`restartCount=0` | `CORRECTIONS.md` ② |
+| 3 | `opMode` 預設值變更為 **breaking change** | 實為**修復**：舊預設值 `兩者皆可` 不在合法清單內，省略即 **400** | `CORRECTIONS.md` ① / issue #49 |
+
+**共同根因：用症狀歸因，未先取得那一側的證據。** 已寫進 `api-version-sweep` skill
+（Step 7 兩段 + 檢查清單 3 項）。**這是本系列最重要的產出。**
+
+### 仍未解 ⚠️（經更正後仍成立）
+- **ranking 層不可重現**：版本內 top-3 交集多為 0–1/3。第 5↔6 輪同版本對照顯示抽樣變異可達 **5×**
 - **分數尺度跨版本漂移**（案例 04：v5.4 `4.86` → v5.6 `2.54`）⇒ 有絕對分數門檻的下游邏輯升級會失效
 
 ### 值得注意的事件
-- **v5.4**：HTTP 503 `FILTER_FAILED`，且**該回應違反自身宣告的 `ErrorResponse` schema**（宣告 required `error`，實際只回 `detail`）
-- **v5.6**：重現性探針首次執行 **3/3 於精確 75.00s 硬切、完全無 HTTP 回應**（`http=000`）→ transient，約 10 分鐘後恢復。對照 v5.4 的結構化 503，**疑似錯誤處理退步**（未證實同因）
-- **v5.6**：`opMode` **預設值由「兩者皆可」改為「僅篩選」** —— 對未明傳該參數的呼叫者是 breaking change
+- **v5.4**：HTTP 503 `FILTER_FAILED`（該回應的 schema 不符問題已於後續修復，見上）
+- **v5.6**：重現性探針首次執行 3/3 於精確 **75.00s 硬切、無 HTTP 回應** → transient；
+  真因在客戶端／網路路徑（已由 server log 否證伺服器端）
+- **v5.6**：`opMode` 預設值 `兩者皆可` → `僅篩選`（**修復 400**，非 breaking；見上表 #3）
 
 ---
 
