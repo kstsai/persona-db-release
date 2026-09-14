@@ -1,0 +1,234 @@
+{
+  "status": "ok",
+  "total_matched": 30,
+  "persona_ids": [
+    275,
+    248,
+    484,
+    370,
+    795
+  ],
+  "summary": [
+    {
+      "id": "TW-P-0275",
+      "name": "米亞",
+      "age": "25-34",
+      "occupation": "金融",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "台南市",
+      "family_size": "3",
+      "city_price_tier": "低",
+      "commute_mode": "步行/腳踏車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "低",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "score": 4.9073
+    },
+    {
+      "id": "TW-P-0248",
+      "name": "小奈",
+      "age": "25-34",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "台南市",
+      "family_size": "3",
+      "city_price_tier": "低",
+      "commute_mode": "捷運/公車",
+      "housing_cost": "<5千",
+      "housing_burden": "低",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "score": 4.7842
+    },
+    {
+      "id": "TW-P-0484",
+      "name": "慧君",
+      "age": "45-54",
+      "occupation": "金融",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "台南市",
+      "family_size": "3",
+      "city_price_tier": "低",
+      "commute_mode": "機車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "低",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "自營作業者",
+      "score": 4.6895
+    },
+    {
+      "id": "TW-P-0370",
+      "name": "惠如",
+      "age": "35-44",
+      "occupation": "公務",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "桃園市",
+      "family_size": "3",
+      "city_price_tier": "中",
+      "commute_mode": "捷運/公車",
+      "housing_cost": "<5千",
+      "housing_burden": "低",
+      "clothing_spend": "1500~3000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "score": 4.6488
+    },
+    {
+      "id": "TW-P-0795",
+      "name": "淑貞",
+      "age": "35-44",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "新竹縣",
+      "family_size": "3",
+      "city_price_tier": "高",
+      "commute_mode": "在家工作",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "低",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "score": 4.5749
+    }
+  ],
+  "returned": 5,
+  "pool_exhausted": false,
+  "important_dimensions": [
+    {
+      "dim": "age",
+      "values": [
+        "25-34",
+        "35-44",
+        "45-54"
+      ]
+    },
+    {
+      "dim": "region",
+      "values": [
+        "都會區(六都)",
+        "北部"
+      ]
+    },
+    {
+      "dim": "occupation",
+      "values": [
+        "金融",
+        "科技",
+        "公務"
+      ]
+    },
+    {
+      "dim": "commute_mode",
+      "values": [
+        "捷運/公車",
+        "步行/腳踏車",
+        "機車",
+        "在家工作"
+      ]
+    },
+    {
+      "dim": "clothing_spend",
+      "values": [
+        ">5000",
+        "1500~3000"
+      ]
+    },
+    {
+      "dim": "employment_status",
+      "values": [
+        "受僱者",
+        "自營作業者"
+      ]
+    }
+  ],
+  "llm_analysis": {
+    "domain": "房貸/房地產金融",
+    "reasoning": "問題涉及房屋貸款優惠，屬於房地產金融領域；主要關心者為有購屋或換屋需求、具備穩定收入與一定家庭負擔能力的族群。發問者為房仲業者，目標是找出潛在購屋/換屋客戶。",
+    "question_analysis": [
+      {
+        "question": "房貸優惠方案",
+        "topic": "房屋貸款/購屋換屋",
+        "target_user": "30-45歲已婚、有小孩且家庭收入中高、居住負擔低、有首購或換屋需求者"
+      }
+    ],
+    "usage_suggestion": {
+      "mode": "問卷答題者",
+      "reason": "發問者為房仲業者，目的是找出關心房貸優惠的潛在購屋/換屋客戶，適合先篩選出目標名單再進行後續問卷或接觸。",
+      "recommended_opMode": "僅篩選"
+    }
+  },
+  "relaxed_dims": [],
+  "broadening_attempts": [
+    {
+      "loop": 1,
+      "change": "放寬 housing_burden 維度，從僅「低」擴大為「低、中」。因為問題核心在於無負債已婚家庭，housing_burden 非核心條件，且保留 debt_status 無可維持無負債族群輪廓。",
+      "match_count_before": 13,
+      "match_count_after": 30,
+      "filters_changed": true,
+      "no_op": false,
+      "overshoot": false
+    }
+  ],
+  "applied_filters": {
+    "age": [
+      "25-34",
+      "35-44",
+      "45-54"
+    ],
+    "income": [
+      "3-8萬",
+      ">8萬"
+    ],
+    "marriage": [
+      "已婚"
+    ],
+    "family_size": [
+      "3",
+      "4"
+    ],
+    "family_income": [
+      "5-7萬",
+      "7萬",
+      ">8萬"
+    ],
+    "housing_burden": [
+      "低",
+      "中"
+    ],
+    "debt_status": [
+      "無"
+    ]
+  },
+  "scoring_basis": {
+    "method": "log-frequency × cross-dim normalized [0.5, 2.0]",
+    "weight_source": "DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024",
+    "weight_version": "v5.6",
+    "score_scale": "relative-within-version",
+    "score_schema": 1,
+    "dims_counted": [
+      "age",
+      "income",
+      "marriage",
+      "family_size",
+      "family_income",
+      "housing_burden",
+      "debt_status",
+      "occupation"
+    ],
+    "relaxed_dims_scored_at": null
+  }
+}

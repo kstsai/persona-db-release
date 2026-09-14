@@ -8,11 +8,13 @@ import json, glob, os, sys, csv, hashlib, itertools
 
 HOME = '/Users/kstsai/Documents'
 DIRS = sys.argv[1:] or [
-    f'{HOME}/round1-v4.9.2-nodeA',        # v4.9.2
-    f'{HOME}/round2-v5.2-nodeB',           # v5.2
-    f'{HOME}/round3-v5.3.1-nodeA',   # v5.3.1
-    f'{HOME}/round4-v5.4-nodeB',       # v5.4
-    f'{HOME}/round5-v5.6-nodeB-frozenrunner',       # v5.6
+    f'{HOME}/round1-v4.9.2-nodeA',
+    f'{HOME}/round2-v5.2-nodeB',
+    f'{HOME}/round3-v5.3.1-nodeA',
+    f'{HOME}/round4-v5.4-nodeB',
+    f'{HOME}/round5-v5.6-nodeB-frozenrunner',
+    f'{HOME}/round6-v5.6-nodeB-upstreamrunner',
+    f'{HOME}/round7-v5.6-nodeA-upstreamrunner',
 ]
 CASES = ['01_kangshimei','02_tesla','03_fashion','04_role_fangzhong',
          '05_role_banker','06_aesthetic','07_debt','08_boss']

@@ -1,0 +1,7 @@
+case_id: 09_owner
+label: 9. 業主本人 — dimension 22: employment_status（語意無歧義，issue #34）
+http_code: 200
+time_total_sec: 152.617413
+size_download_bytes: 6529
+url_effective: http://NODE-A:8000/personadb/candidates?questions=%e6%83%b3%e6%89%be%e4%bc%81%e6%a5%ad%e4%b8%bb%e6%88%96%e5%b7%a5%e5%bb%a0%e8%80%81%e9%97%86%e6%9c%ac%e4%ba%ba%e4%bd%9c%e7%82%baB2B%e5%95%8f%e5%8d%b7%e5%8f%97%e8%a8%aa%e8%80%85&top_k=10&opMode=%e5%83%85%e7%af%a9%e9%81%b8
+curl_args: --data-urlencode questions=想找企業主或工廠老闆本人作為B2B問卷受訪者 --data-urlencode top_k=10 --data-urlencode opMode=僅篩選

@@ -19,7 +19,7 @@
 
 ---
 
-## 六輪一覽
+## 七輪一覽
 
 | # | 版本 | 節點 | runner | 日期 | 契約 sha256(16) | 結果 | 該輪重點 |
 |:-:|:-----|:-----|:-----|:-----|:----------------|:-----|:---------|
@@ -29,6 +29,7 @@
 | 4 | **v5.4** | `NODE-B` | 凍結 | 2026-09-12 | `30a228782154bdce` | **8/9** | +`pool_exhausted`/`returned`/`no_op`/`overshoot`/`score_scale`；首見 503 且**該回應違反自身宣告 schema** |
 | 5 | **v5.6** | `NODE-B` | 凍結 | 2026-09-13 | `aafe647f46ee8abe` | 9/9 | **契約型別化**（落實第 4 輪建議）；延遲 98.2s |
 | 6 | **v5.6** | `NODE-B` | **upstream 223 行** | 2026-09-14 | `aafe647f46ee8abe` | **10/10** | **結案 issue #51**（`employment_status` 實為量測工件）；負向測試**驗收 #47 已修復** |
+| 7 | **v5.6** | `NODE-A` | upstream 223 行 | 2026-09-14 | `aafe647f46ee8abe` | **10/10** | **主機端驗收**（Docker 部署）：語意正確性 9/9；**判讀不跨版本比對**，聚焦 response 內容分析 |
 
 **共 4 種不同契約**（v5.2 與 v5.3.1 同 hash ⇒ 純行為 patch；第 5、6 輪同為最後一種）。
 
@@ -49,7 +50,8 @@ qa-reports/
 ├── round3-v5.3.1-nodeA/                   ← 第 3 輪
 ├── round4-v5.4-nodeB/                     ← 第 4 輪
 ├── round5-v5.6-nodeB-frozenrunner/        ← 第 5 輪（凍結 runner）
-└── round6-v5.6-nodeB-upstreamrunner/      ← 第 6 輪（upstream runner）
+├── round6-v5.6-nodeB-upstreamrunner/      ← 第 6 輪（upstream runner）
+└── round7-v5.6-nodeA-upstreamrunner/      ← 第 7 輪（同 runner，`NODE-A` Docker 部署；**不做版本比對**）
 ```
 
 > **命名 = `round<輪次>-v<版本>-node<代號>[-<runner 別>]`。** 三個理由：
@@ -118,21 +120,23 @@ cat meta/07_debt.meta              # HTTP code / 耗時 / curl 參數
 cat headers/07_debt.headers
 ```
 
-### 六輪交叉對照（不需重跑，用已保存的證據）
+### 七輪交叉對照（不需重跑，用已保存的證據）
 
 > ⚠️ 以下指令**在 `round6-…/` 目錄內執行**（故用 `../` 指到其他輪）；從 `qa-reports/` 執行請去掉 `../`。
 
 ```bash
-cd qa-reports/round6-v5.6-nodeB-upstreamrunner
+cd qa-reports/round7-v5.6-nodeA-upstreamrunner
 python3 compare-nway.py \
   ../round1-v4.9.2-nodeA \
   ../round2-v5.2-nodeB \
   ../round3-v5.3.1-nodeA \
   ../round4-v5.4-nodeB \
   ../round5-v5.6-nodeB-frozenrunner \
+  ../round6-v5.6-nodeB-upstreamrunner \
   .
 # 註 1：會在最後一個目錄（.）寫出 version-comparison-nway.csv
-# 註 2：只比較案例 1–8（round6 多出的案例 9「業主本人」沒有前輪 baseline）
+# 註 2：只比較案例 1–8（round6/7 多出的案例 9「業主本人」沒有前輪 baseline）
+# 註 3：第 7 輪的**報告本身不做版本比對**（依指示聚焦 response 分析）；納入本指令僅為技術上可行
 ```
 
 ### 各包自己的複驗指令
@@ -176,6 +180,33 @@ OUT=/tmp/rerun BASE_URL=http://<node>:8000 bash run-test.sh
 
 **共同根因：用症狀歸因，未先取得那一側的證據。** 已寫進 `api-version-sweep` skill
 （Step 7 兩段 + 檢查清單 3 項）。**這是本系列最重要的產出。**
+
+### 第 7 輪（`NODE-A` Docker 部署）新增 ✅
+- **語意正確性 9/9**：各案例 filter 選擇皆符合題意；`#34` 雙向驗證通過
+  （業主 query 套 `employment_status=['雇主']` 且 10/10 回傳皆雇主；顧客 query 正確不套）
+- **模型的 `reasoning` 已內化 #34 判準**（明寫「主體是顧客不是業者本人，故不使用 employment_status」）
+- **`dims_counted` 的誠實性經「正向實驗」驗證**：以 `top_k=30` 取得更大池子後，找到
+  **相同計分向量、不同 `city_price_tier`（高 vs 低）** 的 persona，**分數完全相同**
+  ⇒ 居住地／城市層級確實不參與計分 ⇒ 宣告完整
+- **推翻一條假設**：先前看似「居住地影響計分」的線索（top-3 全在同一城市）
+  **經該實驗否證** —— 若未做探針，就會誤報一條不存在的缺陷
+
+### 第 7 輪新增 ⚠️（觀察，非缺陷）
+- **頭部集中 25%**：20 個 top-3 persona 中 5 個跨案例重複，且橫跨不同產業
+  （同一 persona 同時是多個不相關 query 的 top-3）⇒ 下游名單會跨題重疊
+- **Broadening 空轉 31%**（5/16 輪迴圈 `no_op`）；0 次 `overshoot`
+- **TESLA 案例把 `commute_mode` 放寬掉** —— 與模型自述意圖（「以汽車通勤」）不一致
+- **同輪、同 query 的 filter 就會不同**：主套件 `debt_status=['無']` vs 同輪 probe
+  `['無','有房貸','有信貸或卡債']` ⇒ 再次顯示抽樣變異，且放寬後語意精度下降
+- **可觀測性缺口**：`sex`/`marriage`/`education`/`hobby` 可出現在 `dims_counted`
+  卻**不在 `summary`** ⇒ 消費端無法從回應驗證其是否生效
+
+### 方法論修正（2026-09-14，非產品問題）
+「同分 ⇔ 同 `dims_counted` 向量」的檢定原本**混用兩種情況**：
+**(a) 同分但向量不同**＝**分數碰撞**（合法）；**(b) 同向量但分數不同**＝**dims_counted 低報**（真缺陷）。
+區分後重驗：第 1 輪的 33、第 2 輪的 11 **全屬 (b)**（原結論正確）；
+但**第 5 輪報告的「1」實為 (a) 碰撞** —— 該輪 `dims_counted` 其實是完美的。
+另：該檢定僅能涵蓋 `summary` 曝露的維度（見上「可觀測性缺口」）。
 
 ### 仍未解 ⚠️（經更正後仍成立）
 - **ranking 層不可重現**：版本內 top-3 交集多為 0–1/3。第 5↔6 輪同版本對照顯示抽樣變異可達 **5×**

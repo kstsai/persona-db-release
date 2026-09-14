@@ -1,0 +1,354 @@
+{
+  "status": "ok",
+  "total_matched": 185,
+  "persona_ids": [
+    142,
+    762,
+    764,
+    174,
+    157,
+    145,
+    135,
+    184,
+    763,
+    149
+  ],
+  "summary": [
+    {
+      "id": "TW-P-0142",
+      "name": "阿翔",
+      "age": "19-24",
+      "occupation": "學生",
+      "income": "無收入",
+      "family_income": "1-3萬",
+      "residence": "台中市",
+      "family_size": "1",
+      "city_price_tier": "中高",
+      "commute_mode": "捷運/公車",
+      "housing_cost": "<5千",
+      "housing_burden": "低",
+      "clothing_spend": "500~1500",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "不適用",
+      "score": 3.7784
+    },
+    {
+      "id": "TW-P-0762",
+      "name": "阿元",
+      "age": "19-24",
+      "occupation": "服務",
+      "income": "<3萬",
+      "family_income": "1-3萬",
+      "residence": "基隆市",
+      "family_size": "1",
+      "city_price_tier": "中",
+      "commute_mode": "步行/腳踏車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "高",
+      "clothing_spend": "<500",
+      "aesthetic_procedure": "無",
+      "debt_status": "有房貸",
+      "employment_status": "受僱者",
+      "score": 3.7506
+    },
+    {
+      "id": "TW-P-0764",
+      "name": "阿峰",
+      "age": "19-24",
+      "occupation": "服務",
+      "income": "<3萬",
+      "family_income": "1-3萬",
+      "residence": "基隆市",
+      "family_size": "1",
+      "city_price_tier": "中",
+      "commute_mode": "步行/腳踏車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "高",
+      "clothing_spend": "<500",
+      "aesthetic_procedure": "無",
+      "debt_status": "有房貸",
+      "employment_status": "受僱者",
+      "score": 3.7506
+    },
+    {
+      "id": "TW-P-0174",
+      "name": "凱琳",
+      "age": "19-24",
+      "occupation": "學生",
+      "income": "無收入",
+      "family_income": "1-3萬",
+      "residence": "台中市",
+      "family_size": "1",
+      "city_price_tier": "中高",
+      "commute_mode": "步行/腳踏車",
+      "housing_cost": "<5千",
+      "housing_burden": "低",
+      "clothing_spend": "1500~3000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "不適用",
+      "score": 3.6471
+    },
+    {
+      "id": "TW-P-0157",
+      "name": "大雄",
+      "age": "19-24",
+      "occupation": "學生",
+      "income": "無收入",
+      "family_income": "5-7萬",
+      "residence": "新北市",
+      "family_size": "4",
+      "city_price_tier": "中高",
+      "commute_mode": "捷運/公車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "500~1500",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "不適用",
+      "score": 3.6373
+    },
+    {
+      "id": "TW-P-0145",
+      "name": "阿杰",
+      "age": "19-24",
+      "occupation": "學生",
+      "income": "無收入",
+      "family_income": "5-7萬",
+      "residence": "桃園市",
+      "family_size": "3",
+      "city_price_tier": "中",
+      "commute_mode": "捷運/公車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "低",
+      "clothing_spend": "500~1500",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "不適用",
+      "score": 3.6105
+    },
+    {
+      "id": "TW-P-0135",
+      "name": "小安",
+      "age": "19-24",
+      "occupation": "學生",
+      "income": "無收入",
+      "family_income": "1-3萬",
+      "residence": "台南市",
+      "family_size": "1",
+      "city_price_tier": "低",
+      "commute_mode": "機車",
+      "housing_cost": "<5千",
+      "housing_burden": "低",
+      "clothing_spend": "<500",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "不適用",
+      "score": 3.5799
+    },
+    {
+      "id": "TW-P-0184",
+      "name": "小莉",
+      "age": "19-24",
+      "occupation": "學生",
+      "income": "無收入",
+      "family_income": "1-3萬",
+      "residence": "台中市",
+      "family_size": "1",
+      "city_price_tier": "中高",
+      "commute_mode": "機車",
+      "housing_cost": "<5千",
+      "housing_burden": "低",
+      "clothing_spend": "1500~3000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "不適用",
+      "score": 3.5799
+    },
+    {
+      "id": "TW-P-0763",
+      "name": "小陳",
+      "age": "19-24",
+      "occupation": "學生",
+      "income": "無收入",
+      "family_income": "1-3萬",
+      "residence": "新竹市",
+      "family_size": "1",
+      "city_price_tier": "中高",
+      "commute_mode": "機車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "高",
+      "clothing_spend": "500~1500",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "不適用",
+      "score": 3.5799
+    },
+    {
+      "id": "TW-P-0149",
+      "name": "小白",
+      "age": "19-24",
+      "occupation": "學生",
+      "income": "無收入",
+      "family_income": "5-7萬",
+      "residence": "桃園市",
+      "family_size": "5+",
+      "city_price_tier": "中",
+      "commute_mode": "步行/腳踏車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "500~1500",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "不適用",
+      "score": 3.577
+    }
+  ],
+  "returned": 10,
+  "pool_exhausted": false,
+  "important_dimensions": [
+    {
+      "dim": "sex",
+      "values": [
+        "男",
+        "女"
+      ]
+    },
+    {
+      "dim": "region",
+      "values": [
+        "都會區(六都)",
+        "北部"
+      ]
+    },
+    {
+      "dim": "occupation",
+      "values": [
+        "學生",
+        "服務"
+      ]
+    },
+    {
+      "dim": "income",
+      "values": [
+        "無收入",
+        "<3萬"
+      ]
+    },
+    {
+      "dim": "family_income",
+      "values": [
+        "1-3萬",
+        "5-7萬"
+      ]
+    },
+    {
+      "dim": "commute_mode",
+      "values": [
+        "步行/腳踏車",
+        "捷運/公車",
+        "機車"
+      ]
+    },
+    {
+      "dim": "clothing_spend",
+      "values": [
+        "500~1500",
+        "<500",
+        "1500~3000"
+      ]
+    },
+    {
+      "dim": "housing_burden",
+      "values": [
+        "低",
+        "高",
+        "中"
+      ]
+    },
+    {
+      "dim": "debt_status",
+      "values": [
+        "無",
+        "有房貸"
+      ]
+    },
+    {
+      "dim": "employment_status",
+      "values": [
+        "不適用",
+        "受僱者"
+      ]
+    }
+  ],
+  "llm_analysis": {
+    "domain": "餐飲/零售消費行為與目標客群分析",
+    "reasoning": "發問者為夜市商圈協會，想了解小吃攤的目標客群；問題主體是「小吃攤老闆的目標客群」即顧客，不是業者本人，因此不使用 employment_status。小吃攤消費屬餐飲/零售消費行為，故以年齡、職業、收入並搭配家庭收入、通勤方式等消費維度過濾，不指定性別與地區。",
+    "question_analysis": [
+      {
+        "question": "小吃攤老闆的目標客群",
+        "topic": "小吃攤/夜市消費客群分析",
+        "target_user": "夜市、小吃攤的潛在消費者"
+      }
+    ],
+    "usage_suggestion": {
+      "mode": "問卷答題者",
+      "reason": "夜市商圈協會想了解小吃攤的目標客群特徵，應先篩選出可能到夜市或攤販消費的族群，再進行問卷或訪談。",
+      "recommended_opMode": "僅篩選"
+    }
+  },
+  "relaxed_dims": [],
+  "broadening_attempts": [],
+  "applied_filters": {
+    "age": [
+      "19-24",
+      "25-34",
+      "35-44"
+    ],
+    "occupation": [
+      "學生",
+      "服務",
+      "製造",
+      "科技",
+      "金融",
+      "家管"
+    ],
+    "income": [
+      "無收入",
+      "<3萬",
+      "3-8萬"
+    ],
+    "marriage": [
+      "未婚",
+      "已婚"
+    ],
+    "family_income": [
+      "1-3萬",
+      "3-5萬",
+      "5-7萬"
+    ],
+    "commute_mode": [
+      "機車",
+      "捷運/公車",
+      "步行/腳踏車"
+    ]
+  },
+  "scoring_basis": {
+    "method": "log-frequency × cross-dim normalized [0.5, 2.0]",
+    "weight_source": "DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024",
+    "weight_version": "v5.6",
+    "score_scale": "relative-within-version",
+    "score_schema": 1,
+    "dims_counted": [
+      "age",
+      "occupation",
+      "income",
+      "marriage",
+      "family_income",
+      "commute_mode",
+      "family_size"
+    ],
+    "relaxed_dims_scored_at": null
+  }
+}

@@ -1,0 +1,16 @@
+=== 目標（本輪不使用版本對比；此處僅記錄受測環境）===
+  node: NODE-A (NODE-A)   tailscale NODE-A   node ID NODE-A-NODEID
+  部署型態: Docker（upDockerVerHermes compose：hermes + persona-db-api 容器）
+  RELEASE-VERSION: v5.6
+  服務版本: v5.6（/personadb/status）
+  連線: [public-ip]:62119 (relay hkg)
+  收集時間(UTC): 2026-09-14T02:25:52Z
+
+=== 儀器 ===
+  upstream sha256: 9a29a8ef3bc553a334b1865c792d4f0f17e60ce15f93a46fe9f8ac9b684edbd8 (223 行)
+  runner   sha256: 10e888d9ad575401363e70b61ffbf37d46da1ff90b6b9696853add6ed306e196
+  → 與 round6 完全相同（同一儀器）
+
+=== 本輪範圍（依 kstsai 指示）===
+  ✗ 不做 api-version 跨版本比對
+  ✓ 純 API response 結果分析
