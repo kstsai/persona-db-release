@@ -6,6 +6,8 @@
 > 方法論：`api-version-sweep` skill（dsh 系共用 kit）。
 > 執行者：dsh1（DeepSeek Harness）。**五輪的 runner sha256 完全相同** ⇒ 跨輪可比。
 
+> **⚠️ 判讀修正請先看 [`CORRECTIONS.md`](CORRECTIONS.md)** —— 個別報告的判讀若被後續證據推翻（例如取得伺服器端 log），修正記於該檔，**原文保留不動**。
+
 ---
 
 ## 五輪一覽
