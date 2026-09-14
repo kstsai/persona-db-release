@@ -298,7 +298,8 @@ for c, cd in _cases.items():
                    for b in (cd.get("broadening_attempts") or [])):
             _bad_veto.append(c)
 print(f"  #57 protected_veto 均有 attempt 標記 → " + ("✅" if not _bad_veto else f"❌ {_bad_veto}"))
-if "protected_veto" not in _sr_seen:
+_sr_seen_v59 = sorted({cd.get("broadening_stop_reason") for cd in _cases.values()})
+if "protected_veto" not in _sr_seen_v59:
     print("  #57 本輪未觸發 veto（保護維度皆未被嘗試移除）→ ℹ️")
 # #58 status 語意：matched==0 ⇔ status != 'ok'
 _bad_status = [c for c, cd in _cases.items()
@@ -312,7 +313,7 @@ try:
     _enum = _props["broadening_stop_reason"]["enum"]
     print("  #59 OpenAPI 含 protected_dims → " + ("✅" if "protected_dims" in _props else "❌"))
     print("  #59 stop_reason enum 含 protected_veto → " + ("✅" if "protected_veto" in _enum else "❌"))
-    _bad_enum = [v for v in _sr_seen if v not in _enum]
+    _bad_enum = [v for v in _sr_seen_v59 if v not in _enum]
     print("  #59 回應出的停止原因皆在 enum 內 → " + ("✅" if not _bad_enum else f"❌ {_bad_enum}"))
 except Exception as e:
     print(f"  #59 OpenAPI 檢查失敗（非致命）: {type(e).__name__}")
