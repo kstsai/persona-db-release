@@ -276,6 +276,46 @@ for cname, cd in _cases.items():
           + ("✅" if (ok_sr and ok_streak and consistent) else f"❌ (合法={ok_sr} 空轉={ok_streak} 一致={consistent})"))
 _sr_seen = sorted({cd.get("broadening_stop_reason") for cd in _cases.values()})
 print(f"  #56 本輪出現的停止原因: {_sr_seen}")
+
+# ── v5.9 (#57/#58/#59) 斷言：核心維度保護 + status 語意 + 契約 ──
+print("  --- v5.9 (#57 核心維度保護 / #58 status / #59 503 兩型態) ---")
+_ALLOWED_SR_V59 = {"", "target_reached", "no_op_limit", "loop_limit", "budget_limit",
+                   "llm_empty", "llm_parse_error", "llm_no_filters", "no_filters", "protected_veto"}
+_missing_field = [c for c, cd in _cases.items() if "protected_dims" not in cd]
+print(f"  #57 全部案例都有 protected_dims 欄位 → " + ("✅" if not _missing_field else f"❌ 缺 {_missing_field}"))
+print(f"  #57 本輪各案保護集: " + "; ".join(
+    f"{c}={cd.get('protected_dims')}" for c, cd in _cases.items()))
+# ★ 不變式：受保護維度不得出現在 relaxed_dims
+_viol = {c: sorted(set(cd.get("protected_dims") or []) & set(cd.get("relaxed_dims") or []))
+         for c, cd in _cases.items()}
+_viol = {c: v for c, v in _viol.items() if v}
+print(f"  ★ #57 不變式（受保護維度未被放寬）→ " + ("✅" if not _viol else f"❌ {_viol}"))
+# protected_veto ⇒ 有對應 attempt 標記
+_bad_veto = []
+for c, cd in _cases.items():
+    if cd.get("broadening_stop_reason") == "protected_veto":
+        if not any(b.get("protected_veto") and b.get("vetoed_dims")
+                   for b in (cd.get("broadening_attempts") or [])):
+            _bad_veto.append(c)
+print(f"  #57 protected_veto 均有 attempt 標記 → " + ("✅" if not _bad_veto else f"❌ {_bad_veto}"))
+if "protected_veto" not in _sr_seen:
+    print("  #57 本輪未觸發 veto（保護維度皆未被嘗試移除）→ ℹ️")
+# #58 status 語意：matched==0 ⇔ status != 'ok'
+_bad_status = [c for c, cd in _cases.items()
+               if ((cd.get("total_matched") or 0) == 0) != (cd.get("status") != "ok")]
+print(f"  #58 status 語意（matched==0 ⇔ status!=ok）→ " + ("✅" if not _bad_status else f"❌ {_bad_status}"))
+# #59 列舉：protected_veto 存在（OpenAPI 零成本檢查）
+try:
+    import urllib.request as _u
+    _os = json.load(_u.urlopen("http://localhost:8000/openapi.json", timeout=10))
+    _props = _os["components"]["schemas"]["CandidatesResponse"]["properties"]
+    _enum = _props["broadening_stop_reason"]["enum"]
+    print("  #59 OpenAPI 含 protected_dims → " + ("✅" if "protected_dims" in _props else "❌"))
+    print("  #59 stop_reason enum 含 protected_veto → " + ("✅" if "protected_veto" in _enum else "❌"))
+    _bad_enum = [v for v in _sr_seen if v not in _enum]
+    print("  #59 回應出的停止原因皆在 enum 內 → " + ("✅" if not _bad_enum else f"❌ {_bad_enum}"))
+except Exception as e:
+    print(f"  #59 OpenAPI 檢查失敗（非致命）: {type(e).__name__}")
 PYEOF
 
 # #55：失敗 log 需帶例外型別（主機層：確認映像內 code 有該診斷）
