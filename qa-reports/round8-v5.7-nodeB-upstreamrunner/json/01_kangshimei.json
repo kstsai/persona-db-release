@@ -1,0 +1,197 @@
+{
+  "status": "ok",
+  "total_matched": 105,
+  "persona_ids": [
+    250,
+    777,
+    246
+  ],
+  "summary": [
+    {
+      "id": "TW-P-0250",
+      "name": "凱琳",
+      "age": "25-34",
+      "occupation": "製造",
+      "income": "<3萬",
+      "family_income": "5-7萬",
+      "residence": "桃園市",
+      "family_size": "2",
+      "city_price_tier": "中",
+      "commute_mode": "捷運/公車",
+      "housing_cost": "<5千",
+      "housing_burden": "低",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "sex": "女",
+      "region": "都會區(六都)",
+      "education": "研究所以上",
+      "marriage": "未婚",
+      "hobby": [
+        "登山",
+        "閱讀"
+      ],
+      "politics": "白/第三勢力",
+      "media_diet": "社群為主",
+      "score": 3.318
+    },
+    {
+      "id": "TW-P-0777",
+      "name": "米亞",
+      "age": "25-34",
+      "occupation": "製造",
+      "income": "<3萬",
+      "family_income": "5-7萬",
+      "residence": "新竹縣",
+      "family_size": "2",
+      "city_price_tier": "高",
+      "commute_mode": "機車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "sex": "女",
+      "region": "北部",
+      "education": "大學",
+      "marriage": "未婚",
+      "hobby": [
+        "打電動",
+        "烹飪",
+        "球類"
+      ],
+      "politics": "泛綠",
+      "media_diet": "社群為主",
+      "score": 3.318
+    },
+    {
+      "id": "TW-P-0246",
+      "name": "若希",
+      "age": "25-34",
+      "occupation": "公務",
+      "income": "<3萬",
+      "family_income": "3-5萬",
+      "residence": "台北市",
+      "family_size": "5+",
+      "city_price_tier": "高",
+      "commute_mode": "捷運/公車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "中",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "sex": "女",
+      "region": "都會區(六都)",
+      "education": "大學",
+      "marriage": "已婚",
+      "hobby": [
+        "打電動",
+        "球類",
+        "追劇"
+      ],
+      "politics": "泛藍",
+      "media_diet": "混合",
+      "score": 3.2288
+    }
+  ],
+  "returned": 3,
+  "pool_exhausted": false,
+  "important_dimensions": [
+    {
+      "dim": "region",
+      "values": [
+        "都會區(六都)",
+        "北部"
+      ]
+    },
+    {
+      "dim": "occupation",
+      "values": [
+        "製造",
+        "公務"
+      ]
+    },
+    {
+      "dim": "family_income",
+      "values": [
+        "5-7萬",
+        "3-5萬"
+      ]
+    },
+    {
+      "dim": "commute_mode",
+      "values": [
+        "捷運/公車",
+        "機車"
+      ]
+    },
+    {
+      "dim": "housing_burden",
+      "values": [
+        "中",
+        "低"
+      ]
+    }
+  ],
+  "llm_analysis": {
+    "domain": "藥妝零售/美妝生活通路",
+    "reasoning": "康是美是台灣知名藥妝連鎖通路，問題主體是其顧客而非業主，屬於零售消費行為。目標客群以女性為主，年齡集中在25-54歲，收入中等、家庭可支配所得中等，且日常有逛街購物與美妝保養相關消費。",
+    "question_analysis": [
+      {
+        "question": "康是美的目標客戶",
+        "topic": "藥妝零售目標客群",
+        "target_user": "想了解康是美主力消費族群的行銷企劃、通路經營者或市場研究人員；實際目標客群為注重美妝保養、健康生活，具日常消費力的女性，年齡約25-54歲。"
+      }
+    ],
+    "usage_suggestion": {
+      "mode": "問卷答題者",
+      "reason": "此問題本身是在定義目標客群，適合先篩選出潛在顧客 personas，再對這群人進行消費行為問卷或訪談，而非讓 persona 直接回答「目標客戶是誰」。",
+      "recommended_opMode": "僅篩選"
+    }
+  },
+  "relaxed_dims": [],
+  "broadening_attempts": [],
+  "applied_filters": {
+    "age": [
+      "25-34",
+      "35-44",
+      "45-54"
+    ],
+    "sex": [
+      "女"
+    ],
+    "income": [
+      "<3萬",
+      "3-8萬"
+    ],
+    "clothing_spend": [
+      "500~1500",
+      "1500~3000",
+      "3000~5000"
+    ],
+    "family_income": [
+      "3-5萬",
+      "5-7萬"
+    ]
+  },
+  "scoring_basis": {
+    "method": "log-frequency × cross-dim normalized [0.5, 2.0]",
+    "weight_source": "DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024",
+    "weight_version": "v5.7",
+    "score_scale": "relative-within-version",
+    "score_schema": 1,
+    "dims_counted": [
+      "age",
+      "sex",
+      "income",
+      "clothing_spend",
+      "family_income",
+      "occupation",
+      "family_size"
+    ],
+    "relaxed_dims_scored_at": null
+  }
+}

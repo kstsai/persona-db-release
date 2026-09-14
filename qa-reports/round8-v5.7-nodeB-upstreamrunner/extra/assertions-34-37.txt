@@ -1,0 +1,19 @@
+  #34 業主 query employment_status=['雇主', '自營作業者'] → ✅
+  #34 顧客 query employment_status=None → ✅ 未套用（語意正確）
+  #35 09_owner: applied=2 dims_counted=6 新維度=['employment_status'] ✅
+  #35 06_aesthetic: applied=4 dims_counted=8 新維度=['aesthetic_procedure'] ✅
+  #35 07_debt: applied=4 dims_counted=7 新維度=['debt_status'] ✅
+  #35 08_boss: applied=8 dims_counted=8 新維度=none ✅
+  #36 藥妝零售 query aesthetic_procedure=None → ✅ 未套用
+  #36 醫美 query aesthetic_procedure=['有'] → ✅ 正確套用
+  #37/#42 09_owner: 0 loops, no_op+overshoot 欄位✅
+  #37/#42 01_kangshimei: 0 loops, no_op+overshoot 欄位✅
+  #37/#42 02_tesla: 3 loops, no_op+overshoot 欄位✅
+  #37/#42 06_aesthetic: 3 loops, no_op+overshoot 欄位✅
+  #37/#42 07_debt: 3 loops, no_op+overshoot 欄位✅
+
+  --- v5.4 (#42/#43/#44) ---
+  #42 debt_status 保留=True 符合率=10/10 (100%) pool_exhausted=False overshoot=[False, False, False] → ✅
+  #42 醫美硬篩選維持: sex=['女'] aesthetic=['有'] → ✅
+  #43 案例06 returned=10 pool_exhausted=False len(summary)=10 → ✅
+  #44 weight_version=v5.7 score_scale=relative-within-version score_schema=1 → ✅

@@ -1,0 +1,4 @@
+  #47 400 錯誤形狀 status=400 body={"status": "error", "error": {"code": "INVALID_OPMODE", "message": "無效的 opMode: 亂寫", "details": "有效值: 僅篩選, 篩選+模擬, 模擬詢問"}}
+  #47 → ✅ 契約相符
+  #49 opMode 預設值='僅篩選' 在合法清單內 → ✅
+  #48 OpenAPI 有 BroadeningAttempt/ScoringBasis 且 properties 完整 → ✅

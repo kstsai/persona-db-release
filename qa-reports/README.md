@@ -19,7 +19,7 @@
 
 ---
 
-## 七輪一覽
+## 八輪一覽
 
 | # | 版本 | 節點 | runner | 日期 | 契約 sha256(16) | 結果 | 該輪重點 |
 |:-:|:-----|:-----|:-----|:-----|:----------------|:-----|:---------|
@@ -30,8 +30,9 @@
 | 5 | **v5.6** | `NODE-B` | 凍結 | 2026-09-13 | `aafe647f46ee8abe` | 9/9 | **契約型別化**（落實第 4 輪建議）；延遲 98.2s |
 | 6 | **v5.6** | `NODE-B` | **upstream 223 行** | 2026-09-14 | `aafe647f46ee8abe` | **10/10** | **結案 issue #51**（`employment_status` 實為量測工件）；負向測試**驗收 #47 已修復** |
 | 7 | **v5.6** | `NODE-A` | upstream 223 行 | 2026-09-14 | `aafe647f46ee8abe` | **10/10** | **主機端驗收**（Docker 部署）：語意正確性 9/9；**判讀不跨版本比對**，聚焦 response 內容分析 |
+| 8 | **v5.7** | `NODE-B` | **upstream 227 行** | 2026-09-14 | **`cb5b08084daea8af`** | **10/10** | **上游斷言 13/13 全過**；`summary` 擴充 **17→24 欄**（回應可自我驗證）；**不與前版本比對** |
 
-**共 4 種不同契約**（v5.2 與 v5.3.1 同 hash ⇒ 純行為 patch；第 5、6 輪同為最後一種）。
+**共 5 種不同契約**（v5.2 與 v5.3.1 同 hash ⇒ 純行為 patch；第 5–7 輪同為 `aafe647f`；**v5.7 為新契約 `cb5b0808`**）。
 
 > ⚠️ **第 5 輪與第 6 輪版本、契約完全相同，只差 runner**。兩輪案例 1–8 的 **query 與參數完全相同**
 > （已機械比對），故其差異**純屬 LLM 抽樣**、**不可歸因於 runner** —— 這組對照反而提供最乾淨的
@@ -51,7 +52,8 @@ qa-reports/
 ├── round4-v5.4-nodeB/                     ← 第 4 輪
 ├── round5-v5.6-nodeB-frozenrunner/        ← 第 5 輪（凍結 runner）
 ├── round6-v5.6-nodeB-upstreamrunner/      ← 第 6 輪（upstream runner）
-└── round7-v5.6-nodeA-upstreamrunner/      ← 第 7 輪（同 runner，`NODE-A` Docker 部署；**不做版本比對**）
+├── round7-v5.6-nodeA-upstreamrunner/      ← 第 7 輪（同 runner，`NODE-A` Docker 部署；**不做版本比對**）
+└── round8-v5.7-nodeB-upstreamrunner/      ← 第 8 輪（**v5.7**，upstream 227 行；**不做版本比對**）
 ```
 
 > **命名 = `round<輪次>-v<版本>-node<代號>[-<runner 別>]`。** 三個理由：
@@ -120,12 +122,12 @@ cat meta/07_debt.meta              # HTTP code / 耗時 / curl 參數
 cat headers/07_debt.headers
 ```
 
-### 七輪交叉對照（不需重跑，用已保存的證據）
+### 八輪交叉對照（不需重跑，用已保存的證據）
 
 > ⚠️ 以下指令**在 `round6-…/` 目錄內執行**（故用 `../` 指到其他輪）；從 `qa-reports/` 執行請去掉 `../`。
 
 ```bash
-cd qa-reports/round7-v5.6-nodeA-upstreamrunner
+cd qa-reports/round8-v5.7-nodeB-upstreamrunner
 python3 compare-nway.py \
   ../round1-v4.9.2-nodeA \
   ../round2-v5.2-nodeB \
@@ -133,10 +135,11 @@ python3 compare-nway.py \
   ../round4-v5.4-nodeB \
   ../round5-v5.6-nodeB-frozenrunner \
   ../round6-v5.6-nodeB-upstreamrunner \
+  ../round7-v5.6-nodeA-upstreamrunner \
   .
 # 註 1：會在最後一個目錄（.）寫出 version-comparison-nway.csv
-# 註 2：只比較案例 1–8（round6/7 多出的案例 9「業主本人」沒有前輪 baseline）
-# 註 3：第 7 輪的**報告本身不做版本比對**（依指示聚焦 response 分析）；納入本指令僅為技術上可行
+# 註 2：只比較案例 1–8（round6/7/8 多出的案例 9「業主本人」沒有前輪 baseline）
+# 註 3：第 7、8 輪的**報告本身不做版本比對**（依指示聚焦 response 分析）；納入本指令僅為技術上可行
 ```
 
 ### 各包自己的複驗指令
@@ -170,6 +173,10 @@ OUT=/tmp/rerun BASE_URL=http://<node>:8000 bash run-test.sh
   `score_scale: "relative-within-version"`（回應第 3 輪「分數不可跨版本比較」）
 - **v5.6**：`BroadeningAttempt` / `ScoringBasis` **型別化** —— 落實第 4 輪「新欄位只寫在描述裡、codegen 看不到」
 - **v5.6**：延遲降至 **98.2s**（前四輪 144–204s）
+- **v5.7**：`PersonaSummary` 由 **17 → 24 欄**，新增 `sex`/`marriage`/`education`/`hobby`/
+  `region`/`media_diet`/`politics` —— **關閉第 7 輪 §4.5 指出的可觀測性缺口**
+  （該輪發現這些維度可出現在 `applied_filters`/`dims_counted` 卻不在 `summary`）。
+  回應自此**可自我驗證**：能直接從回傳列確認每個 `applied_filter` 是否生效
 
 ### ❌ 我的誤報（3 條，同源）**—— 與產品缺陷數量相同**
 | # | 我原本寫的 | 真相 | 出處 |
@@ -209,6 +216,28 @@ OUT=/tmp/rerun BASE_URL=http://<node>:8000 bash run-test.sh
 區分後重驗：第 1 輪的 33、第 2 輪的 11 **全屬 (b)**（原結論正確）；
 但**第 5 輪報告的「1」實為 (a) 碰撞** —— 該輪 `dims_counted` 其實是完美的。
 另：該檢定僅能涵蓋 `summary` 曝露的維度（見上「可觀測性缺口」）。
+
+### 第 8 輪（`NODE-B` **v5.7**）✅
+- **上游斷言 13/13 全數通過**（含負向測試 #47）；`#42` 的比例式修復**已驗證生效**，
+  輸出同時給出比例與 `pool_exhausted`，可讀性提升
+- **語意正確性 9/9**；醫美案例**現在有 `sex=['女']` 硬篩選**（先前僅 `aesthetic_procedure`）
+- **回應「自證性」實測通過**：24 欄 summary 下，9 項可驗證查核（sex/marriage/education/
+  employment_status/debt_status/aesthetic_procedure）**全部在回傳列中被滿足**；
+  7 個新欄位在全部 66 筆皆為實值（`hobby` 為多值陣列）
+- **計分宣告誠實**：具檢定效力的 5 個案例中，低報 **(b) = 0**
+
+### 第 8 輪新增 ⚠️（觀察）
+- **Broadening 空轉率 60%**（9/15，較先前明顯偏高）。最嚴重為案例 4：
+  **三輪放寬全部無效**（`13→13` ×3），且第 1 輪聲稱「新增教育、醫療、其他」
+  —— **該三值本來就已在 `applied_filters` 中**；第 2/3 輪反覆調整 `housing_cost`
+  卻證明它並非約束 ⇒ **放寬機制挑錯維度**
+- **首次觸發 `overshoot`**：案例 2（TESLA）移除 `commute_mode` 使樣本 `19→60`（**3.2×**）。
+  但「以汽車通勤」對電動車是核心語意維度，模型自己的 reasoning 也如此陳述
+  ⇒ **自述意圖與放寬行為矛盾**（v5.6 已見同一模式，本輪能量化）
+- **頭部集中 19%**：21 個 top-3 persona 中 4 個跨案例重複（含同時是兩題 top-1 者）
+- **案例 6 延遲離群 588.9s**（次慢者 292.9s）—— **未歸因**（未取得伺服器端證據）
+- **版本落差**：部署服務自報 **v5.7**，repo `RELEASE-VERSION` 為 **v5.6**。
+  上游 `#50` 正是檢查此事，惟需 host 權限 → 遠端 runner **N/A**，**無法判定**
 
 ### 仍未解 ⚠️（經更正後仍成立）
 - **ranking 層不可重現**：版本內 top-3 交集多為 0–1/3。第 5↔6 輪同版本對照顯示抽樣變異可達 **5×**

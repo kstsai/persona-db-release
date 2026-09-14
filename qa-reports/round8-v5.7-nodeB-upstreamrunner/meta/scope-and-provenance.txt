@@ -1,0 +1,22 @@
+=== 目標 ===
+  node: NODE-B (NODE-B)  NODE-B  node ID NODE-B-NODEID
+  → node ID 與 v5.2/v5.4/v5.6 三輪相同 ⇒ 同一節點就地升級
+  服務版本: v5.7（/personadb/status）
+  persona: 1069 (1.72 MB), Name diversity 172 (16.1%) max 16×, Python 3.11.15
+  LLM: deepseek-v4-flash → api.deepseek.com
+  連線: [public-ip]:41641 relay hkg
+  收集(UTC): 2026-09-14T06:36:22Z
+
+=== ⚠️ 版本落差觀察 ===
+  部署服務自報: v5.7
+  repo RELEASE-VERSION: v5.6
+  → 兩者不一致（repo 落後一個版本？）。上游 #50 斷言正是檢查此事，但該項需 host 權限 → 本輪 N/A
+
+=== 儀器 ===
+  upstream sha256: 5c1ca7165049f449745f43813edc01190fa25d171fa8f2228ceef71010bcf537 (227 行, 2026-09-14 取得)
+  與上輪 9a29a8ef(223 行) 唯一差異: #42 斷言改比例式（issue #52 修復）
+  runner sha256: 473d6e5525da45d2795c51eab1b8b512ccef89377ce45b26a5597b33a03e4bfd
+
+=== 本輪範圍 ===
+  ✗ 不做與前版本的比對（依指示）
+  ✓ LLM Verify QA：契約 + 斷言 + response 內容分析

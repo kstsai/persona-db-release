@@ -1,0 +1,7 @@
+case_id: 00_status
+label: 0. /personadb/status
+http_code: 200
+time_total_sec: 1.203266
+size_download_bytes: 790
+url_effective: http://NODE-B:8000/personadb/status
+curl_args: 

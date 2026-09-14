@@ -15,6 +15,7 @@ DIRS = sys.argv[1:] or [
     f'{HOME}/round5-v5.6-nodeB-frozenrunner',
     f'{HOME}/round6-v5.6-nodeB-upstreamrunner',
     f'{HOME}/round7-v5.6-nodeA-upstreamrunner',
+    f'{HOME}/round8-v5.7-nodeB-upstreamrunner',
 ]
 CASES = ['01_kangshimei','02_tesla','03_fashion','04_role_fangzhong',
          '05_role_banker','06_aesthetic','07_debt','08_boss']

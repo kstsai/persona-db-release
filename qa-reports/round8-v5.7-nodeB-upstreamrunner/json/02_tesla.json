@@ -1,0 +1,255 @@
+{
+  "status": "ok",
+  "total_matched": 60,
+  "persona_ids": [
+    244,
+    331,
+    234
+  ],
+  "summary": [
+    {
+      "id": "TW-P-0244",
+      "name": "可恩",
+      "age": "25-34",
+      "occupation": "金融",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "新北市",
+      "family_size": "2",
+      "city_price_tier": "中高",
+      "commute_mode": "機車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "sex": "女",
+      "region": "都會區(六都)",
+      "education": "研究所以上",
+      "marriage": "已婚",
+      "hobby": [
+        "球類",
+        "登山"
+      ],
+      "politics": "泛綠",
+      "media_diet": "混合",
+      "score": 7.3971
+    },
+    {
+      "id": "TW-P-0331",
+      "name": "正雄",
+      "age": "35-44",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "新北市",
+      "family_size": "5+",
+      "city_price_tier": "中高",
+      "commute_mode": "汽車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "有房貸",
+      "employment_status": "雇主",
+      "sex": "男",
+      "region": "都會區(六都)",
+      "education": "研究所以上",
+      "marriage": "未婚",
+      "hobby": [
+        "打電動",
+        "球類"
+      ],
+      "politics": "泛藍",
+      "media_diet": "傳統媒體為主",
+      "score": 7.1321
+    },
+    {
+      "id": "TW-P-0234",
+      "name": "艾力克",
+      "age": "25-34",
+      "occupation": "金融",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "台南市",
+      "family_size": "4",
+      "city_price_tier": "低",
+      "commute_mode": "汽車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "有房貸",
+      "employment_status": "受僱者",
+      "sex": "男",
+      "region": "都會區(六都)",
+      "education": "大學",
+      "marriage": "已婚",
+      "hobby": [
+        "打電動",
+        "球類",
+        "追劇"
+      ],
+      "politics": "無政治傾向",
+      "media_diet": "混合",
+      "score": 7.1245
+    }
+  ],
+  "returned": 3,
+  "pool_exhausted": false,
+  "important_dimensions": [
+    {
+      "dim": "age",
+      "values": [
+        "25-34",
+        "35-44"
+      ]
+    },
+    {
+      "dim": "sex",
+      "values": [
+        "男",
+        "女"
+      ]
+    },
+    {
+      "dim": "occupation",
+      "values": [
+        "金融",
+        "科技"
+      ]
+    },
+    {
+      "dim": "commute_mode",
+      "values": [
+        "汽車",
+        "機車"
+      ]
+    },
+    {
+      "dim": "clothing_spend",
+      "values": [
+        "3000~5000",
+        ">5000"
+      ]
+    },
+    {
+      "dim": "debt_status",
+      "values": [
+        "有房貸",
+        "無"
+      ]
+    },
+    {
+      "dim": "employment_status",
+      "values": [
+        "受僱者",
+        "雇主"
+      ]
+    }
+  ],
+  "llm_analysis": {
+    "domain": "汽車/電動車/消費品",
+    "reasoning": "問題主體為 TESLA 的目標客戶，屬於汽車/電動車消費領域，與消費行為高度相關。必須使用消費維度（如 family_income, commute_mode, housing_cost, clothing_spend）區分可能購買高價電動車的族群。年齡層集中於 25-54 歲，職業偏向科技、金融、醫療等高收入行業，教育程度偏高。地區未指定，residence 留空；問題主體是顧客而非業主，不使用 employment_status。",
+    "question_analysis": [
+      {
+        "question": "TESLA的目標客戶",
+        "topic": "電動車/汽車消費市場",
+        "target_user": "具中高收入、開車通勤、高教育程度、年齡介於 25-54 歲的潛在電動車購買族群"
+      }
+    ],
+    "usage_suggestion": {
+      "mode": "問卷答題者",
+      "reason": "問題目的在界定 TESLA 的客戶輪廓，應先篩選出符合潛在客戶特徵的人群，再進行問卷或訪談，以了解其偏好與決策因素。",
+      "recommended_opMode": "僅篩選"
+    }
+  },
+  "relaxed_dims": [
+    "commute_mode"
+  ],
+  "broadening_attempts": [
+    {
+      "loop": 1,
+      "change": "放寬年齡維度，加入 55-64 歲族群，以增加樣本數並保留收入、教育、職業等核心篩選條件。",
+      "match_count_before": 13,
+      "match_count_after": 14,
+      "filters_changed": true,
+      "no_op": false,
+      "overshoot": false
+    },
+    {
+      "loop": 2,
+      "change": "放寬家庭收入維度，新增「3-5萬」與「7萬」兩個值，以涵蓋更多中高家庭收入但個人收入符合條件的受眾，其餘維度維持不變。",
+      "match_count_before": 14,
+      "match_count_after": 19,
+      "filters_changed": true,
+      "no_op": false,
+      "overshoot": false
+    },
+    {
+      "loop": 3,
+      "change": "移除「commute_mode」篩選維度（原僅限汽車）。通勤方式並非本題核心條件，其他社經地位與消費力篩選仍保留，以避免改變核心判斷。",
+      "match_count_before": 19,
+      "match_count_after": 60,
+      "filters_changed": true,
+      "no_op": false,
+      "overshoot": true
+    }
+  ],
+  "applied_filters": {
+    "age": [
+      "25-34",
+      "35-44",
+      "45-54",
+      "55-64"
+    ],
+    "occupation": [
+      "科技",
+      "金融",
+      "醫療"
+    ],
+    "income": [
+      ">8萬",
+      "3-8萬"
+    ],
+    "family_income": [
+      ">8萬",
+      "5-7萬",
+      "7萬",
+      "3-5萬"
+    ],
+    "education": [
+      "大學",
+      "研究所以上"
+    ],
+    "housing_cost": [
+      "5千~1.5萬",
+      "1.5萬~3萬"
+    ],
+    "clothing_spend": [
+      "1500~3000",
+      "3000~5000",
+      ">5000"
+    ]
+  },
+  "scoring_basis": {
+    "method": "log-frequency × cross-dim normalized [0.5, 2.0]",
+    "weight_source": "DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024",
+    "weight_version": "v5.7",
+    "score_scale": "relative-within-version",
+    "score_schema": 1,
+    "dims_counted": [
+      "age",
+      "occupation",
+      "income",
+      "family_income",
+      "education",
+      "commute_mode",
+      "housing_cost",
+      "clothing_spend",
+      "family_size"
+    ],
+    "relaxed_dims_scored_at": null
+  }
+}

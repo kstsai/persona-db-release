@@ -1,0 +1,490 @@
+{
+  "status": "ok",
+  "total_matched": 16,
+  "persona_ids": [
+    328,
+    473,
+    388,
+    331,
+    811,
+    929,
+    1019,
+    400,
+    791,
+    801
+  ],
+  "summary": [
+    {
+      "id": "TW-P-0328",
+      "name": "俊傑",
+      "age": "35-44",
+      "occupation": "製造",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "桃園市",
+      "family_size": "5+",
+      "city_price_tier": "中",
+      "commute_mode": "步行/腳踏車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "<500",
+      "aesthetic_procedure": "無",
+      "debt_status": "房貸+消費債",
+      "employment_status": "自營作業者",
+      "sex": "男",
+      "region": "都會區(六都)",
+      "education": "研究所以上",
+      "marriage": "已婚",
+      "hobby": [
+        "追劇",
+        "閱讀"
+      ],
+      "politics": "泛綠",
+      "media_diet": "國際來源",
+      "score": 4.7287
+    },
+    {
+      "id": "TW-P-0473",
+      "name": "淑娟",
+      "age": "45-54",
+      "occupation": "其他",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "高雄市",
+      "family_size": "5+",
+      "city_price_tier": "中",
+      "commute_mode": "機車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "有",
+      "debt_status": "有房貸",
+      "employment_status": "受僱者",
+      "sex": "女",
+      "region": "都會區(六都)",
+      "education": "研究所以上",
+      "marriage": "已婚",
+      "hobby": [
+        "游泳",
+        "球類"
+      ],
+      "politics": "泛藍",
+      "media_diet": "混合",
+      "score": 4.5929
+    },
+    {
+      "id": "TW-P-0388",
+      "name": "美珍",
+      "age": "35-44",
+      "occupation": "教育",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "台中市",
+      "family_size": "3",
+      "city_price_tier": "中高",
+      "commute_mode": "汽車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "有房貸",
+      "employment_status": "受僱者",
+      "sex": "女",
+      "region": "都會區(六都)",
+      "education": "研究所以上",
+      "marriage": "已婚",
+      "hobby": [
+        "園藝",
+        "登山",
+        "追劇"
+      ],
+      "politics": "泛綠",
+      "media_diet": "混合",
+      "score": 4.5541
+    },
+    {
+      "id": "TW-P-0331",
+      "name": "正雄",
+      "age": "35-44",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "新北市",
+      "family_size": "5+",
+      "city_price_tier": "中高",
+      "commute_mode": "汽車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "有房貸",
+      "employment_status": "雇主",
+      "sex": "男",
+      "region": "都會區(六都)",
+      "education": "研究所以上",
+      "marriage": "未婚",
+      "hobby": [
+        "打電動",
+        "球類"
+      ],
+      "politics": "泛藍",
+      "media_diet": "傳統媒體為主",
+      "score": 4.5208
+    },
+    {
+      "id": "TW-P-0811",
+      "name": "志強",
+      "age": "45-54",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "基隆市",
+      "family_size": "5+",
+      "city_price_tier": "中",
+      "commute_mode": "捷運/公車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "有房貸",
+      "employment_status": "受僱者",
+      "sex": "男",
+      "region": "北部",
+      "education": "大學",
+      "marriage": "已婚",
+      "hobby": [
+        "打電動",
+        "登山"
+      ],
+      "politics": "無政治傾向",
+      "media_diet": "傳統媒體為主",
+      "score": 4.5112
+    },
+    {
+      "id": "TW-P-0929",
+      "name": "麗華",
+      "age": "45-54",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "彰化縣",
+      "family_size": "5+",
+      "city_price_tier": "極低",
+      "commute_mode": "捷運/公車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "有房貸",
+      "employment_status": "受僱者",
+      "sex": "女",
+      "region": "中部",
+      "education": "大學",
+      "marriage": "鰥寡",
+      "hobby": [
+        "打電動",
+        "登山"
+      ],
+      "politics": "無政治傾向",
+      "media_diet": "社群為主",
+      "score": 4.5112
+    },
+    {
+      "id": "TW-P-1019",
+      "name": "寶珠",
+      "age": "55-64",
+      "occupation": "科技",
+      "income": "3-8萬",
+      "family_income": "7萬",
+      "residence": "嘉義縣",
+      "family_size": "4",
+      "city_price_tier": "低",
+      "commute_mode": "機車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "1500~3000",
+      "aesthetic_procedure": "無",
+      "debt_status": "有房貸",
+      "employment_status": "受僱者",
+      "sex": "女",
+      "region": "南部",
+      "education": "大學",
+      "marriage": "已婚",
+      "hobby": [
+        "烹飪",
+        "登山",
+        "閱讀"
+      ],
+      "politics": "無政治傾向",
+      "media_diet": "傳統媒體為主",
+      "score": 2.8749
+    },
+    {
+      "id": "TW-P-0400",
+      "name": "惠雯",
+      "age": "35-44",
+      "occupation": "公務",
+      "income": "3-8萬",
+      "family_income": "5-7萬",
+      "residence": "台北市",
+      "family_size": "2",
+      "city_price_tier": "高",
+      "commute_mode": "機車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "房貸+消費債",
+      "employment_status": "受僱者",
+      "sex": "女",
+      "region": "都會區(六都)",
+      "education": "高中",
+      "marriage": "已婚",
+      "hobby": [
+        "逛街購物",
+        "閱讀"
+      ],
+      "politics": "無政治傾向",
+      "media_diet": "混合",
+      "score": 2.7719
+    },
+    {
+      "id": "TW-P-0791",
+      "name": "文龍",
+      "age": "35-44",
+      "occupation": "製造",
+      "income": "3-8萬",
+      "family_income": "3-5萬",
+      "residence": "新竹縣",
+      "family_size": "5+",
+      "city_price_tier": "高",
+      "commute_mode": "機車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "中",
+      "clothing_spend": "500~1500",
+      "aesthetic_procedure": "無",
+      "debt_status": "房貸+消費債",
+      "employment_status": "受僱者",
+      "sex": "男",
+      "region": "北部",
+      "education": "研究所以上",
+      "marriage": "已婚",
+      "hobby": [
+        "泡茶",
+        "球類",
+        "登山"
+      ],
+      "politics": "泛綠",
+      "media_diet": "混合",
+      "score": 2.5098
+    },
+    {
+      "id": "TW-P-0801",
+      "name": "美珍",
+      "age": "35-44",
+      "occupation": "公務",
+      "income": "3-8萬",
+      "family_income": "5-7萬",
+      "residence": "新竹縣",
+      "family_size": "2",
+      "city_price_tier": "高",
+      "commute_mode": "汽車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "有房貸",
+      "employment_status": "受僱者",
+      "sex": "女",
+      "region": "北部",
+      "education": "高中",
+      "marriage": "已婚",
+      "hobby": [
+        "打牌",
+        "追劇"
+      ],
+      "politics": "無政治傾向",
+      "media_diet": "混合",
+      "score": 2.4829
+    }
+  ],
+  "returned": 10,
+  "pool_exhausted": false,
+  "important_dimensions": [
+    {
+      "dim": "age",
+      "values": [
+        "35-44",
+        "45-54",
+        "55-64"
+      ]
+    },
+    {
+      "dim": "sex",
+      "values": [
+        "女",
+        "男"
+      ]
+    },
+    {
+      "dim": "region",
+      "values": [
+        "都會區(六都)",
+        "北部",
+        "中部",
+        "南部"
+      ]
+    },
+    {
+      "dim": "occupation",
+      "values": [
+        "科技",
+        "製造",
+        "公務",
+        "其他",
+        "教育"
+      ]
+    },
+    {
+      "dim": "income",
+      "values": [
+        ">8萬",
+        "3-8萬"
+      ]
+    },
+    {
+      "dim": "family_income",
+      "values": [
+        ">8萬",
+        "5-7萬",
+        "7萬",
+        "3-5萬"
+      ]
+    },
+    {
+      "dim": "commute_mode",
+      "values": [
+        "機車",
+        "汽車",
+        "捷運/公車",
+        "步行/腳踏車"
+      ]
+    },
+    {
+      "dim": "clothing_spend",
+      "values": [
+        "3000~5000",
+        ">5000",
+        "<500",
+        "1500~3000",
+        "500~1500"
+      ]
+    },
+    {
+      "dim": "aesthetic_procedure",
+      "values": [
+        "無",
+        "有"
+      ]
+    },
+    {
+      "dim": "debt_status",
+      "values": [
+        "有房貸",
+        "房貸+消費債"
+      ]
+    },
+    {
+      "dim": "employment_status",
+      "values": [
+        "受僱者",
+        "自營作業者",
+        "雇主"
+      ]
+    }
+  ],
+  "llm_analysis": {
+    "domain": "金融服務/債務整合貸款",
+    "reasoning": "問題是銀行債務整合專員尋找適合轉貸或整合負債的目標客群，應著重於有既有房貸、居住負擔偏高且具穩定還款能力的中壯年族群。",
+    "question_analysis": [
+      {
+        "question": "債務整合貸款方案的目標客戶",
+        "topic": "債務整合/轉貸目標客群",
+        "target_user": "已有房貸、希望降低利率或整合負債，且具備穩定還款能力的中壯年房貸戶"
+      }
+    ],
+    "usage_suggestion": {
+      "mode": "問卷答題者",
+      "reason": "銀行專員需要先找出這群目標客戶，再針對其轉貸或整合需求進行問卷調查或訪談。",
+      "recommended_opMode": "僅篩選"
+    }
+  },
+  "relaxed_dims": [
+    "family_income"
+  ],
+  "broadening_attempts": [
+    {
+      "loop": 1,
+      "change": "刪除 family_income 維度：因問題核心為個人高收入且有房貸負擔，家庭收入與個人收入高度相關且非核心條件，移除可放寬樣本而不改變核心判斷。",
+      "match_count_before": 6,
+      "match_count_after": 6,
+      "filters_changed": true,
+      "no_op": true,
+      "overshoot": false
+    },
+    {
+      "loop": 2,
+      "change": "放寬 age 維度：保留 35-44、45-54，新增 55-64。55-64 歲仍多處於房貸還款期，且與中高住房負擔、高收入族群輪廓相近，不算偏離核心。",
+      "match_count_before": 6,
+      "match_count_after": 6,
+      "filters_changed": true,
+      "no_op": true,
+      "overshoot": false
+    },
+    {
+      "loop": 3,
+      "change": "放寬收入維度，從原本的 [>8萬] 擴大到 [>8萬, 3-8萬]。收入在此題中不是最核心的財務壓力條件，住房負擔與債務狀態已保留核心判斷，故僅放寬收入以增加樣本。",
+      "match_count_before": 6,
+      "match_count_after": 16,
+      "filters_changed": true,
+      "no_op": false,
+      "overshoot": false
+    }
+  ],
+  "applied_filters": {
+    "age": [
+      "35-44",
+      "45-54",
+      "55-64"
+    ],
+    "income": [
+      ">8萬",
+      "3-8萬"
+    ],
+    "housing_burden": [
+      "中",
+      "高"
+    ],
+    "debt_status": [
+      "有房貸",
+      "房貸+消費債"
+    ]
+  },
+  "scoring_basis": {
+    "method": "log-frequency × cross-dim normalized [0.5, 2.0]",
+    "weight_source": "DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024",
+    "weight_version": "v5.7",
+    "score_scale": "relative-within-version",
+    "score_schema": 1,
+    "dims_counted": [
+      "age",
+      "income",
+      "family_income",
+      "housing_burden",
+      "debt_status",
+      "occupation",
+      "family_size"
+    ],
+    "relaxed_dims_scored_at": null
+  }
+}
