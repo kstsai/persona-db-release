@@ -1,4 +1,4 @@
-> 產品文件（來源：kstsai/linkEazyCenter wiki `entities/persona-db.md`，更新 2026-09-12）
+> 產品文件（來源：kstsai/linkEazyCenter wiki `entities/persona-db.md`，更新 2026-09-14）
 > 進度看板：GitHub issues（kstsai/persona-db）為 ground truth。
 
 
@@ -20,7 +20,8 @@
 | 性別比 | 男 49.7% / 女 50.3% |
 | Repos | `kstsai/persona-db`（source）+ `kstsai/persona-db-release`（delivery） |
 | API | FastAPI `/personadb/candidates`（LLM 分析→篩選人設） |
-| 部署 | lzcdh5（v5.3.1）/ lzc-dh1（v5.2 baseline）（Docker containers） |
+| 版本 | **v5.6**（`VERSION` / `RELEASE-VERSION` / `dim_weights._meta.version` 三者一致，由 `check_dim_weights.py` 守門） |
+| 部署 | **nodeA**（原 lzcdh5）/ **nodeB**（原 lzc-dh1）皆 **v5.6**（Docker containers；nodeA 另含 hermes 容器） |
 
 ## 22 維度
 
@@ -81,6 +82,9 @@
 | v5.2 | dimension 22 從業身分（occupation 自營退役 + full regen，issue #32） | 09/09 |
 | v5.3 | **bug fix ×6**：#33 filter 值型別 500、#34 `employment_status` 未套用、#35 新維度 rarity 0 靜默不計分、#36 `aesthetic_procedure` 語意誤套、#37 broadening no-op 空轉、#41 **權重表自 v4.3.2 未重建**（latent） | 09/12 |
 | v5.3.1 | 交付包納入 `concepts/` 設計知識（14 頁 + README）；`references/` 仍排除（內部 review 紀錄） | 09/12 |
+| **v5.4** | #42 稀有維度放寬護欄（rescue-only + 核心性排除 + 強制理由 + `broadening_attempts[].overshoot`）；#43 `returned` / `pool_exhausted`；#44 `scoring_basis.weight_version` / `score_scale` / `score_schema` | 09/12 |
+| **v5.5** | #47 **錯誤契約統一**（400/404/422/500/503 全為 `{status:error,error:{code,message,details}}`，不再回 FastAPI `detail` 包裝）；#46 解析失敗記 raw response + 重試帶變化 + `retryable`；#48 `BroadeningAttempt` / `ScoringBasis` 型別化；#49 `opMode` 預設值修正（省略不再 400） | 09/12 |
+| **v5.6** | #50 `finish_reason` 從 `call_llm` 傳到消費層（解析失敗 log 可一句話分辨「截斷 vs 格式問題」）；`content` 非空但被截斷在來源即告警 | 09/13 |
 
 ## API 品質演進（v4.3.2→v4.4.3）
 
@@ -251,10 +255,29 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 - **flash**（deepseek-v4-flash）也是 reasoning model，加 `thinking={"type":"disabled"}` 才 3s/題但漏消費維度，當備援
 - 詳見 LLM Retry 防火牆
 
+## API 契約要點（給消費者）
+
+- **錯誤回應**：所有錯誤碼統一 `{"status":"error","error":{"code","message","details"}}`；瞬時失敗（`FILTER_FAILED`）帶 `retryable: true`。**不要解析 FastAPI 的 `detail`**
+- **回傳數**：`returned == len(summary) == len(persona_ids)`，**可小於 `top_k`**（`pool_exhausted: true` 表示池子比要求的小；系統拒絕為湊數放寬核心維度）
+- **分數**：`score` 僅供**版本內相對排序**（`score_scale: "relative-within-version"`）；`weight_version` 可偵測尺度換版；`score_schema` 為分數定義版號（與資料版號脫鉤）
+- **`opMode` 可省略**，預設 `僅篩選`
+
+## 未解項（追蹤用）
+
+| issue | 類型 | 內容 |
+|:---|:---|:---|
+| #38 | known-limitation | 端點不可重現（filter 層同版本內即變動，見 抽樣變異 vs 版本效應） |
+| #39 | known-limitation | 延遲偏高（品質/成本刻意分離） |
+| #40 | known-limitation | 候選池頭部集中（第 7 輪量化：跨案例重複 top-3 persona **25%**） |
+| #45 | bug（低） | `usage_suggestion` 失去區辨力（待 k=5 變異檢定） |
+| #53 | enhancement | `summary` 缺 7 個可篩維度（含 `region`）→ 消費端無法驗證 filter 生效 |
+
+> 已關閉：#1–#37、#41–#44、#46–#52（含 v5.4–v5.6 全部修復）。
+
 ## 部署環境
 
-- **lzcdh1**（100.100.112.108）：deploy host，跑 Pre-release SOP — 目前 **v5.2**（跨版本 baseline）
-- **lzcdh5**（100.96.79.33）：tailscale 測試 VM — 目前 **v5.3.1**（2026-09-12 fresh install QA 通過）
+- **lzc-dh1**（100.100.112.108）：deploy host，跑 Pre-release SOP — **nodeB，目前 v5.6**（2026-09-14 實查）
+- **lzcdh5**（100.96.79.33）：tailscale 測試 VM — **nodeA，目前 v5.6**（2026-09-14 實查；Docker 部署，另含 hermes 容器）
 - QA host 慣例：由 kstsai 指定進版的那台跑完整 SOP，另一台保留 baseline
 
 ## QA 系統
@@ -304,3 +327,8 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 - 型別與衍生產物安全 — LLM JSON 純量型別不可信 + derived artifact 新鮮度（#33/#35/#41）
 - 維度語意適用性 — 新維度「可用 ≠ 用對語境」（#34/#36）
 - v5.3 release 摘要
+- persona-db QA 報告系列 — 跨版本實測報告 + 判讀修正制度（v4.9.2→v5.6 七輪）
+- v5.4→v5.6 API 驗證 digest — 驗證與驗證的驗證（三條誤報查明 + 雙向品質迴路）
+- 用症狀歸因的陷阱 — 任何「對方有問題」的結論，先證明你的量測看得到那個問題
+- 覆蓋缺口 vs 產品缺陷 — 「測試集測不到」≠「產品沒做」（employment_status 0/8）
+- 抽樣變異 vs 版本效應 — 同版本同 query 變異 5×，N=1 跨版比較無統計意義
