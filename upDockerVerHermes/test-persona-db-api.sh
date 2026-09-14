@@ -209,6 +209,38 @@ ok48 = ("BroadeningAttempt" in sch and "ScoringBasis" in sch
         and "overshoot" in sch["BroadeningAttempt"]["properties"]
         and "score_scale" in sch["ScoringBasis"]["properties"])
 print(f"  #48 OpenAPI 有 BroadeningAttempt/ScoringBasis 且 properties 完整 → " + ("✅" if ok48 else "❌"))
+
+# ── v5.7 (#53/#54) 斷言：可篩維度必須可見（結構性，不受抽樣變異影響）──
+print("")
+print("  --- v5.7 (#53 summary 維度完備性 / #54 housing_cost) ---")
+NEW_DIMS = ["sex", "region", "education", "marriage", "hobby", "politics", "media_diet"]
+_cases = {"kangshimei": kangshimei, "tesla": tesla, "醫美": aes, "債務": debt}
+_ok_fields = True
+for cname, cd in _cases.items():
+    rows = cd.get("summary") or []
+    if not rows:
+        continue
+    miss = [k for k in NEW_DIMS if k not in rows[0]]
+    empty = [k for k in NEW_DIMS if k != "hobby" and any(not r.get(k) for r in rows)]
+    bad_hobby = [r.get("id") for r in rows if not isinstance(r.get("hobby"), list)]
+    good = (not miss) and (not empty) and (not bad_hobby)
+    _ok_fields = _ok_fields and good
+    print(f"  #53 {cname}: 7 欄位齊備={not miss} 無空值={not empty} hobby為list={not bad_hobby} → "
+          + ("✅" if good else f"❌ 缺={miss} 空={empty} 非list={bad_hobby[:2]}"))
+# 套用的新維度必須與回傳值一致（有套才驗）
+for cname, cd in _cases.items():
+    afx = cd.get("applied_filters") or {}
+    rows = cd.get("summary") or []
+    for dim in NEW_DIMS:
+        if dim not in afx or not rows:
+            continue
+        want = set(afx[dim])
+        ok = (all(want & set(r.get("hobby") or []) for r in rows) if dim == "hobby"
+              else all(r.get(dim) in want for r in rows))
+        print(f"  #53 {cname}: applied {dim}={afx[dim]} ↔ 回傳一致 → " + ("✅" if ok else "❌"))
+#54：housing_cost 必須可篩（不再被靜默丟棄）—— LLM 是否選用依抽樣，故僅記錄不判定
+_hc_seen = [c for c, cd in _cases.items() if "housing_cost" in (cd.get("applied_filters") or {})]
+print(f"  #54 housing_cost 進入 applied_filters 的案例: {_hc_seen if _hc_seen else '（本輪未觸發，LLM 選用依抽樣）'}")
 PYEOF
 echo ""
 echo "  --- v5.6 (#50) / 部署版本一致性 ---"
