@@ -1,0 +1,168 @@
+{
+  "status": "ok",
+  "total_matched": 34,
+  "persona_ids": [
+    234,
+    341,
+    475
+  ],
+  "summary": [
+    {
+      "id": "TW-P-0234",
+      "name": "艾力克",
+      "age": "25-34",
+      "occupation": "金融",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "台南市",
+      "family_size": "4",
+      "city_price_tier": "低",
+      "commute_mode": "汽車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "有房貸",
+      "employment_status": "受僱者",
+      "score": 5.5906
+    },
+    {
+      "id": "TW-P-0341",
+      "name": "世昌",
+      "age": "35-44",
+      "occupation": "其他",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "台北市",
+      "family_size": "1",
+      "city_price_tier": "高",
+      "commute_mode": "汽車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "score": 5.5739
+    },
+    {
+      "id": "TW-P-0475",
+      "name": "淑貞",
+      "age": "45-54",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "台中市",
+      "family_size": "1",
+      "city_price_tier": "中高",
+      "commute_mode": "汽車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "score": 5.4318
+    }
+  ],
+  "important_dimensions": [
+    {
+      "dim": "age",
+      "values": [
+        "25-34",
+        "35-44",
+        "45-54"
+      ]
+    },
+    {
+      "dim": "sex",
+      "values": [
+        "男",
+        "女"
+      ]
+    },
+    {
+      "dim": "occupation",
+      "values": [
+        "金融",
+        "其他",
+        "科技"
+      ]
+    },
+    {
+      "dim": "clothing_spend",
+      "values": [
+        "3000~5000",
+        ">5000"
+      ]
+    },
+    {
+      "dim": "debt_status",
+      "values": [
+        "無",
+        "有房貸"
+      ]
+    }
+  ],
+  "llm_analysis": {
+    "domain": "電動車／汽車產業（新能源車消費）",
+    "reasoning": "TESLA 為高單價電動車，購買決策與家庭可支配所得、通勤方式、居住支出與消費力高度相關；目標客戶多為中高收入、以汽車通勤且對科技接受度較高的族群，不能只以年齡或職業判斷。",
+    "question_analysis": [
+      {
+        "question": "TESLA的目標客戶",
+        "topic": "電動車／新能源車潛在買家輪廓",
+        "target_user": "25-54歲、中高收入、以汽車通勤、家庭可支配所得較高、居住支出中高且對科技與新能源車接受度高的消費者；也可能是汽車銷售或市場研究人員想界定目標客群。"
+      }
+    ],
+    "usage_suggestion": {
+      "mode": "問卷答題者",
+      "reason": "此題目的目的是找出 TESLA 的潛在購買者輪廓，而非直接請人評價產品；篩選出高收入、汽車通勤、居住消費力中高的群體後，可對其發放問卷調查購車偏好、充電需求與品牌態度。",
+      "recommended_opMode": "僅篩選"
+    }
+  },
+  "relaxed_dims": [],
+  "broadening_attempts": [],
+  "applied_filters": {
+    "age": [
+      "25-34",
+      "35-44",
+      "45-54"
+    ],
+    "income": [
+      "3-8萬",
+      ">8萬"
+    ],
+    "family_income": [
+      "5-7萬",
+      "7萬",
+      ">8萬"
+    ],
+    "commute_mode": [
+      "汽車"
+    ],
+    "housing_burden": [
+      "低",
+      "中"
+    ],
+    "clothing_spend": [
+      "1500~3000",
+      "3000~5000",
+      ">5000"
+    ]
+  },
+  "scoring_basis": {
+    "method": "log-frequency × cross-dim normalized [0.5, 2.0]",
+    "weight_source": "DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024",
+    "dims_counted": [
+      "age",
+      "income",
+      "family_income",
+      "commute_mode",
+      "housing_burden",
+      "clothing_spend",
+      "occupation",
+      "family_size"
+    ],
+    "relaxed_dims_scored_at": null
+  }
+}

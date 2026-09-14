@@ -1,0 +1,15 @@
+=== 第一次重現性探針：全部失敗（2026-09-13 ~23:55 UTC）===
+命令：curl -s -m 300 --get <BASE>/personadb/candidates --data-urlencode questions=康是美的目標客戶 --data-urlencode top_k=3 --data-urlencode opMode=僅篩選
+
+結果：r1 http=000 time=75.002718 size=0
+      r2 http=000 time=75.003561 size=0
+      r3 http=000 time=75.004980 size=0
+
+觀察：
+  * 三次都是 **75.00s 硬切**（非我設的 -m 300），且無任何 HTTP 回應（http=000）
+  * 同一查詢在主套件 10 分鐘前才成功過（125.4s, HTTP 200）
+  * 故障窗口內 /personadb/status 仍正常（1.5s, HTTP 200）且自報 'LLM ✅ responsive'
+  * 約 10 分鐘後重試即恢復（45.4s / 95.2s, 皆 HTTP 200）→ **transient**
+
+對照：v5.4 的 LLM 失敗回的是**結構化 503 FILTER_FAILED**（有 body、有錯誤碼）；
+      本次窗口回的是**完全沒有 HTTP 回應**。若兩者同因，則是錯誤處理退步 —— 但**未證實同因**。

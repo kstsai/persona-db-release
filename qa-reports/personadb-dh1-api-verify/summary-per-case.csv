@@ -1,0 +1,9 @@
+﻿case,label,http,sec,bytes,total_matched,returned,top_score,lowest_score,domain,rel_opmode,relaxed,broaden_loops,sex_filter,aesthetic_procedure_filter,debt_status_filter,employment_status_filter,income_filter,scoring_dims,n_summary_fields
+01_kangshimei,1. 康是美的目標客戶,200,57.138543,2746,62,3,5.2606,4.6564,零售/藥妝/美妝,僅篩選,,0,女,NOT_APPLIED,NOT_APPLIED,NOT_APPLIED,無收入|<3萬|3-8萬,age|occupation|sex|income|clothing_spend|family_income,17
+02_tesla,2. TESLA的目標客戶,200,176.334560,3249,20,3,6.7397,6.209,汽車/電動車產業,僅篩選,,2,NOT_APPLIED,NOT_APPLIED,NOT_APPLIED,NOT_APPLIED,>8萬|3-8萬,age|occupation|income|family_income|commute_mode|clothing_spend,17
+03_fashion,3. 時尚服裝設計師的目標客戶,200,201.170385,6470,11,10,7.1747,4.9306,時尚與服飾產業,僅篩選,hobby|aesthetic_procedure,3,NOT_APPLIED,NOT_APPLIED,NOT_APPLIED,NOT_APPLIED,3-8萬|>8萬,age|occupation|income|clothing_spend|family_income|commute_mode|region|education|family_size|hobby,17
+04_role_fangzhong,4. 房貸優惠 — 房仲業者,200,244.832483,4696,27,5,5.5692,5.0506,房地產/金融服務,篩選+模擬,,3,NOT_APPLIED,NOT_APPLIED,無|有房貸,NOT_APPLIED,3-8萬|>8萬,age|occupation|income|marriage|family_size|family_income|housing_burden,17
+05_role_banker,5. 房貸優惠 — 銀行業者,200,178.279272,4490,9,5,4.1771,4.1328,金融/房貸/房產,篩選+模擬,,3,NOT_APPLIED,NOT_APPLIED,有房貸|房貸+消費債,NOT_APPLIED,>8萬|3-8萬,age|income|housing_burden|family_income,17
+06_aesthetic,6. 醫美診所的目標客戶,200,339.930785,6722,11,10,5.6709,3.1087,醫美/醫療美容,僅篩選,family_income,3,女|男,有,NOT_APPLIED,NOT_APPLIED,3-8萬|>8萬,age|occupation|sex|income|clothing_spend|family_income,17
+07_debt,7. 債務整合的目標客戶,200,365.244410,6600,23,10,4.3476,2.1444,金融／銀行貸款,僅篩選,family_income,3,NOT_APPLIED,NOT_APPLIED,有房貸|房貸+消費債,NOT_APPLIED,>8萬|3-8萬,age|income|family_income|housing_burden,17
+08_boss,8. 小吃攤老闆的目標客群,200,65.218362,6272,25,10,5.6095,4.5832,餐飲/夜市商圈/市場研究,僅篩選,,0,NOT_APPLIED,NOT_APPLIED,NOT_APPLIED,NOT_APPLIED,無收入|<3萬|3-8萬,age|occupation|income|marriage|clothing_spend|family_income|commute_mode|hobby,17

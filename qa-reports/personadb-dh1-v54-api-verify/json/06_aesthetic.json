@@ -1,0 +1,376 @@
+{
+  "status": "ok",
+  "total_matched": 13,
+  "persona_ids": [
+    473,
+    513,
+    891,
+    361,
+    247,
+    280,
+    238,
+    350,
+    512,
+    372
+  ],
+  "summary": [
+    {
+      "id": "TW-P-0473",
+      "name": "淑娟",
+      "age": "45-54",
+      "occupation": "其他",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "高雄市",
+      "family_size": "5+",
+      "city_price_tier": "中",
+      "commute_mode": "機車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "有",
+      "debt_status": "有房貸",
+      "employment_status": "受僱者",
+      "score": 4.6875
+    },
+    {
+      "id": "TW-P-0513",
+      "name": "婉玲",
+      "age": "45-54",
+      "occupation": "製造",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "台中市",
+      "family_size": "5+",
+      "city_price_tier": "中高",
+      "commute_mode": "機車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "1500~3000",
+      "aesthetic_procedure": "有",
+      "debt_status": "有信貸或卡債",
+      "employment_status": "受僱者",
+      "score": 4.1221
+    },
+    {
+      "id": "TW-P-0891",
+      "name": "菲菲",
+      "age": "25-34",
+      "occupation": "公務",
+      "income": "3-8萬",
+      "family_income": "5-7萬",
+      "residence": "南投縣",
+      "family_size": "2",
+      "city_price_tier": "極低",
+      "commute_mode": "步行/腳踏車",
+      "housing_cost": "<5千",
+      "housing_burden": "低",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "有",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "score": 3.6509
+    },
+    {
+      "id": "TW-P-0361",
+      "name": "麗華",
+      "age": "35-44",
+      "occupation": "醫療",
+      "income": "3-8萬",
+      "family_income": "7萬",
+      "residence": "台南市",
+      "family_size": "4",
+      "city_price_tier": "低",
+      "commute_mode": "汽車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "低",
+      "clothing_spend": "500~1500",
+      "aesthetic_procedure": "有",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "score": 3.2462
+    },
+    {
+      "id": "TW-P-0247",
+      "name": "小薇",
+      "age": "25-34",
+      "occupation": "服務",
+      "income": "3-8萬",
+      "family_income": "3-5萬",
+      "residence": "高雄市",
+      "family_size": "3",
+      "city_price_tier": "中",
+      "commute_mode": "機車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "有",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "score": 3.152
+    },
+    {
+      "id": "TW-P-0280",
+      "name": "莉亞",
+      "age": "25-34",
+      "occupation": "製造",
+      "income": "3-8萬",
+      "family_income": "3-5萬",
+      "residence": "桃園市",
+      "family_size": "4",
+      "city_price_tier": "中",
+      "commute_mode": "捷運/公車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "中",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "有",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "score": 3.1321
+    },
+    {
+      "id": "TW-P-0238",
+      "name": "米亞",
+      "age": "25-34",
+      "occupation": "服務",
+      "income": "3-8萬",
+      "family_income": "3-5萬",
+      "residence": "桃園市",
+      "family_size": "2",
+      "city_price_tier": "中",
+      "commute_mode": "機車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "有",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "score": 3.1281
+    },
+    {
+      "id": "TW-P-0350",
+      "name": "美惠",
+      "age": "35-44",
+      "occupation": "家管",
+      "income": "3-8萬",
+      "family_income": "3-5萬",
+      "residence": "新北市",
+      "family_size": "2",
+      "city_price_tier": "中高",
+      "commute_mode": "機車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "中",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "有",
+      "debt_status": "無",
+      "employment_status": "不適用",
+      "score": 2.9163
+    },
+    {
+      "id": "TW-P-0512",
+      "name": "慧君",
+      "age": "45-54",
+      "occupation": "家管",
+      "income": "3-8萬",
+      "family_income": "3-5萬",
+      "residence": "桃園市",
+      "family_size": "2",
+      "city_price_tier": "中",
+      "commute_mode": "在家工作",
+      "housing_cost": "<5千",
+      "housing_burden": "低",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "有",
+      "debt_status": "無",
+      "employment_status": "不適用",
+      "score": 2.9073
+    },
+    {
+      "id": "TW-P-0372",
+      "name": "麗卿",
+      "age": "35-44",
+      "occupation": "服務",
+      "income": "3-8萬",
+      "family_income": "3-5萬",
+      "residence": "台南市",
+      "family_size": "2",
+      "city_price_tier": "低",
+      "commute_mode": "汽車",
+      "housing_cost": "<5千",
+      "housing_burden": "低",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "有",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "score": 2.9057
+    }
+  ],
+  "returned": 10,
+  "pool_exhausted": false,
+  "important_dimensions": [
+    {
+      "dim": "age",
+      "values": [
+        "25-34",
+        "45-54",
+        "35-44"
+      ]
+    },
+    {
+      "dim": "region",
+      "values": [
+        "都會區(六都)",
+        "中部"
+      ]
+    },
+    {
+      "dim": "occupation",
+      "values": [
+        "服務",
+        "製造",
+        "家管",
+        "其他",
+        "公務"
+      ]
+    },
+    {
+      "dim": "income",
+      "values": [
+        "3-8萬",
+        ">8萬"
+      ]
+    },
+    {
+      "dim": "family_income",
+      "values": [
+        "3-5萬",
+        ">8萬",
+        "5-7萬",
+        "7萬"
+      ]
+    },
+    {
+      "dim": "commute_mode",
+      "values": [
+        "機車",
+        "汽車",
+        "步行/腳踏車",
+        "捷運/公車",
+        "在家工作"
+      ]
+    },
+    {
+      "dim": "clothing_spend",
+      "values": [
+        ">5000",
+        "3000~5000",
+        "1500~3000",
+        "500~1500"
+      ]
+    },
+    {
+      "dim": "housing_burden",
+      "values": [
+        "中",
+        "低"
+      ]
+    },
+    {
+      "dim": "debt_status",
+      "values": [
+        "無",
+        "有房貸",
+        "有信貸或卡債"
+      ]
+    },
+    {
+      "dim": "employment_status",
+      "values": [
+        "受僱者",
+        "不適用"
+      ]
+    }
+  ],
+  "llm_analysis": {
+    "domain": "醫美/醫療美容",
+    "reasoning": "問題主體是醫美診所的目標客戶（顧客），不是業主本人，因此不使用 employment_status。醫美屬於個人形象與外貌消費，需兼顧年齡、收入、家庭收入與服飾消費等消費力維度，以區分較可能消費醫美的族群。aesthetic_procedure 雖與醫美直接相關，但資料庫中「有」僅約 1.5%，若設為篩選會使候選池過度限縮，因此不作為主要篩選條件。",
+    "question_analysis": [
+      {
+        "question": "醫美診所的目標客戶",
+        "topic": "醫美診所目標客群",
+        "target_user": "25-54歲、中高個人與家庭收入、重視形象消費的潛在醫美消費者"
+      }
+    ],
+    "usage_suggestion": {
+      "mode": "問卷答題者",
+      "reason": "此題是行銷主管要找出目標市場潛在客戶，適合先以消費力與年齡篩選出符合條件的 persona 名單，再進行問卷或廣告投放。",
+      "recommended_opMode": "僅篩選"
+    }
+  },
+  "relaxed_dims": [
+    "family_income",
+    "clothing_spend"
+  ],
+  "broadening_attempts": [
+    {
+      "loop": 1,
+      "change": "移除 family_income 維度。個人收入（income）已能反映消費能力，家庭收入並非本問題的核心條件，且與個人收入高度重疊，故刪除該維度以放寬篩選。",
+      "match_count_before": 3,
+      "match_count_after": 10,
+      "filters_changed": true,
+      "no_op": false,
+      "overshoot": false
+    },
+    {
+      "loop": 2,
+      "change": "刪除 clothing_spend 維度，因其非本問題核心判斷條件，僅為輔助篩選消費力，且 income 已涵蓋經濟能力。",
+      "match_count_before": 10,
+      "match_count_after": 13,
+      "filters_changed": true,
+      "no_op": false,
+      "overshoot": false
+    },
+    {
+      "loop": 3,
+      "change": "放寬年齡維度：在原有 25-34、35-44、45-54 歲之外，新增 19-24 歲與 55-64 歲，保留收入與醫美經歷條件。",
+      "match_count_before": 13,
+      "match_count_after": 13,
+      "filters_changed": true,
+      "no_op": true,
+      "overshoot": false
+    }
+  ],
+  "applied_filters": {
+    "age": [
+      "19-24",
+      "25-34",
+      "35-44",
+      "45-54",
+      "55-64"
+    ],
+    "income": [
+      "3-8萬",
+      ">8萬"
+    ],
+    "aesthetic_procedure": [
+      "有"
+    ]
+  },
+  "scoring_basis": {
+    "method": "log-frequency × cross-dim normalized [0.5, 2.0]",
+    "weight_source": "DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024",
+    "weight_version": "v5.4",
+    "score_scale": "relative-within-version",
+    "score_schema": 1,
+    "dims_counted": [
+      "age",
+      "income",
+      "clothing_spend",
+      "family_income",
+      "aesthetic_procedure",
+      "occupation",
+      "family_size"
+    ],
+    "relaxed_dims_scored_at": null
+  }
+}

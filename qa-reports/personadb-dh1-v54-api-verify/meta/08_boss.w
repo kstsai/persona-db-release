@@ -1,0 +1,1 @@
+200	90.837100	5935	http://100.100.112.108:8000/personadb/candidates?questions=%e5%b0%8f%e5%90%83%e6%94%a4%e8%80%81%e9%97%86%e7%9a%84%e7%9b%ae%e6%a8%99%e5%ae%a2%e7%be%a4&role=%e5%a4%9c%e5%b8%82%e5%95%86%e5%9c%88%e5%8d%94%e6%9c%83&top_k=10&opMode=%e5%83%85%e7%af%a9%e9%81%b8

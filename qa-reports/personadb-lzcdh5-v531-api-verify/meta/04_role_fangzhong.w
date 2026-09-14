@@ -1,0 +1,1 @@
+200	179.028736	4385	http://100.96.79.33:8000/personadb/candidates?questions=%e6%88%bf%e8%b2%b8%e5%84%aa%e6%83%a0%e6%96%b9%e6%a1%88&role=%e6%88%bf%e4%bb%b2%e6%a5%ad%e8%80%85&top_k=5&opMode=%e5%83%85%e7%af%a9%e9%81%b8

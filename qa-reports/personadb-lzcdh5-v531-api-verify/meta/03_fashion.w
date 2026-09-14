@@ -1,0 +1,1 @@
+200	117.957897	6157	http://100.96.79.33:8000/personadb/candidates?questions=%e6%99%82%e5%b0%9a%e6%9c%8d%e8%a3%9d%e8%a8%ad%e8%a8%88%e5%b8%ab%e7%9a%84%e7%9b%ae%e6%a8%99%e5%ae%a2%e6%88%b6&top_k=10&opMode=%e5%83%85%e7%af%a9%e9%81%b8

@@ -1,0 +1,284 @@
+{
+  "status": "ok",
+  "total_matched": 20,
+  "persona_ids": [
+    337,
+    1062,
+    797,
+    996,
+    914,
+    331,
+    326,
+    382,
+    802,
+    817
+  ],
+  "summary": [
+    {
+      "id": "TW-P-0337",
+      "name": "建宏",
+      "age": "35-44",
+      "occupation": "自營",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "高雄市",
+      "family_size": "5+",
+      "city_price_tier": "中",
+      "commute_mode": "捷運/公車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "1500~3000",
+      "score": 5.2411
+    },
+    {
+      "id": "TW-P-1062",
+      "name": "大仁",
+      "age": "35-44",
+      "occupation": "自營",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "連江縣",
+      "family_size": "4",
+      "city_price_tier": "極低",
+      "commute_mode": "汽車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "500~1500",
+      "score": 5.1229
+    },
+    {
+      "id": "TW-P-0797",
+      "name": "雅芳",
+      "age": "35-44",
+      "occupation": "醫療",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "新竹市",
+      "family_size": "4",
+      "city_price_tier": "中高",
+      "commute_mode": "汽車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "score": 5.0259
+    },
+    {
+      "id": "TW-P-0996",
+      "name": "麗美",
+      "age": "35-44",
+      "occupation": "醫療",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "嘉義市",
+      "family_size": "4",
+      "city_price_tier": "中高",
+      "commute_mode": "汽車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "score": 5.0259
+    },
+    {
+      "id": "TW-P-0914",
+      "name": "雅雯",
+      "age": "35-44",
+      "occupation": "公務",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "苗栗縣",
+      "family_size": "5+",
+      "city_price_tier": "低",
+      "commute_mode": "汽車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "score": 4.9066
+    },
+    {
+      "id": "TW-P-0331",
+      "name": "強哥",
+      "age": "35-44",
+      "occupation": "醫療",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "台南市",
+      "family_size": "2",
+      "city_price_tier": "低",
+      "commute_mode": "機車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "<500",
+      "score": 4.8442
+    },
+    {
+      "id": "TW-P-0326",
+      "name": "志強",
+      "age": "35-44",
+      "occupation": "金融",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "高雄市",
+      "family_size": "2",
+      "city_price_tier": "中",
+      "commute_mode": "機車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "1500~3000",
+      "score": 4.7894
+    },
+    {
+      "id": "TW-P-0382",
+      "name": "婉玲",
+      "age": "35-44",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "台中市",
+      "family_size": "5+",
+      "city_price_tier": "中高",
+      "commute_mode": "汽車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "score": 4.6649
+    },
+    {
+      "id": "TW-P-0802",
+      "name": "雅芳",
+      "age": "35-44",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "新竹縣",
+      "family_size": "5+",
+      "city_price_tier": "高",
+      "commute_mode": "機車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "score": 4.6649
+    },
+    {
+      "id": "TW-P-0817",
+      "name": "惠如",
+      "age": "45-54",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "宜蘭縣",
+      "family_size": "5+",
+      "city_price_tier": "低",
+      "commute_mode": "機車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "score": 4.6554
+    }
+  ],
+  "important_dimensions": [
+    {
+      "dim": "age",
+      "values": [
+        "35-44",
+        "45-54"
+      ]
+    },
+    {
+      "dim": "sex",
+      "values": [
+        "女",
+        "男"
+      ]
+    },
+    {
+      "dim": "region",
+      "values": [
+        "都會區(六都)",
+        "北部",
+        "離島",
+        "南部",
+        "中部"
+      ]
+    },
+    {
+      "dim": "occupation",
+      "values": [
+        "醫療",
+        "科技",
+        "自營",
+        "公務",
+        "金融"
+      ]
+    },
+    {
+      "dim": "commute_mode",
+      "values": [
+        "汽車",
+        "機車",
+        "捷運/公車"
+      ]
+    },
+    {
+      "dim": "clothing_spend",
+      "values": [
+        ">5000",
+        "1500~3000",
+        "500~1500",
+        "<500"
+      ]
+    }
+  ],
+  "llm_analysis": {
+    "domain": "金融/銀行貸款/債務整合",
+    "reasoning": "債務整合貸款方案的目標客戶是既有房貸戶且想轉貸降息者，通常具有中高居住負擔與穩定收入，年齡偏中壯年。",
+    "question_analysis": [
+      {
+        "question": "債務整合貸款方案的目標客戶",
+        "topic": "債務整合/房貸轉貸",
+        "target_user": "40-55歲、有既有房貸、還款壓力中高、家庭月可支配所得>8萬的穩定收入族群"
+      }
+    ],
+    "usage_suggestion": {
+      "mode": "問卷答題者",
+      "reason": "此題在尋找目標客戶，適合先篩選出具上述特徵的 persona 作為問卷或行銷名單。",
+      "recommended_opMode": "僅篩選"
+    }
+  },
+  "relaxed_dims": [],
+  "broadening_attempts": [],
+  "applied_filters": {
+    "age": [
+      "35-44",
+      "45-54"
+    ],
+    "occupation": [
+      "科技",
+      "金融",
+      "自營",
+      "公務",
+      "醫療"
+    ],
+    "income": [
+      ">8萬"
+    ],
+    "housing_burden": [
+      "中",
+      "高"
+    ],
+    "family_income": [
+      ">8萬"
+    ]
+  },
+  "scoring_basis": {
+    "method": "log-frequency × cross-dim normalized [0.5, 2.0]",
+    "weight_source": "DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024",
+    "dims_counted": [
+      "age",
+      "occupation",
+      "income",
+      "housing_burden",
+      "family_income"
+    ],
+    "relaxed_dims_scored_at": null
+  }
+}

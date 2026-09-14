@@ -1,0 +1,202 @@
+{
+  "status": "ok",
+  "total_matched": 24,
+  "persona_ids": [
+    244,
+    331,
+    234
+  ],
+  "summary": [
+    {
+      "id": "TW-P-0244",
+      "name": "可恩",
+      "age": "25-34",
+      "occupation": "金融",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "新北市",
+      "family_size": "2",
+      "city_price_tier": "中高",
+      "commute_mode": "機車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "score": 6.9883
+    },
+    {
+      "id": "TW-P-0331",
+      "name": "正雄",
+      "age": "35-44",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "新北市",
+      "family_size": "5+",
+      "city_price_tier": "中高",
+      "commute_mode": "汽車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "有房貸",
+      "employment_status": "雇主",
+      "score": 6.779
+    },
+    {
+      "id": "TW-P-0234",
+      "name": "艾力克",
+      "age": "25-34",
+      "occupation": "金融",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "台南市",
+      "family_size": "4",
+      "city_price_tier": "低",
+      "commute_mode": "汽車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "有房貸",
+      "employment_status": "受僱者",
+      "score": 6.7156
+    }
+  ],
+  "returned": 3,
+  "pool_exhausted": false,
+  "important_dimensions": [
+    {
+      "dim": "age",
+      "values": [
+        "25-34",
+        "35-44"
+      ]
+    },
+    {
+      "dim": "sex",
+      "values": [
+        "男",
+        "女"
+      ]
+    },
+    {
+      "dim": "occupation",
+      "values": [
+        "金融",
+        "科技"
+      ]
+    },
+    {
+      "dim": "commute_mode",
+      "values": [
+        "汽車",
+        "機車"
+      ]
+    },
+    {
+      "dim": "clothing_spend",
+      "values": [
+        "3000~5000",
+        ">5000"
+      ]
+    },
+    {
+      "dim": "debt_status",
+      "values": [
+        "有房貸",
+        "無"
+      ]
+    },
+    {
+      "dim": "employment_status",
+      "values": [
+        "受僱者",
+        "雇主"
+      ]
+    }
+  ],
+  "llm_analysis": {
+    "domain": "汽車/電動車消費",
+    "reasoning": "TESLA 是電動車品牌，問題在於定義其目標客戶，屬於高單價汽車/消費科技產品，需用消費行為與收入/家庭消費維度區分潛在買家。",
+    "question_analysis": [
+      {
+        "question": "TESLA的目標客戶",
+        "topic": "電動車/汽車市場",
+        "target_user": "25-54歲、高收入、家庭可支配所得高、以汽車通勤、居住支出中高、重視科技與環保的消費者"
+      }
+    ],
+    "usage_suggestion": {
+      "mode": "問卷答題者",
+      "reason": "問題在於找出 Tesla 的目標客戶輪廓，這些高消費力、有購車潛力的人適合作為問卷對象，了解其購買偏好與決策因素。",
+      "recommended_opMode": "僅篩選"
+    }
+  },
+  "relaxed_dims": [
+    "commute_mode"
+  ],
+  "broadening_attempts": [
+    {
+      "loop": 1,
+      "change": "放寬方式：刪除 commute_mode（通勤方式）維度。通勤方式不是本問題的核心條件；核心條件為高收入、高學歷、中高住房負擔與高服裝消費，移除汽車通勤限制不會改變問題判斷。",
+      "match_count_before": 7,
+      "match_count_after": 24,
+      "filters_changed": true,
+      "no_op": false,
+      "overshoot": false
+    }
+  ],
+  "applied_filters": {
+    "age": [
+      "25-34",
+      "35-44",
+      "45-54"
+    ],
+    "occupation": [
+      "科技",
+      "金融",
+      "醫療"
+    ],
+    "income": [
+      ">8萬",
+      "3-8萬"
+    ],
+    "clothing_spend": [
+      "3000~5000",
+      ">5000"
+    ],
+    "family_income": [
+      ">8萬",
+      "7萬"
+    ],
+    "education": [
+      "大學",
+      "研究所以上"
+    ],
+    "housing_burden": [
+      "中",
+      "高"
+    ]
+  },
+  "scoring_basis": {
+    "method": "log-frequency × cross-dim normalized [0.5, 2.0]",
+    "weight_source": "DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024",
+    "weight_version": "v5.6",
+    "score_scale": "relative-within-version",
+    "score_schema": 1,
+    "dims_counted": [
+      "age",
+      "occupation",
+      "income",
+      "clothing_spend",
+      "commute_mode",
+      "family_income",
+      "education",
+      "housing_burden",
+      "family_size"
+    ],
+    "relaxed_dims_scored_at": null
+  }
+}

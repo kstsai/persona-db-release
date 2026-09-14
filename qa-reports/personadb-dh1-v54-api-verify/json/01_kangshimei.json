@@ -1,0 +1,173 @@
+{
+  "status": "ok",
+  "total_matched": 99,
+  "persona_ids": [
+    768,
+    183,
+    171
+  ],
+  "summary": [
+    {
+      "id": "TW-P-0768",
+      "name": "小艾",
+      "age": "19-24",
+      "occupation": "學生",
+      "income": "無收入",
+      "family_income": "5-7萬",
+      "residence": "基隆市",
+      "family_size": "5+",
+      "city_price_tier": "中",
+      "commute_mode": "機車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "不適用",
+      "score": 4.2342
+    },
+    {
+      "id": "TW-P-0183",
+      "name": "艾倫",
+      "age": "19-24",
+      "occupation": "製造",
+      "income": "<3萬",
+      "family_income": "5-7萬",
+      "residence": "台中市",
+      "family_size": "5+",
+      "city_price_tier": "中高",
+      "commute_mode": "機車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "score": 4.2031
+    },
+    {
+      "id": "TW-P-0171",
+      "name": "可恩",
+      "age": "19-24",
+      "occupation": "學生",
+      "income": "無收入",
+      "family_income": "5-7萬",
+      "residence": "台南市",
+      "family_size": "2",
+      "city_price_tier": "低",
+      "commute_mode": "汽車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "不適用",
+      "score": 4.16
+    }
+  ],
+  "returned": 3,
+  "pool_exhausted": false,
+  "important_dimensions": [
+    {
+      "dim": "region",
+      "values": [
+        "都會區(六都)",
+        "北部"
+      ]
+    },
+    {
+      "dim": "occupation",
+      "values": [
+        "學生",
+        "製造"
+      ]
+    },
+    {
+      "dim": "income",
+      "values": [
+        "無收入",
+        "<3萬"
+      ]
+    },
+    {
+      "dim": "commute_mode",
+      "values": [
+        "機車",
+        "汽車"
+      ]
+    },
+    {
+      "dim": "clothing_spend",
+      "values": [
+        "3000~5000",
+        ">5000"
+      ]
+    },
+    {
+      "dim": "employment_status",
+      "values": [
+        "不適用",
+        "受僱者"
+      ]
+    }
+  ],
+  "llm_analysis": {
+    "domain": "藥妝零售/美妝通路",
+    "reasoning": "康是美是台灣大型藥妝連鎖，問題在找出其主力客群；主力為年輕至中年女性，具中低至中等可支配所得，且有一定服飾、美妝等非必需消費力。因屬零售藥妝消費，需用 clothing_spend、family_income 等消費維度過濾；不涉及業主身分，故不用 employment_status。",
+    "question_analysis": [
+      {
+        "question": "康是美的目標客戶",
+        "topic": "藥妝零售目標客群",
+        "target_user": "藥妝零售行銷或市場研究人員，想定義康是美核心消費者輪廓並進行後續問卷或策略規劃"
+      }
+    ],
+    "usage_suggestion": {
+      "mode": "問卷答題者",
+      "reason": "問題在於定義目標客群，而非請 persona 直接評價康是美；應先篩選出可能的核心消費者，再對其進行消費行為或通路偏好問卷。",
+      "recommended_opMode": "僅篩選"
+    }
+  },
+  "relaxed_dims": [],
+  "broadening_attempts": [],
+  "applied_filters": {
+    "age": [
+      "19-24",
+      "25-34",
+      "35-44"
+    ],
+    "sex": [
+      "女"
+    ],
+    "income": [
+      "無收入",
+      "<3萬",
+      "3-8萬"
+    ],
+    "family_income": [
+      "3-5萬",
+      "5-7萬"
+    ],
+    "clothing_spend": [
+      "1500~3000",
+      "3000~5000",
+      ">5000"
+    ]
+  },
+  "scoring_basis": {
+    "method": "log-frequency × cross-dim normalized [0.5, 2.0]",
+    "weight_source": "DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024",
+    "weight_version": "v5.4",
+    "score_scale": "relative-within-version",
+    "score_schema": 1,
+    "dims_counted": [
+      "age",
+      "sex",
+      "income",
+      "family_income",
+      "clothing_spend",
+      "occupation",
+      "family_size"
+    ],
+    "relaxed_dims_scored_at": null
+  }
+}

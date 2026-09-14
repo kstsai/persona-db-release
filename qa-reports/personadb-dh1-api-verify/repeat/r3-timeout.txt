@@ -1,0 +1,6 @@
+repeat/case01_r3: HTTP code 000 (client timeout), time 300.06s, 0 bytes
+command used:
+  curl -s -m 300 --get <BASE>/personadb/candidates --data-urlencode questions=康是美的目標客戶 --data-urlencode top_k=3 --data-urlencode opMode=僅篩選
+
+note: the SAME query completed in 57.1s during the main suite run and 297.2s / 256.3s in repeats 1 / 2,
+      i.e. latency varied 57s -> >300s across 4 observations of an identical request.

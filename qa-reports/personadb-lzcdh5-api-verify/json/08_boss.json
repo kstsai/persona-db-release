@@ -1,0 +1,284 @@
+{
+  "status": "ok",
+  "total_matched": 234,
+  "persona_ids": [
+    181,
+    166,
+    175,
+    149,
+    151,
+    138,
+    172,
+    139,
+    185,
+    165
+  ],
+  "summary": [
+    {
+      "id": "TW-P-0181",
+      "name": "小奈",
+      "age": "19-24",
+      "occupation": "學生",
+      "income": "無收入",
+      "family_income": ">8萬",
+      "residence": "台中市",
+      "family_size": "5+",
+      "city_price_tier": "中高",
+      "commute_mode": "機車",
+      "housing_cost": "<5千",
+      "housing_burden": "低",
+      "clothing_spend": ">5000",
+      "score": 4.0163
+    },
+    {
+      "id": "TW-P-0166",
+      "name": "菲菲",
+      "age": "19-24",
+      "occupation": "學生",
+      "income": "無收入",
+      "family_income": "7萬",
+      "residence": "台南市",
+      "family_size": "5+",
+      "city_price_tier": "低",
+      "commute_mode": "汽車",
+      "housing_cost": "<5千",
+      "housing_burden": "低",
+      "clothing_spend": "500~1500",
+      "score": 3.7964
+    },
+    {
+      "id": "TW-P-0175",
+      "name": "菲菲",
+      "age": "19-24",
+      "occupation": "服務",
+      "income": "<3萬",
+      "family_income": "<1萬",
+      "residence": "新北市",
+      "family_size": "2",
+      "city_price_tier": "中高",
+      "commute_mode": "機車",
+      "housing_cost": "<5千",
+      "housing_burden": "高",
+      "clothing_spend": "500~1500",
+      "score": 3.7683
+    },
+    {
+      "id": "TW-P-0149",
+      "name": "阿緯",
+      "age": "19-24",
+      "occupation": "學生",
+      "income": "無收入",
+      "family_income": "7萬",
+      "residence": "台中市",
+      "family_size": "4",
+      "city_price_tier": "中高",
+      "commute_mode": "機車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "500~1500",
+      "score": 3.619
+    },
+    {
+      "id": "TW-P-0151",
+      "name": "阿豪",
+      "age": "19-24",
+      "occupation": "學生",
+      "income": "無收入",
+      "family_income": "7萬",
+      "residence": "新北市",
+      "family_size": "4",
+      "city_price_tier": "中高",
+      "commute_mode": "機車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "1500~3000",
+      "score": 3.619
+    },
+    {
+      "id": "TW-P-0138",
+      "name": "小白",
+      "age": "19-24",
+      "occupation": "學生",
+      "income": "無收入",
+      "family_income": "1-3萬",
+      "residence": "台中市",
+      "family_size": "4",
+      "city_price_tier": "中高",
+      "commute_mode": "汽車",
+      "housing_cost": "<5千",
+      "housing_burden": "低",
+      "clothing_spend": "<500",
+      "score": 3.5868
+    },
+    {
+      "id": "TW-P-0172",
+      "name": "小艾",
+      "age": "19-24",
+      "occupation": "學生",
+      "income": "無收入",
+      "family_income": "1-3萬",
+      "residence": "台南市",
+      "family_size": "4",
+      "city_price_tier": "低",
+      "commute_mode": "步行/腳踏車",
+      "housing_cost": "<5千",
+      "housing_burden": "低",
+      "clothing_spend": "1500~3000",
+      "score": 3.5868
+    },
+    {
+      "id": "TW-P-0139",
+      "name": "大雄",
+      "age": "19-24",
+      "occupation": "學生",
+      "income": "無收入",
+      "family_income": "3-5萬",
+      "residence": "台南市",
+      "family_size": "5+",
+      "city_price_tier": "低",
+      "commute_mode": "機車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "中",
+      "clothing_spend": "<500",
+      "score": 3.5114
+    },
+    {
+      "id": "TW-P-0185",
+      "name": "若希",
+      "age": "19-24",
+      "occupation": "學生",
+      "income": "無收入",
+      "family_income": "3-5萬",
+      "residence": "高雄市",
+      "family_size": "5+",
+      "city_price_tier": "中",
+      "commute_mode": "機車",
+      "housing_cost": "<5千",
+      "housing_burden": "低",
+      "clothing_spend": "500~1500",
+      "score": 3.5114
+    },
+    {
+      "id": "TW-P-0165",
+      "name": "菲菲",
+      "age": "19-24",
+      "occupation": "製造",
+      "income": "<3萬",
+      "family_income": "7萬",
+      "residence": "台南市",
+      "family_size": "4",
+      "city_price_tier": "低",
+      "commute_mode": "捷運/公車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "500~1500",
+      "score": 3.4557
+    }
+  ],
+  "important_dimensions": [
+    {
+      "dim": "sex",
+      "values": [
+        "女",
+        "男"
+      ]
+    },
+    {
+      "dim": "occupation",
+      "values": [
+        "學生",
+        "服務",
+        "製造"
+      ]
+    },
+    {
+      "dim": "income",
+      "values": [
+        "無收入",
+        "<3萬"
+      ]
+    },
+    {
+      "dim": "family_income",
+      "values": [
+        "7萬",
+        "1-3萬",
+        "3-5萬",
+        ">8萬",
+        "<1萬"
+      ]
+    },
+    {
+      "dim": "commute_mode",
+      "values": [
+        "機車",
+        "汽車",
+        "步行/腳踏車",
+        "捷運/公車"
+      ]
+    },
+    {
+      "dim": "clothing_spend",
+      "values": [
+        "500~1500",
+        "1500~3000",
+        "<500",
+        ">5000"
+      ]
+    },
+    {
+      "dim": "housing_burden",
+      "values": [
+        "低",
+        "中",
+        "高"
+      ]
+    }
+  ],
+  "llm_analysis": {
+    "domain": "餐飲/零售消費行為",
+    "reasoning": "夜市商圈協會想了解小吃攤的目標客群，屬於餐飲消費行為分析。小吃攤消費與平價、便利性相關，需考量收入、家庭收入等消費維度，並搭配年齡、職業等特徵找出潛在消費者。",
+    "question_analysis": [
+      {
+        "question": "小吃攤老闆的目標客群",
+        "topic": "小吃攤消費客群分析",
+        "target_user": "夜市商圈協會欲找出小吃攤的潛在消費者，以協助攤商定位與行銷"
+      }
+    ],
+    "usage_suggestion": {
+      "mode": "問卷答題者",
+      "reason": "此問題目的是找出目標客群特徵，這些 persona 適合作為問卷對象，進一步調查其消費習慣與偏好。",
+      "recommended_opMode": "僅篩選"
+    }
+  },
+  "relaxed_dims": [],
+  "broadening_attempts": [],
+  "applied_filters": {
+    "age": [
+      "19-24",
+      "25-34",
+      "35-44"
+    ],
+    "occupation": [
+      "學生",
+      "服務",
+      "製造",
+      "科技"
+    ],
+    "income": [
+      "無收入",
+      "<3萬",
+      "3-8萬"
+    ]
+  },
+  "scoring_basis": {
+    "method": "log-frequency × cross-dim normalized [0.5, 2.0]",
+    "weight_source": "DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024",
+    "dims_counted": [
+      "age",
+      "occupation",
+      "income"
+    ],
+    "relaxed_dims_scored_at": null
+  }
+}

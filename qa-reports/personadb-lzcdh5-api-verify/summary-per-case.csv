@@ -1,0 +1,9 @@
+﻿case,label,http,sec,bytes,total_matched,returned,top_k_topscore,lowest_score,domain,relaxed,broaden_loops,sex_filter,income_filter,scoring_dims
+01_kangshimei,1. 康是美的目標客戶,200,185.387696,3086,21,3,6.5499,6.0622,零售/美妝/藥妝,hobby,3,女,無收入|<3萬|3-8萬|>8萬,age|sex|occupation|income|family_income|clothing_spend|commute_mode|hobby|education
+02_tesla,2. TESLA的目標客戶,200,80.895049,2935,21,3,7.7196,7.3817,汽車/電動車,,1,NONE,>8萬,age|occupation|income|family_income|family_size|commute_mode|clothing_spend|education|housing_burden
+03_fashion,3. 時尚服裝設計師的目標客戶,200,167.789869,5452,118,10,7.4629,6.2122,時尚/服飾設計與零售產業,hobby,3,NONE,3-8萬|>8萬,age|occupation|income|clothing_spend|family_income|education|hobby
+04_role_fangzhong,4. 房貸優惠 — 房仲業者,200,223.110889,3848,32,5,5.7728,5.4955,房地產金融,occupation,3,NONE,3-8萬|>8萬,age|occupation|income|marriage|family_size|housing_burden|family_income
+05_role_banker,5. 房貸優惠 — 銀行業者,200,199.115624,3528,26,5,5.6547,5.4931,房貸/房地產金融,marriage,2,NONE,>8萬,age|occupation|income|marriage|housing_burden|family_income
+06_aesthetic,6. 醫美診所的目標客戶,200,84.500563,4814,69,10,5.0374,4.7175,醫療美容/消費醫療,,0,NONE,3-8萬|>8萬,age|occupation|income|clothing_spend|family_income
+07_debt,7. 債務整合的目標客戶,200,124.956956,4632,20,10,5.2411,4.6554,金融/銀行貸款/債務整合,,0,NONE,>8萬,age|occupation|income|housing_burden|family_income
+08_boss,8. 小吃攤老闆的目標客群,200,87.191005,4717,234,10,4.0163,3.4557,餐飲/零售消費行為,,0,NONE,無收入|<3萬|3-8萬,age|occupation|income

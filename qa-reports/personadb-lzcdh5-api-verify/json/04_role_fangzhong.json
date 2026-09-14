@@ -1,0 +1,227 @@
+{
+  "status": "ok",
+  "total_matched": 32,
+  "persona_ids": [
+    408,
+    1004,
+    237,
+    277,
+    997
+  ],
+  "summary": [
+    {
+      "id": "TW-P-0408",
+      "name": "世昌",
+      "age": "45-54",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "台南市",
+      "family_size": "4",
+      "city_price_tier": "低",
+      "commute_mode": "汽車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "低",
+      "clothing_spend": "500~1500",
+      "score": 5.7728
+    },
+    {
+      "id": "TW-P-1004",
+      "name": "文彬",
+      "age": "45-54",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "嘉義縣",
+      "family_size": "4",
+      "city_price_tier": "低",
+      "commute_mode": "汽車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "低",
+      "clothing_spend": "1500~3000",
+      "score": 5.7728
+    },
+    {
+      "id": "TW-P-0237",
+      "name": "柔伊",
+      "age": "25-34",
+      "occupation": "公務",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "台北市",
+      "family_size": "3",
+      "city_price_tier": "高",
+      "commute_mode": "捷運/公車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "低",
+      "clothing_spend": ">5000",
+      "score": 5.6297
+    },
+    {
+      "id": "TW-P-0277",
+      "name": "艾倫",
+      "age": "25-34",
+      "occupation": "公務",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "桃園市",
+      "family_size": "3",
+      "city_price_tier": "中",
+      "commute_mode": "在家工作",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "低",
+      "clothing_spend": ">5000",
+      "score": 5.6297
+    },
+    {
+      "id": "TW-P-0997",
+      "name": "美珍",
+      "age": "35-44",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "嘉義市",
+      "family_size": "4",
+      "city_price_tier": "中高",
+      "commute_mode": "汽車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "score": 5.4955
+    }
+  ],
+  "important_dimensions": [
+    {
+      "dim": "age",
+      "values": [
+        "45-54",
+        "25-34",
+        "35-44"
+      ]
+    },
+    {
+      "dim": "sex",
+      "values": [
+        "女",
+        "男"
+      ]
+    },
+    {
+      "dim": "region",
+      "values": [
+        "都會區(六都)",
+        "南部"
+      ]
+    },
+    {
+      "dim": "occupation",
+      "values": [
+        "科技",
+        "公務"
+      ]
+    },
+    {
+      "dim": "commute_mode",
+      "values": [
+        "汽車",
+        "捷運/公車",
+        "在家工作"
+      ]
+    },
+    {
+      "dim": "clothing_spend",
+      "values": [
+        ">5000",
+        "500~1500",
+        "1500~3000"
+      ]
+    },
+    {
+      "dim": "housing_burden",
+      "values": [
+        "低",
+        "中"
+      ]
+    }
+  ],
+  "llm_analysis": {
+    "domain": "房地產金融",
+    "reasoning": "房貸優惠方案屬於房地產金融領域，主要吸引有購屋或換屋需求的人。房仲業者要找潛在客戶，需篩選年齡30-45歲、家庭人數較多、現有住房負擔低、收入穩定且家庭可支配所得較高的已婚族群。",
+    "question_analysis": [
+      {
+        "question": "房貸優惠方案",
+        "topic": "房貸優惠",
+        "target_user": "考慮購屋或換屋、家庭成員較多、現有住房負擔輕、有穩定收入的已婚人士"
+      }
+    ],
+    "usage_suggestion": {
+      "mode": "問卷答題者",
+      "reason": "房仲業者需要找出具有換屋能力的潛在客戶，再向他們推廣房貸優惠或進行需求調查，因此應先篩選出合適的 persona 名單。",
+      "recommended_opMode": "僅篩選"
+    }
+  },
+  "relaxed_dims": [
+    "occupation"
+  ],
+  "broadening_attempts": [
+    {
+      "loop": 1,
+      "change": "移除職業（occupation）維度，因收入與家庭收入已能反映經濟能力，職業屬輔助條件，刪除後可增加樣本數且不影響核心判斷。",
+      "match_count_before": 4,
+      "match_count_after": 8
+    },
+    {
+      "loop": 2,
+      "change": "放寬年齡範圍，加入 45-54 歲族群，以提高樣本數。",
+      "match_count_before": 8,
+      "match_count_after": 14
+    },
+    {
+      "loop": 3,
+      "change": "將 housing_burden 從僅「低」放寬為「低、中」，以增加樣本涵蓋中度住房負擔族群。",
+      "match_count_before": 14,
+      "match_count_after": 32
+    }
+  ],
+  "applied_filters": {
+    "age": [
+      "25-34",
+      "35-44",
+      "45-54"
+    ],
+    "income": [
+      "3-8萬",
+      ">8萬"
+    ],
+    "marriage": [
+      "已婚"
+    ],
+    "family_size": [
+      "3",
+      "4"
+    ],
+    "housing_burden": [
+      "低",
+      "中"
+    ],
+    "family_income": [
+      "5-7萬",
+      "7萬",
+      ">8萬"
+    ]
+  },
+  "scoring_basis": {
+    "method": "log-frequency × cross-dim normalized [0.5, 2.0]",
+    "weight_source": "DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024",
+    "dims_counted": [
+      "age",
+      "occupation",
+      "income",
+      "marriage",
+      "family_size",
+      "housing_burden",
+      "family_income"
+    ],
+    "relaxed_dims_scored_at": null
+  }
+}

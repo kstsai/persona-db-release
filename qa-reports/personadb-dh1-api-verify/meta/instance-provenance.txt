@@ -1,0 +1,44 @@
+=== collected_at_utc: 2026-09-12T02:50:15Z ===
+
+=== tailscale status (full) ===
+Warning: client version "1.98.8-t05a918293" != tailscaled server version "1.102.1-t8ebe8f7c3-gda6192991"
+100.125.195.64   a945            tkhand@  macOS    -                                                       
+100.83.52.97     bangoo          tkhand@  windows  -                                                       
+100.84.129.98    hermesa3-clone  tkhand@  linux    -                                                       
+100.100.112.108  lzc-dh1-1       tkhand@  linux    active; direct 1.169.214.22:21888, tx 9988 rx 29660     
+100.66.58.123    lzc             tkhand@  linux    active; direct 1.169.214.22:41641, tx 218696 rx 859840  
+100.96.79.33     lzcdh5          tkhand@  linux    idle, tx 48328 rx 133464                                
+
+=== node detail: lzc-dh1-1 (matched by DNSName) ===
+{
+  "ID": "nVS9uUUusZ11CNTRL",
+  "HostName": "lzc-dh1",
+  "DNSName": "lzc-dh1-1.tail6cb434.ts.net.",
+  "OS": "linux",
+  "TailscaleIPs": [
+    "100.100.112.108",
+    "fd7a:115c:a1e0::f139:706d"
+  ],
+  "Online": true,
+  "Active": true,
+  "CurAddr": "1.169.214.22:21888",
+  "Relay": "tok",
+  "LastHandshake": "2026-09-12T10:49:45.39085+08:00",
+  "KeyExpiry": "2027-02-07T06:37:12Z",
+  "RxBytes": 29660,
+  "TxBytes": 9988
+}
+
+=== compare: lzcdh5 node detail ===
+{
+  "HostName": "lzcdh5",
+  "DNSName": "lzcdh5.tail6cb434.ts.net.",
+  "TailscaleIPs": [
+    "100.96.79.33",
+    "fd7a:115c:a1e0::2939:4f22"
+  ],
+  "Online": true,
+  "Active": false,
+  "CurAddr": "",
+  "Relay": "hkg"
+}

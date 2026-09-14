@@ -1,0 +1,1 @@
+{"detail":{"code":"FILTER_FAILED","message":"無法從問題中解析出篩選條件（LLM 分析失敗且關鍵字解析無結果）","details":"請確認 LLM API key / model 設定，或換一種問法"}}

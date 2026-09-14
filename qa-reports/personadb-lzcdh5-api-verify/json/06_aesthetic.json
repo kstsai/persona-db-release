@@ -1,0 +1,291 @@
+{
+  "status": "ok",
+  "total_matched": 69,
+  "persona_ids": [
+    208,
+    770,
+    337,
+    189,
+    213,
+    252,
+    382,
+    802,
+    817,
+    199
+  ],
+  "summary": [
+    {
+      "id": "TW-P-0208",
+      "name": "阿凱",
+      "age": "25-34",
+      "occupation": "金融",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "台南市",
+      "family_size": "2",
+      "city_price_tier": "低",
+      "commute_mode": "機車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "低",
+      "clothing_spend": ">5000",
+      "score": 5.0374
+    },
+    {
+      "id": "TW-P-0770",
+      "name": "諾亞",
+      "age": "25-34",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "新竹縣",
+      "family_size": "5+",
+      "city_price_tier": "高",
+      "commute_mode": "汽車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "3000~5000",
+      "score": 4.9732
+    },
+    {
+      "id": "TW-P-0337",
+      "name": "建宏",
+      "age": "35-44",
+      "occupation": "自營",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "高雄市",
+      "family_size": "5+",
+      "city_price_tier": "中",
+      "commute_mode": "捷運/公車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "1500~3000",
+      "score": 4.947
+    },
+    {
+      "id": "TW-P-0189",
+      "name": "艾力克",
+      "age": "25-34",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "桃園市",
+      "family_size": "3",
+      "city_price_tier": "中",
+      "commute_mode": "捷運/公車",
+      "housing_cost": "<5千",
+      "housing_burden": "低",
+      "clothing_spend": "3000~5000",
+      "score": 4.7638
+    },
+    {
+      "id": "TW-P-0213",
+      "name": "班",
+      "age": "25-34",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "高雄市",
+      "family_size": "3",
+      "city_price_tier": "中",
+      "commute_mode": "機車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "低",
+      "clothing_spend": "3000~5000",
+      "score": 4.7638
+    },
+    {
+      "id": "TW-P-0252",
+      "name": "小艾",
+      "age": "25-34",
+      "occupation": "服務",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "台北市",
+      "family_size": "4",
+      "city_price_tier": "高",
+      "commute_mode": "汽車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "score": 4.7441
+    },
+    {
+      "id": "TW-P-0382",
+      "name": "婉玲",
+      "age": "35-44",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "台中市",
+      "family_size": "5+",
+      "city_price_tier": "中高",
+      "commute_mode": "汽車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "score": 4.7255
+    },
+    {
+      "id": "TW-P-0802",
+      "name": "雅芳",
+      "age": "35-44",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "新竹縣",
+      "family_size": "5+",
+      "city_price_tier": "高",
+      "commute_mode": "機車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "score": 4.7255
+    },
+    {
+      "id": "TW-P-0817",
+      "name": "惠如",
+      "age": "45-54",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "宜蘭縣",
+      "family_size": "5+",
+      "city_price_tier": "低",
+      "commute_mode": "機車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "score": 4.718
+    },
+    {
+      "id": "TW-P-0199",
+      "name": "洛克",
+      "age": "25-34",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "台中市",
+      "family_size": "1",
+      "city_price_tier": "中高",
+      "commute_mode": "汽車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "低",
+      "clothing_spend": ">5000",
+      "score": 4.7175
+    }
+  ],
+  "important_dimensions": [
+    {
+      "dim": "age",
+      "values": [
+        "25-34",
+        "35-44",
+        "45-54"
+      ]
+    },
+    {
+      "dim": "sex",
+      "values": [
+        "男",
+        "女"
+      ]
+    },
+    {
+      "dim": "region",
+      "values": [
+        "都會區(六都)",
+        "北部"
+      ]
+    },
+    {
+      "dim": "occupation",
+      "values": [
+        "科技",
+        "金融",
+        "自營",
+        "服務"
+      ]
+    },
+    {
+      "dim": "commute_mode",
+      "values": [
+        "機車",
+        "汽車",
+        "捷運/公車"
+      ]
+    },
+    {
+      "dim": "clothing_spend",
+      "values": [
+        ">5000",
+        "3000~5000",
+        "1500~3000"
+      ]
+    },
+    {
+      "dim": "housing_burden",
+      "values": [
+        "中",
+        "低"
+      ]
+    }
+  ],
+  "llm_analysis": {
+    "domain": "醫療美容/消費醫療",
+    "reasoning": "醫美診所提供醫療美容服務，屬於非必要但高度消費導向的產業，目標客戶需具備一定消費能力與外表管理意願。問題在尋找潛在客戶，需用消費行為與收入維度區分。",
+    "question_analysis": [
+      {
+        "question": "醫美診所的目標客戶",
+        "topic": "醫美/美容醫療",
+        "target_user": "對醫美服務有需求或興趣的潛在消費者，通常注重外表、有穩定收入且具消費能力"
+      }
+    ],
+    "usage_suggestion": {
+      "mode": "問卷答題者",
+      "reason": "問題本身是詢問目標客戶，目的是從資料庫中篩選出適合的潛在客戶名單，後續再進行行銷或問卷調查，不需要 LLM 扮演 persona 回答。",
+      "recommended_opMode": "僅篩選"
+    }
+  },
+  "relaxed_dims": [],
+  "broadening_attempts": [],
+  "applied_filters": {
+    "age": [
+      "25-34",
+      "35-44",
+      "45-54"
+    ],
+    "occupation": [
+      "科技",
+      "金融",
+      "服務",
+      "自營"
+    ],
+    "income": [
+      "3-8萬",
+      ">8萬"
+    ],
+    "clothing_spend": [
+      "1500~3000",
+      "3000~5000",
+      ">5000"
+    ],
+    "family_income": [
+      "5-7萬",
+      "7萬",
+      ">8萬"
+    ]
+  },
+  "scoring_basis": {
+    "method": "log-frequency × cross-dim normalized [0.5, 2.0]",
+    "weight_source": "DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024",
+    "dims_counted": [
+      "age",
+      "occupation",
+      "income",
+      "clothing_spend",
+      "family_income"
+    ],
+    "relaxed_dims_scored_at": null
+  }
+}

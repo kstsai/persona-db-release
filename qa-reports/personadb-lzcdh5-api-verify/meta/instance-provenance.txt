@@ -1,0 +1,58 @@
+=== collected_at_utc: 2026-09-12T02:25:55Z ===
+
+=== tailscale status (full) ===
+Warning: client version "1.98.8-t05a918293" != tailscaled server version "1.102.1-t8ebe8f7c3-gda6192991"
+100.125.195.64   a945            tkhand@  macOS    -                                                       
+100.83.52.97     bangoo          tkhand@  windows  -                                                       
+100.84.129.98    hermesa3-clone  tkhand@  linux    -                                                       
+100.100.112.108  lzc-dh1-1       tkhand@  linux    -                                                       
+100.66.58.123    lzc             tkhand@  linux    active; direct 1.169.214.22:41641, tx 165832 rx 767008  
+100.96.79.33     lzcdh5          tkhand@  linux    active; direct 1.169.214.22:52036, tx 9556 rx 20108     
+
+=== tailscale status --json (lzcdh5 node) ===
+{
+  "ID": "niegcmVrhm11CNTRL",
+  "PublicKey": "nodekey:0b42d4246c249c8f1560be364085ee89e226d54f3c2dc92cf60cb14129204f21",
+  "HostName": "lzcdh5",
+  "DNSName": "lzcdh5.tail6cb434.ts.net.",
+  "OS": "linux",
+  "UserID": 5111571072275620,
+  "TailscaleIPs": [
+    "100.96.79.33",
+    "fd7a:115c:a1e0::2939:4f22"
+  ],
+  "AllowedIPs": [
+    "100.96.79.33/32",
+    "fd7a:115c:a1e0::2939:4f22/128"
+  ],
+  "Addrs": null,
+  "CurAddr": "1.169.214.22:52036",
+  "Relay": "tok",
+  "PeerRelay": "",
+  "RxBytes": 20108,
+  "TxBytes": 9556,
+  "Created": "2026-07-24T07:51:59.237452944Z",
+  "LastWrite": "2026-09-12T10:25:51.188369792+08:00",
+  "LastSeen": "0001-01-01T00:00:00Z",
+  "LastHandshake": "2026-09-12T10:24:09.934324+08:00",
+  "Online": true,
+  "ExitNode": false,
+  "ExitNodeOption": false,
+  "Active": true,
+  "PeerAPIURL": [
+    "http://100.96.79.33:53670",
+    "http://[fd7a:115c:a1e0::2939:4f22]:38179"
+  ],
+  "TaildropTarget": 1,
+  "NoFileSharingReason": "",
+  "InNetworkMap": true,
+  "InMagicSock": true,
+  "InEngine": true,
+  "KeyExpiry": "2027-01-20T07:51:59Z"
+}
+
+=== tailscale version ===
+1.98.8
+  tailscale commit: 05a91829316e055517a1e84f7b00016846ef4107
+  long version: 1.98.8-t05a918293
+  go version: go1.26.4

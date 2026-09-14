@@ -1,0 +1,251 @@
+{
+  "status": "ok",
+  "total_matched": 9,
+  "persona_ids": [
+    473,
+    331,
+    811,
+    929,
+    328
+  ],
+  "summary": [
+    {
+      "id": "TW-P-0473",
+      "name": "淑娟",
+      "age": "45-54",
+      "occupation": "其他",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "高雄市",
+      "family_size": "5+",
+      "city_price_tier": "中",
+      "commute_mode": "機車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "有",
+      "debt_status": "有房貸",
+      "employment_status": "受僱者",
+      "score": 4.1771
+    },
+    {
+      "id": "TW-P-0331",
+      "name": "正雄",
+      "age": "35-44",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "新北市",
+      "family_size": "5+",
+      "city_price_tier": "中高",
+      "commute_mode": "汽車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "有房貸",
+      "employment_status": "雇主",
+      "score": 4.1598
+    },
+    {
+      "id": "TW-P-0811",
+      "name": "志強",
+      "age": "45-54",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "基隆市",
+      "family_size": "5+",
+      "city_price_tier": "中",
+      "commute_mode": "捷運/公車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "有房貸",
+      "employment_status": "受僱者",
+      "score": 4.1524
+    },
+    {
+      "id": "TW-P-0929",
+      "name": "麗華",
+      "age": "45-54",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "彰化縣",
+      "family_size": "5+",
+      "city_price_tier": "極低",
+      "commute_mode": "捷運/公車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "3000~5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "有房貸",
+      "employment_status": "受僱者",
+      "score": 4.1524
+    },
+    {
+      "id": "TW-P-0328",
+      "name": "俊傑",
+      "age": "35-44",
+      "occupation": "製造",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "桃園市",
+      "family_size": "5+",
+      "city_price_tier": "中",
+      "commute_mode": "步行/腳踏車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "<500",
+      "aesthetic_procedure": "無",
+      "debt_status": "房貸+消費債",
+      "employment_status": "自營作業者",
+      "score": 4.1328
+    }
+  ],
+  "important_dimensions": [
+    {
+      "dim": "age",
+      "values": [
+        "45-54",
+        "35-44"
+      ]
+    },
+    {
+      "dim": "sex",
+      "values": [
+        "男",
+        "女"
+      ]
+    },
+    {
+      "dim": "region",
+      "values": [
+        "都會區(六都)",
+        "北部",
+        "中部"
+      ]
+    },
+    {
+      "dim": "occupation",
+      "values": [
+        "科技",
+        "其他",
+        "製造"
+      ]
+    },
+    {
+      "dim": "commute_mode",
+      "values": [
+        "捷運/公車",
+        "機車",
+        "汽車",
+        "步行/腳踏車"
+      ]
+    },
+    {
+      "dim": "clothing_spend",
+      "values": [
+        "3000~5000",
+        ">5000",
+        "<500"
+      ]
+    },
+    {
+      "dim": "aesthetic_procedure",
+      "values": [
+        "無",
+        "有"
+      ]
+    },
+    {
+      "dim": "debt_status",
+      "values": [
+        "有房貸",
+        "房貸+消費債"
+      ]
+    },
+    {
+      "dim": "employment_status",
+      "values": [
+        "受僱者",
+        "雇主",
+        "自營作業者"
+      ]
+    }
+  ],
+  "llm_analysis": {
+    "domain": "金融/房貸/房產",
+    "reasoning": "題目「房貸優惠方案」屬於房貸金融領域，與消費行為中的房產相關。銀行業者想找既有房貸戶進行轉貸或提供優惠，需考量年齡、收入、居住負擔及債務狀態等消費維度，以精準找出有穩定還款能力且承受房貸壓力的目標客群。",
+    "question_analysis": [
+      {
+        "question": "房貸優惠方案",
+        "topic": "房貸/轉貸",
+        "target_user": "已有房貸且想轉貸降息、尋求較低利率或優惠條件的40-55歲穩定收入者"
+      }
+    ],
+    "usage_suggestion": {
+      "mode": "兩者皆可",
+      "reason": "銀行可先依條件篩選出符合「既有房貸、40-55歲、收入>8萬、居住負擔中高」的目標客群，再模擬詢問其對房貸優惠方案的接受度與偏好，以優化產品設計。",
+      "recommended_opMode": "篩選+模擬"
+    }
+  },
+  "relaxed_dims": [],
+  "broadening_attempts": [
+    {
+      "loop": 1,
+      "change": "放寬收入條件：由僅限 >8萬 擴大到 >8萬 與 3-8萬，其餘條件不變。",
+      "match_count_before": 6,
+      "match_count_after": 6
+    },
+    {
+      "loop": 2,
+      "change": "將「家庭月收入」從原本僅限 >8 萬，放寬為納入 7 萬，仍維持中高家庭收入的核心判斷。",
+      "match_count_before": 6,
+      "match_count_after": 7
+    },
+    {
+      "loop": 3,
+      "change": "僅放寬「家庭月收入」維度，新增 5-7萬，以納入中高收入且仍可能有房貸負擔的族群。",
+      "match_count_before": 7,
+      "match_count_after": 9
+    }
+  ],
+  "applied_filters": {
+    "age": [
+      "35-44",
+      "45-54",
+      "55-64"
+    ],
+    "income": [
+      ">8萬",
+      "3-8萬"
+    ],
+    "housing_burden": [
+      "中",
+      "高"
+    ],
+    "family_income": [
+      ">8萬",
+      "7萬",
+      "5-7萬"
+    ],
+    "debt_status": [
+      "有房貸",
+      "房貸+消費債"
+    ]
+  },
+  "scoring_basis": {
+    "method": "log-frequency × cross-dim normalized [0.5, 2.0]",
+    "weight_source": "DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024",
+    "dims_counted": [
+      "age",
+      "income",
+      "housing_burden",
+      "family_income"
+    ],
+    "relaxed_dims_scored_at": null
+  }
+}

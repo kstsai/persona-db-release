@@ -1,0 +1,7 @@
+case_id: 01_kangshimei
+label: 1. 康是美的目標客戶
+http_code: 200
+time_total_sec: 102.385232
+size_download_bytes: 3110
+url_effective: http://100.100.112.108:8000/personadb/candidates?questions=%e5%ba%b7%e6%98%af%e7%be%8e%e7%9a%84%e7%9b%ae%e6%a8%99%e5%ae%a2%e6%88%b6&top_k=3&opMode=%e5%83%85%e7%af%a9%e9%81%b8
+curl_args: --data-urlencode questions=康是美的目標客戶 --data-urlencode top_k=3 --data-urlencode opMode=僅篩選

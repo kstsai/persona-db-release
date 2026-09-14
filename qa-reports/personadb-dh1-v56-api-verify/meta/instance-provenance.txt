@@ -1,0 +1,35 @@
+=== collected_at_utc: 2026-09-13T23:41:37Z ===
+
+=== 目標節點 ===
+100.100.112.108  lzc-dh1-1       tkhand@  linux    active; direct 1.169.214.22:23251, tx 11228 rx 36476  
+
+{
+  "ID": "nVS9uUUusZ11CNTRL",
+  "HostName": "lzc-dh1",
+  "DNSName": "lzc-dh1-1.tail6cb434.ts.net.",
+  "OS": "linux",
+  "TailscaleIPs": [
+    "100.100.112.108",
+    "fd7a:115c:a1e0::f139:706d"
+  ],
+  "Online": true,
+  "Active": true,
+  "CurAddr": "1.169.214.22:23251",
+  "Relay": "tok",
+  "LastHandshake": "2026-09-14T07:39:46.824889+08:00",
+  "KeyExpiry": "2027-02-07T06:37:12Z"
+}
+
+=== 版本（node ID 與 v5.2/v5.4 相同 => 就地升級） ===
+  Version         v5.6
+  Main personas   1069 (tw_persona_1069.json, 1.72 MB)
+  QA (23 rules)   ✅ ALL CHECKS PASSED
+  Python          3.11.15
+  LLM             ✅ deepseek-v4-flash → https://api.deepseek.com (responsive)
+  📁 Supporting Artifices: 32 Python files
+  QA Results:
+
+=== 歷史節點對照 ===
+  v5.2  round2: node ID nVS9uUUusZ11CNTRL (lzc-dh1-1)
+  v5.4  round4: node ID nVS9uUUusZ11CNTRL (lzc-dh1-1)
+  v5.6  round5: node ID nVS9uUUusZ11CNTRL (lzc-dh1-1)  <- 同一節點第三次就地升級

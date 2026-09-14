@@ -1,0 +1,186 @@
+{
+  "status": "ok",
+  "total_matched": 21,
+  "persona_ids": [
+    1000,
+    804,
+    364
+  ],
+  "summary": [
+    {
+      "id": "TW-P-1000",
+      "name": "麗華",
+      "age": "35-44",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "屏東縣",
+      "family_size": "4",
+      "city_price_tier": "低",
+      "commute_mode": "汽車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "低",
+      "clothing_spend": ">5000",
+      "score": 7.7196
+    },
+    {
+      "id": "TW-P-0804",
+      "name": "明義",
+      "age": "45-54",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "宜蘭縣",
+      "family_size": "4",
+      "city_price_tier": "低",
+      "commute_mode": "捷運/公車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": "3000~5000",
+      "score": 7.4513
+    },
+    {
+      "id": "TW-P-0364",
+      "name": "麗美",
+      "age": "35-44",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "高雄市",
+      "family_size": "3",
+      "city_price_tier": "中",
+      "commute_mode": "汽車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "低",
+      "clothing_spend": "3000~5000",
+      "score": 7.3817
+    }
+  ],
+  "important_dimensions": [
+    {
+      "dim": "age",
+      "values": [
+        "35-44",
+        "45-54"
+      ]
+    },
+    {
+      "dim": "sex",
+      "values": [
+        "女",
+        "男"
+      ]
+    },
+    {
+      "dim": "region",
+      "values": [
+        "南部",
+        "北部",
+        "都會區(六都)"
+      ]
+    },
+    {
+      "dim": "commute_mode",
+      "values": [
+        "汽車",
+        "捷運/公車"
+      ]
+    },
+    {
+      "dim": "clothing_spend",
+      "values": [
+        "3000~5000",
+        ">5000"
+      ]
+    },
+    {
+      "dim": "housing_burden",
+      "values": [
+        "低",
+        "中"
+      ]
+    }
+  ],
+  "llm_analysis": {
+    "domain": "汽車/電動車",
+    "reasoning": "TESLA 是電動車品牌，題目在找目標客戶，屬於汽車消費與高單價耐久財範疇。因此除了基本人口特徵，也需用通勤方式、家庭收入、服飾消費、居住支出等消費維度區分購車潛力。",
+    "question_analysis": [
+      {
+        "question": "TESLA的目標客戶",
+        "topic": "電動車/高價位汽車消費",
+        "target_user": "高收入、以汽車通勤、重視科技與品牌、家庭/專業人士"
+      }
+    ],
+    "usage_suggestion": {
+      "mode": "問卷答題者",
+      "reason": "此題在定義品牌目標客群，適合先篩選出高消費力、汽車通勤、科技/金融背景的 persona，再針對其購買意願與偏好進行問卷調查。",
+      "recommended_opMode": "僅篩選"
+    }
+  },
+  "relaxed_dims": [],
+  "broadening_attempts": [
+    {
+      "loop": 1,
+      "change": "放寬通勤方式，加入機車與捷運/公車，以涵蓋更多高收入但非開車的通勤者。",
+      "match_count_before": 9,
+      "match_count_after": 21
+    }
+  ],
+  "applied_filters": {
+    "age": [
+      "25-34",
+      "35-44",
+      "45-54"
+    ],
+    "occupation": [
+      "科技",
+      "金融",
+      "自營"
+    ],
+    "income": [
+      ">8萬"
+    ],
+    "family_income": [
+      ">8萬",
+      "7萬"
+    ],
+    "family_size": [
+      "2",
+      "3",
+      "4"
+    ],
+    "commute_mode": [
+      "汽車",
+      "機車",
+      "捷運/公車"
+    ],
+    "clothing_spend": [
+      ">5000",
+      "3000~5000"
+    ],
+    "education": [
+      "大學",
+      "研究所以上"
+    ],
+    "housing_burden": [
+      "低",
+      "中"
+    ]
+  },
+  "scoring_basis": {
+    "method": "log-frequency × cross-dim normalized [0.5, 2.0]",
+    "weight_source": "DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024",
+    "dims_counted": [
+      "age",
+      "occupation",
+      "income",
+      "family_income",
+      "family_size",
+      "commute_mode",
+      "clothing_spend",
+      "education",
+      "housing_burden"
+    ],
+    "relaxed_dims_scored_at": null
+  }
+}

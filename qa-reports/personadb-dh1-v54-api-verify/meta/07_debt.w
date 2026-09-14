@@ -1,0 +1,1 @@
+200	220.144287	7079	http://100.100.112.108:8000/personadb/candidates?questions=%e5%82%b5%e5%8b%99%e6%95%b4%e5%90%88%e8%b2%b8%e6%ac%be%e6%96%b9%e6%a1%88%e7%9a%84%e7%9b%ae%e6%a8%99%e5%ae%a2%e6%88%b6&role=%e9%8a%80%e8%a1%8c%e5%82%b5%e5%8b%99%e6%95%b4%e5%90%88%e5%b0%88%e5%93%a1&top_k=10&opMode=%e5%83%85%e7%af%a9%e9%81%b8
