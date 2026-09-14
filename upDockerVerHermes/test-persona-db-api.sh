@@ -158,8 +158,12 @@ af = debt.get('applied_filters') or {}
 s = debt.get('summary') or []
 have = [p for p in s if p.get('debt_status') in ('有房貸', '房貸+消費債', '有信貸或卡債')]
 ovs = [b.get('overshoot') for b in (debt.get('broadening_attempts') or [])]
-print(f"  #42 debt_status 保留={('debt_status' in af)} 符合率={len(have)}/{len(s)} overshoot={ovs} → "
-      + ("✅" if ('debt_status' in af and len(have) >= 9) else "⚠️ 檢查（可能被放寬或精度不足）"))
+# #52: 比例式門檻（原為絕對 `>= 9`，在 pool_exhausted 只回 8 筆時 8/8 全對仍誤報 ⚠️）
+# 保留原「容忍 1 筆」意圖（≥90%），且不假設池子大小；空池不得誤判通過
+ratio_ok = ('debt_status' in af) and len(s) > 0 and (len(have) / len(s)) >= 0.9
+print(f"  #42 debt_status 保留={('debt_status' in af)} 符合率={len(have)}/{len(s)} "
+      f"({(len(have)/len(s)*100 if s else 0):.0f}%) pool_exhausted={debt.get('pool_exhausted')} overshoot={ovs} → "
+      + ("✅" if ratio_ok else "⚠️ 檢查（被放寬、精度不足、或空池）"))
 aes = load('/tmp/aesthetic_closing.json')
 af_a = aes.get('applied_filters') or {}
 print(f"  #42 醫美硬篩選維持: sex={af_a.get('sex')} aesthetic={af_a.get('aesthetic_procedure')} → "
