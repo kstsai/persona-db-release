@@ -214,11 +214,13 @@ print(f"  #48 OpenAPI 有 BroadeningAttempt/ScoringBasis 且 properties 完整 �
 print("")
 print("  --- v5.7 (#53 summary 維度完備性 / #54 housing_cost) ---")
 NEW_DIMS = ["sex", "region", "education", "marriage", "hobby", "politics", "media_diet"]
-_cases = {"kangshimei": kangshimei, "tesla": tesla, "醫美": aes, "債務": debt}
+# 只使用本區塊之前已載入的案例變數（owner / boss / debt / aes）
+_cases = {"醫美": aes, "債務": debt, "業主": owner, "小吃攤": boss}
 _ok_fields = True
 for cname, cd in _cases.items():
     rows = cd.get("summary") or []
     if not rows:
+        print(f"  #53 {cname}: 無 summary（案例未產出？）→ ⚠️ 跳過")
         continue
     miss = [k for k in NEW_DIMS if k not in rows[0]]
     empty = [k for k in NEW_DIMS if k != "hobby" and any(not r.get(k) for r in rows)]
