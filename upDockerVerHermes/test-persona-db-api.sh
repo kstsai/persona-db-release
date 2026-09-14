@@ -265,10 +265,11 @@ for cname, cd in _cases.items():
         streak = streak + 1 if b.get("no_op") else 0
         mx = max(mx, streak)
     ok_streak = mx <= 2
-    # 一致性：no_op_limit ⇒ 最後兩輪皆 no_op；target_reached ⇒ matched ≥ 20
+    # 一致性：no_op_limit ⇒ 最後一輪必為 no_op（兩條路徑：① 連續 2 輪空轉 ② filters 未變更
+    # （LLM 原樣回傳）→ 前者最後兩輪皆 no_op，後者僅最後一輪）；target_reached ⇒ matched ≥ 20
     consistent = True
     if sr == "no_op_limit":
-        consistent = len(ba) >= 2 and ba[-1].get("no_op") and ba[-2].get("no_op")
+        consistent = bool(ba) and ba[-1].get("no_op") is True
     elif sr == "target_reached":
         consistent = (cd.get("total_matched") or 0) >= 20
     print(f"  #56 {cname}: stop_reason={sr!r} loops={len(ba)} 連續空轉max={mx} → "
