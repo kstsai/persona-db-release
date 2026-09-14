@@ -1,6 +1,6 @@
 # persona-db API 實測分析報告 — v5.6（第五輪，五版對照）
 
-**受測目標**：tailscale node **`lzc-dh1-1`** (`100.100.112.108`)，Persona DB **v5.6**
+**受測目標**：tailscale node **`NODE-B`** (`NODE-B`)，Persona DB **v5.6**
 **測試腳本**：`kstsai/persona-db-release` → `upDockerVerHermes/test-persona-db-api.sh`
 **執行時間**：2026-09-13 23:41 – 23:54 UTC（主套件 ≈13 分鐘；含探針約 30 分鐘）
 **執行結果**：**9 / 9 HTTP 200**（本輪無錯誤）
@@ -33,11 +33,11 @@
 
 | 檢查 | 結果 |
 |:---|:---|
-| `lzc-dh1-1` 存在？ | ✅ tailscale `100.100.112.108`，`Online: true` |
+| `NODE-B` 存在？ | ✅ tailscale `NODE-B`，`Online: true` |
 | **版本** | **v5.6** ✅ 與 user 所述一致 |
-| **node ID** | `nVS9uUUusZ11CNTRL` — **與 v5.2、v5.4 兩輪相同** ⇒ 同一節點**第三次就地升級** |
-| 連線 | 直連 `1.169.214.22:23251`（非 relay） |
-| 節點內部 HostName | `lzc-dh1`（與 tailnet 名 `lzc-dh1-1` 不同，須用 `DNSName` 查） |
+| **node ID** | `NODE-B-NODEID` — **與 v5.2、v5.4 兩輪相同** ⇒ 同一節點**第三次就地升級** |
+| 連線 | 直連 `[public-ip]:23251`（非 relay） |
+| 節點內部 HostName | `NODE-B-host`（與 tailnet 名 `NODE-B` 不同，須用 `DNSName` 查） |
 
 ---
 
@@ -304,7 +304,7 @@ r3 http=000  time=75.004980  size=0
 3. **版本歸因能力有限**：除案例 01（4 次取樣）外，其餘案例每版僅 **1 次**執行。已知 LLM 雜訊大，
    **§4.2 中非案例-01 的跨版本差異屬觀察，不可歸因於版本**。
 4. **`dims_counted` 檢定本輪效力弱**：僅 3/8 案例有同分對，其餘 5 個的「0 不一致」不構成證據。
-5. **五輪跨兩台機器**：v4.9.2/v5.3.1 在 `lzcdh5`、v5.2/v5.4/v5.6 在 `lzc-dh1-1`（公網 IP 同為 `1.169.214.22`）。
+5. **五輪跨兩台機器**：v4.9.2/v5.3.1 在 `NODE-A`、v5.2/v5.4/v5.6 在 `NODE-B`（公網 IP 同為 `[public-ip]`）。
    延遲比較受硬體與網路影響，**只當參考**。
 6. **未測**：`opMode` 其他值（含**新的預設值**行為）、`top_k` 邊界、`questions` 多題以 `|` 分隔、400/500 路徑。
 7. **分數仍無法獨立重算** —— `weight_version`/`score_scale`/`score_schema` 已揭露，但權重數值未隨回應提供。
@@ -342,7 +342,7 @@ r3 http=000  time=75.004980  size=0
 
 | 項目 | 原腳本 | 本輪 | 理由 |
 |:---|:---|:---|:---|
-| Base URL | `http://localhost:8000` | `http://100.100.112.108:8000` | 遠端執行 |
+| Base URL | `http://localhost:8000` | `http://NODE-B:8000` | 遠端執行 |
 | 證據落盤 | 僅 case 3 存檔 | 每案例 `raw/` + `headers/` + `meta/` | byte 級證據 |
 | Role QA diff check | `python3` 讀 `/tmp` | `jq` 讀 `json/` | 等效，避免 `/tmp` 依賴 |
 

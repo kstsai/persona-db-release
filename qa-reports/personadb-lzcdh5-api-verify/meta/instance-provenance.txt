@@ -2,31 +2,31 @@
 
 === tailscale status (full) ===
 Warning: client version "1.98.8-t05a918293" != tailscaled server version "1.102.1-t8ebe8f7c3-gda6192991"
-100.125.195.64   a945            tkhand@  macOS    -                                                       
-100.83.52.97     bangoo          tkhand@  windows  -                                                       
-100.84.129.98    hermesa3-clone  tkhand@  linux    -                                                       
-100.100.112.108  lzc-dh1-1       tkhand@  linux    -                                                       
-100.66.58.123    lzc             tkhand@  linux    active; direct 1.169.214.22:41641, tx 165832 rx 767008  
-100.96.79.33     lzcdh5          tkhand@  linux    active; direct 1.169.214.22:52036, tx 9556 rx 20108     
+[ts-peer-ip]   [peer]            [account]@  macOS    -                                                       
+[ts-peer-ip]     [peer]          [account]@  windows  -                                                       
+[ts-peer-ip]    [peer]  [account]@  linux    -                                                       
+NODE-B  NODE-B       [account]@  linux    -                                                       
+[ts-peer-ip]    [peer]             [account]@  linux    active; direct [public-ip]:41641, tx 165832 rx 767008  
+NODE-A     NODE-A          [account]@  linux    active; direct [public-ip]:52036, tx 9556 rx 20108     
 
-=== tailscale status --json (lzcdh5 node) ===
+=== tailscale status --json (NODE-A node) ===
 {
-  "ID": "niegcmVrhm11CNTRL",
+  "ID": "NODE-A-NODEID",
   "PublicKey": "nodekey:0b42d4246c249c8f1560be364085ee89e226d54f3c2dc92cf60cb14129204f21",
-  "HostName": "lzcdh5",
-  "DNSName": "lzcdh5.tail6cb434.ts.net.",
+  "HostName": "NODE-A",
+  "DNSName": "NODE-A.[tailnet].",
   "OS": "linux",
   "UserID": 5111571072275620,
   "TailscaleIPs": [
-    "100.96.79.33",
-    "fd7a:115c:a1e0::2939:4f22"
+    "NODE-A",
+    "[ts-ipv6]"
   ],
   "AllowedIPs": [
-    "100.96.79.33/32",
-    "fd7a:115c:a1e0::2939:4f22/128"
+    "NODE-A/32",
+    "[ts-ipv6]/128"
   ],
   "Addrs": null,
-  "CurAddr": "1.169.214.22:52036",
+  "CurAddr": "[public-ip]:52036",
   "Relay": "tok",
   "PeerRelay": "",
   "RxBytes": 20108,
@@ -40,8 +40,8 @@ Warning: client version "1.98.8-t05a918293" != tailscaled server version "1.102.
   "ExitNodeOption": false,
   "Active": true,
   "PeerAPIURL": [
-    "http://100.96.79.33:53670",
-    "http://[fd7a:115c:a1e0::2939:4f22]:38179"
+    "http://NODE-A:53670",
+    "http://[[ts-ipv6]]:38179"
   ],
   "TaildropTarget": 1,
   "NoFileSharingReason": "",

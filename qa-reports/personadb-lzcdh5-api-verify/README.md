@@ -1,4 +1,4 @@
-# lzcdh5 persona-db API 實測 — 證據包
+# NODE-A persona-db API 實測 — 證據包
 
 **結論摘要**：9/9 請求 HTTP 200。`role` 參數驗證通過；但發現 7 項問題（收入桶飽和、端點不可重現、宣稱維度不存在等）。
 **完整分析**：見 **`ANALYSIS.md`**。
@@ -8,7 +8,7 @@
 ## 目錄結構
 
 ```
-personadb-lzcdh5-api-verify/
+personadb-NODE-A-api-verify/
 ├── ANALYSIS.md                    ← 【主報告】逐案例分析 + 7 項跨案例發現
 ├── README.md                      ← 本檔（證據地圖 + 複驗步驟）
 ├── run-test.sh                    ← 實際執行的 runner（原腳本改作遠端執行版）
@@ -50,7 +50,7 @@ personadb-lzcdh5-api-verify/
 ### 1. 確認證據未被竄改
 
 ```bash
-cd /Users/kstsai/Documents/personadb-lzcdh5-api-verify
+cd /Users/kstsai/Documents/personadb-NODE-A-api-verify
 cat meta/script-provenance.txt          # 比對上游腳本 sha256
 shasum -a 256 run-test.sh               # 應為 ffc7b106…74695d
 ```
@@ -111,9 +111,9 @@ jq -r '.scoring_basis.dims_counted as $d |
 ### 4. 重跑整套（⚠️ 約 20 分鐘，且結果**不會**與本包相同 — 見 §4.2）
 
 ```bash
-cd /Users/kstsai/Documents/personadb-lzcdh5-api-verify
+cd /Users/kstsai/Documents/personadb-NODE-A-api-verify
 # 建議另開目錄，避免覆蓋本證據包
-OUT=/tmp/lzcdh5-rerun bash run-test.sh
+OUT=/tmp/NODE-A-rerun bash run-test.sh
 ```
 
 > **重要**：重跑結果**必然不同**（LLM 每次重新合成篩選維度）。若要比較，請保留本包的 `summary-per-case.csv` 作為 baseline，並用 `determinism-comparison.csv` 的方法做交集比對。
@@ -125,8 +125,8 @@ OUT=/tmp/lzcdh5-rerun bash run-test.sh
 | 項目 | 值 |
 |------|-----|
 | 執行者 | DSH agent（macOS 14/x） |
-| 目標 | `lzcdh5` = tailscale `100.96.79.33`，`lzcdh5.tail6cb434.ts.net` |
-| 連線 | tailscale 直連 `1.169.214.22:52036`（非 relay），`Online: true` |
+| 目標 | `NODE-A` = tailscale `NODE-A`，`NODE-A.[tailnet]` |
+| 連線 | tailscale 直連 `[public-ip]:52036`（非 relay），`Online: true` |
 | 服務 | uvicorn / Persona DB **v4.9.2**，1069 personas |
 | LLM 後端 | `deepseek-v4-flash` → `https://api.deepseek.com` |
 | 時間 | 2026-09-12 02:25:5x – 02:45:07 UTC（≈19.4 分鐘） |
@@ -135,7 +135,7 @@ OUT=/tmp/lzcdh5-rerun bash run-test.sh
 ## 已知偏離原腳本之處
 
 **請求參數、順序、斷言邏輯 100% 不變**。僅三處調整：
-1. Base URL `localhost:8000` → `100.96.79.33:8000`（遠端執行）
+1. Base URL `localhost:8000` → `NODE-A:8000`（遠端執行）
 2. 新增逐案例證據落盤（`raw/` `headers/` `meta/`）
 3. Role QA diff check 由 `python3` 讀 `/tmp` 改為 `jq` 讀 `json/`（等效，避免 `/tmp` 依賴）
 

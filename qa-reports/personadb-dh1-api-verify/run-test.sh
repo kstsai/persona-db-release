@@ -1,15 +1,15 @@
 #!/bin/bash
 # Faithful adaptation of kstsai/persona-db-release upDockerVerHermes/test-persona-db-api.sh
 # Original targets http://localhost:8000 (runs ON the instance host).
-# This variant targets the lzcdh5 tailscale instance remotely, same endpoints/params/order,
+# This variant targets the NODE-A tailscale instance remotely, same endpoints/params/order,
 # and additionally persists full evidence (body / headers / curl meta) for human re-verification.
 #
 # Original script source: https://raw.githubusercontent.com/kstsai/persona-db-release/main/upDockerVerHermes/test-persona-db-api.sh
 
 set -u
 
-BASE_URL="${BASE_URL:-http://100.96.79.33:8000}"
-OUT="${OUT:-/Users/kstsai/Documents/personadb-lzcdh5-api-verify}"
+BASE_URL="${BASE_URL:-http://NODE-A:8000}"
+OUT="${OUT:-/Users/kstsai/Documents/personadb-NODE-A-api-verify}"
 
 mkdir -p "$OUT/raw" "$OUT/json" "$OUT/headers" "$OUT/meta"
 
@@ -68,7 +68,7 @@ case_run() {
 }
 
 echo "############################################################"
-echo "# persona-db API verification against lzcdh5"
+echo "# persona-db API verification against NODE-A"
 echo "# BASE_URL = ${BASE_URL}"
 echo "# started  = $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 echo "# original = kstsai/persona-db-release/upDockerVerHermes/test-persona-db-api.sh"

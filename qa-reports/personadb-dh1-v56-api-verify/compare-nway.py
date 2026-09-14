@@ -8,9 +8,9 @@ import json, glob, os, sys, csv, hashlib, itertools
 
 HOME = '/Users/kstsai/Documents'
 DIRS = sys.argv[1:] or [
-    f'{HOME}/personadb-lzcdh5-api-verify',        # v4.9.2
+    f'{HOME}/personadb-NODE-A-api-verify',        # v4.9.2
     f'{HOME}/personadb-dh1-api-verify',           # v5.2
-    f'{HOME}/personadb-lzcdh5-v531-api-verify',   # v5.3.1
+    f'{HOME}/personadb-NODE-A-v531-api-verify',   # v5.3.1
     f'{HOME}/personadb-dh1-v54-api-verify',       # v5.4
     f'{HOME}/personadb-dh1-v56-api-verify',       # v5.6
 ]

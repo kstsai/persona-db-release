@@ -1,9 +1,9 @@
-# lzc-dh1-1 persona-db **v5.4** API 實測 — 證據包（第四輪，四版對照）
+# NODE-B persona-db **v5.4** API 實測 — 證據包（第四輪，四版對照）
 
 **結論摘要**：8/9 成功（**1 次 HTTP 503 `FILTER_FAILED`，四輪首見**）。v5.4 新增 `pool_exhausted`/`returned`/`no_op`/`overshoot`/`score_scale` 等**可觀測性欄位**，精準對應前三輪報告的發現；`debt_status` 精度與案例 06 召回同時改善。但 503 回應**違反自身宣告的 schema**，且可重現性較 v5.3.1 退步。
 **完整分析**：見 **`ANALYSIS.md`**。
 
-> **節點確認**：`lzc-dh1-1` (`100.100.112.108`)，node ID `nVS9uUUusZ11CNTRL`（與第二輪 v5.2 相同 → 就地升級 v5.2 → v5.4）。
+> **節點確認**：`NODE-B` (`NODE-B`)，node ID `NODE-B-NODEID`（與第二輪 v5.2 相同 → 就地升級 v5.2 → v5.4）。
 
 ---
 
@@ -11,10 +11,10 @@
 
 | 版本 | 節點 | 目錄 |
 |------|------|------|
-| v4.9.2 | lzcdh5 (100.96.79.33) | `../personadb-lzcdh5-api-verify/` |
-| v5.2 | lzc-dh1-1 (100.100.112.108) | `../personadb-dh1-api-verify/` |
-| v5.3.1 | lzcdh5 (100.96.79.33) | `../personadb-lzcdh5-v531-api-verify/` |
-| **v5.4** | **lzc-dh1-1 (100.100.112.108)** | **本目錄** |
+| v4.9.2 | NODE-A (NODE-A) | `../personadb-NODE-A-api-verify/` |
+| v5.2 | NODE-B (NODE-B) | `../personadb-dh1-api-verify/` |
+| v5.3.1 | NODE-A (NODE-A) | `../personadb-NODE-A-v531-api-verify/` |
+| **v5.4** | **NODE-B (NODE-B)** | **本目錄** |
 
 四輪 `run-test.sh` **sha256 完全相同**（`ffc7b106…`）。
 
@@ -72,8 +72,8 @@ cat meta/instance-provenance.txt    # 確認 node ID 與第二輪相同（就地
 ### 2. 確認 v5.4 契約是新的（第三種）
 
 ```bash
-for d in ../personadb-lzcdh5-api-verify ../personadb-dh1-api-verify \
-         ../personadb-lzcdh5-v531-api-verify .; do
+for d in ../personadb-NODE-A-api-verify ../personadb-dh1-api-verify \
+         ../personadb-NODE-A-v531-api-verify .; do
   printf "%-42s %6d B  %s\n" "$(basename $d)" "$(wc -c < $d/raw/openapi.json)" \
     "$(shasum -a 256 $d/raw/openapi.json | cut -c1-16)"
 done
@@ -106,7 +106,7 @@ jq -r 'keys|join(", ")' json/07_debt.json
 # (e) ★ v5.4 scoring_basis 新欄位（回應我上輪「分數不可跨版本比較」的發現）
 jq '.scoring_basis' json/07_debt.json
 # 應含 weight_version="v5.4", score_scale="relative-within-version", score_schema=1
-for d in ../personadb-lzcdh5-api-verify ../personadb-dh1-api-verify ../personadb-lzcdh5-v531-api-verify; do
+for d in ../personadb-NODE-A-api-verify ../personadb-dh1-api-verify ../personadb-NODE-A-v531-api-verify; do
   printf "%-42s %s\n" "$(basename $d)" "$(jq -c '.scoring_basis|keys' $d/json/07_debt.json)"
 done
 # 前三版應只有 4 個 key
@@ -135,15 +135,15 @@ jq -r '.broadening_attempts[] | select(.overshoot==true) | "  loop \(.loop): \(.
 
 # (i) ★ debt_status 精度恢復（v5.3.1 有 4/10 無債務；v5.4 應 0/10）
 echo "v5.4  : $(jq -r '[.summary[].debt_status]|group_by(.)|map("\(.[0]):\(length)")|join("  ")' json/07_debt.json)"
-echo "v5.3.1: $(jq -r '[.summary[].debt_status]|group_by(.)|map("\(.[0]):\(length)")|join("  ")' ../personadb-lzcdh5-v531-api-verify/json/07_debt.json)"
+echo "v5.3.1: $(jq -r '[.summary[].debt_status]|group_by(.)|map("\(.[0]):\(length)")|join("  ")' ../personadb-NODE-A-v531-api-verify/json/07_debt.json)"
 
 # (j) ★ 案例 06 由 5 筆恢復到 10 筆
 echo "v5.4  : matched=$(jq -r .total_matched json/06_aesthetic.json) returned=$(jq -r .returned json/06_aesthetic.json)"
-echo "v5.3.1: matched=$(jq -r .total_matched ../personadb-lzcdh5-v531-api-verify/json/06_aesthetic.json) returned=$(jq -r .returned ../personadb-lzcdh5-v531-api-verify/json/06_aesthetic.json)"
+echo "v5.3.1: matched=$(jq -r .total_matched ../personadb-NODE-A-v531-api-verify/json/06_aesthetic.json) returned=$(jq -r .returned ../personadb-NODE-A-v531-api-verify/json/06_aesthetic.json)"
 
 # (k) ★ employment_status 四輪皆未套用
-for d in ../personadb-lzcdh5-api-verify ../personadb-dh1-api-verify \
-         ../personadb-lzcdh5-v531-api-verify .; do
+for d in ../personadb-NODE-A-api-verify ../personadb-dh1-api-verify \
+         ../personadb-NODE-A-v531-api-verify .; do
   printf "%-42s " "$(basename $d)"
   n=0; for f in $d/json/0[1-8]*.json; do
     jq -e 'has("total_matched")' "$f" >/dev/null 2>&1 || continue
@@ -159,7 +159,7 @@ python3 compare-nway.py
 
 ```bash
 cd /Users/kstsai/Documents/personadb-dh1-v54-api-verify
-OUT=/tmp/v54-rerun BASE_URL=http://100.100.112.108:8000 bash run-test.sh
+OUT=/tmp/v54-rerun BASE_URL=http://NODE-B:8000 bash run-test.sh
 ```
 
 > v5.4 的 `total_matched` 變異約 4.5×（v5.3.1 為 1.3×），且 3 次 case-01 取樣中有 1 次 300s 逾時。**建議保留本包作 baseline。**
@@ -170,8 +170,8 @@ OUT=/tmp/v54-rerun BASE_URL=http://100.100.112.108:8000 bash run-test.sh
 
 | 項目 | 值 |
 |------|-----|
-| 目標 | `lzc-dh1-1` = tailscale `100.100.112.108`（node ID `nVS9uUUusZ11CNTRL`；節點內部 HostName 為 `lzc-dh1`） |
-| 連線 | tailscale 直連 `1.169.214.22:21845`（非 relay） |
+| 目標 | `NODE-B` = tailscale `NODE-B`（node ID `NODE-B-NODEID`；節點內部 HostName 為 `NODE-B-host`） |
+| 連線 | tailscale 直連 `[public-ip]:21845`（非 relay） |
 | 服務 | uvicorn / Persona DB **v5.4**，1069 personas（1.72 MB） |
 | LLM 後端 | `deepseek-v4-flash` → `https://api.deepseek.com` |
 | 其他 | Python 3.11.15；Name diversity 172 (16.1%) max 16×；32 Python files |
@@ -181,7 +181,7 @@ OUT=/tmp/v54-rerun BASE_URL=http://100.100.112.108:8000 bash run-test.sh
 
 | | v4.9.2 | v5.2 | v5.3.1 | **v5.4** |
 |---|---|---|---|---|
-| 節點 | lzcdh5 | lzc-dh1-1 | lzcdh5 | **lzc-dh1-1** |
+| 節點 | NODE-A | NODE-B | NODE-A | **NODE-B** |
 | 契約 sha256(16) | `8ac54b95228d85fc` | `8b869ae266992056` | `8b869ae266992056` | **`30a228782154bdce`** |
 | openapi bytes | 9298 | 9706 | 9706 | **10131** |
 | top-level keys | 10 | 10 | 10 | **12** |

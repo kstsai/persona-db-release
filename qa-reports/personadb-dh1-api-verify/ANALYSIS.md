@@ -1,13 +1,13 @@
-# persona-db API 實測分析報告 — lzc-dh1-1 (v5.2)
+# persona-db API 實測分析報告 — NODE-B (v5.2)
 
-**受測 instance**：`lzc-dh1-1` (tailscale `100.100.112.108`, `lzc-dh1-1.tail6cb434.ts.net`)
-**測試腳本**：`kstsai/persona-db-release` → `upDockerVerHermes/test-persona-db-api.sh`（**與 lzcdh5 那次同一份，sha256 相同**）
+**受測 instance**：`NODE-B` (tailscale `NODE-B`, `NODE-B.[tailnet]`)
+**測試腳本**：`kstsai/persona-db-release` → `upDockerVerHermes/test-persona-db-api.sh`（**與 NODE-A 那次同一份，sha256 相同**）
 **執行時間**：2026-09-12 02:53 – 03:17 UTC（≈ 24 分鐘）
 **執行結果**：9 / 9 請求 HTTP 200，0 錯誤
 **證據目錄**：`/Users/kstsai/Documents/personadb-dh1-api-verify/`
-**對照組**：`/Users/kstsai/Documents/personadb-lzcdh5-api-verify/`（Persona DB **v4.9.2**）
+**對照組**：`/Users/kstsai/Documents/personadb-NODE-A-api-verify/`（Persona DB **v4.9.2**）
 
-> **版本確認**：`lzc-dh1-1` 執行的是 **Persona DB v5.2**（lzcdh5 為 v4.9.2）。這不是小改版 —— v5.2 **新增了 3 個 persona 維度**，正好是 lzcdh5 上缺失、而測試腳本案例標籤所宣稱的那 3 個。詳見 §2。
+> **版本確認**：`NODE-B` 執行的是 **Persona DB v5.2**（NODE-A 為 v4.9.2）。這不是小改版 —— v5.2 **新增了 3 個 persona 維度**，正好是 NODE-A 上缺失、而測試腳本案例標籤所宣稱的那 3 個。詳見 §2。
 
 > ### 📌 量測範圍與判讀修正（2026-09-14 補記 — 僅附加，原文未改）
 >
@@ -63,7 +63,7 @@
 
 對 8 個 persona 抽樣（208/337/181/891/408/331/244/802）呼叫 `/personadb/detail`，兩版都是**每個 persona 恰好 N 維、且 8 個樣本維度集合完全一致**：
 
-| | v4.9.2 (lzcdh5) | v5.2 (lzc-dh1-1) |
+| | v4.9.2 (NODE-A) | v5.2 (NODE-B) |
 |---|---|---|
 | 維度數 | **22** | **25** |
 | 新增 | — | **`aesthetic_procedure`, `debt_status`, `employment_status`** |
@@ -78,12 +78,12 @@
 
 `summary[]` 每一列由 **14 欄 → 17 欄**，新增的正是這 3 個維度。**top-level key 不變** → 屬於**向後相容的欄位新增**（既有 consumer 不會壞，但若做嚴格 schema 驗證會失敗）。
 
-### 2.3 這推翻了 lzcdh5 報告中的一項判讀
+### 2.3 這推翻了 NODE-A 報告中的一項判讀
 
-lzcdh5（v4.9.2）報告 §4.3 結論為「案例標籤宣稱的 dimension 20/21/22 不存在，測試覆蓋率被高估」。**在 v5.2 上該結論不成立**：
+NODE-A（v4.9.2）報告 §4.3 結論為「案例標籤宣稱的 dimension 20/21/22 不存在，測試覆蓋率被高估」。**在 v5.2 上該結論不成立**：
 
 - 這 3 個維度**確實存在**，且**確實會被 API 使用**（見 §3）
-- 正確的判讀是：**lzcdh5 是落後的部署（v4.9.2），而測試腳本是為 v5.2 寫的**
+- 正確的判讀是：**NODE-A 是落後的部署（v4.9.2），而測試腳本是為 v5.2 寫的**
 - → 該問題應重新歸類為**「版本落差（version skew）」**，而非腳本標籤錯誤
 
 **教訓**：在只有單一部署可測時，「腳本標籤與 schema 不符」容易誤判成腳本 bug；實際是**受測環境版本落後**。跨版本對照是唯一能區分兩者的方法。
@@ -346,11 +346,11 @@ loop 3:  0 → 11  移除「aesthetic_procedure」此一非核心維度，以放
 7. **候選池頭部集中**跨版本持續（§5.7）
 
 **跨版本最重要的單一結論**
-> `aesthetic_procedure` / `debt_status` / `employment_status` **不是腳本標籤的錯誤，而是 v5.2 的新增維度**。lzcdh5（v4.9.2）是落後部署。此差異只能靠**跨版本對照**發現 —— 單一環境測試會把它誤判為腳本 bug。
+> `aesthetic_procedure` / `debt_status` / `employment_status` **不是腳本標籤的錯誤，而是 v5.2 的新增維度**。NODE-A（v4.9.2）是落後部署。此差異只能靠**跨版本對照**發現 —— 單一環境測試會把它誤判為腳本 bug。
 
 ---
 
 ## 8. 相對於原腳本的改動
 
-與 lzcdh5 那次**完全相同**：`run-test.sh` sha256 `ffc7b10642f72f4120a43b77848ed722c6cf865c23b3267a3eb87bd48c74695d`（與 lzcdh5 run 一致），上游腳本 sha256 `33749d4e…dad2e3`（相同）。
-差異僅在 `BASE_URL=http://100.100.112.108:8000` 與 `OUT` 指向本目錄。**請求參數、順序、斷言邏輯 100% 未變**。
+與 NODE-A 那次**完全相同**：`run-test.sh` sha256 `ffc7b10642f72f4120a43b77848ed722c6cf865c23b3267a3eb87bd48c74695d`（與 NODE-A run 一致），上游腳本 sha256 `33749d4e…dad2e3`（相同）。
+差異僅在 `BASE_URL=http://NODE-B:8000` 與 `OUT` 指向本目錄。**請求參數、順序、斷言邏輯 100% 未變**。

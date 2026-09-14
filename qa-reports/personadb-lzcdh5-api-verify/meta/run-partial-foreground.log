@@ -1,12 +1,12 @@
 ############################################################
-# persona-db API verification against lzcdh5
-# BASE_URL = http://100.96.79.33:8000
+# persona-db API verification against NODE-A
+# BASE_URL = http://NODE-A:8000
 # started  = 2026-09-12T02:15:43Z
 # original = kstsai/persona-db-release/upDockerVerHermes/test-persona-db-api.sh
 ############################################################
 
 === 0. /personadb/status ===
---- REQUEST: GET http://100.96.79.33:8000/personadb/status  ---
+--- REQUEST: GET http://NODE-A:8000/personadb/status  ---
 
 real	0m1.557s
 user	0m0.006s
@@ -38,7 +38,7 @@ Persona DB Status
 jq: parse error: Invalid numeric literal at line 1, column 8
 
 === 1. 康是美的目標客戶 ===
---- REQUEST: GET http://100.96.79.33:8000/personadb/candidates --data-urlencode questions=康是美的目標客戶 --data-urlencode top_k=3 --data-urlencode opMode=僅篩選 ---
+--- REQUEST: GET http://NODE-A:8000/personadb/candidates --data-urlencode questions=康是美的目標客戶 --data-urlencode top_k=3 --data-urlencode opMode=僅篩選 ---
 
 real	5m57.306s
 user	0m0.014s
@@ -49,7 +49,7 @@ sys	0m0.019s
 --- (pretty JSON saved: json/01_kangshimei.json) ---
 
 === 2. TESLA的目標客戶 ===
---- REQUEST: GET http://100.96.79.33:8000/personadb/candidates --data-urlencode questions=TESLA的目標客戶 --data-urlencode top_k=3 --data-urlencode opMode=僅篩選 ---
+--- REQUEST: GET http://NODE-A:8000/personadb/candidates --data-urlencode questions=TESLA的目標客戶 --data-urlencode top_k=3 --data-urlencode opMode=僅篩選 ---
 
 real	1m27.078s
 user	0m0.008s
@@ -60,7 +60,7 @@ sys	0m0.012s
 --- (pretty JSON saved: json/02_tesla.json) ---
 
 === 3. 時尚服裝設計師的目標客戶 ===
---- REQUEST: GET http://100.96.79.33:8000/personadb/candidates --data-urlencode questions=時尚服裝設計師的目標客戶 --data-urlencode top_k=10 --data-urlencode opMode=僅篩選 ---
+--- REQUEST: GET http://NODE-A:8000/personadb/candidates --data-urlencode questions=時尚服裝設計師的目標客戶 --data-urlencode top_k=10 --data-urlencode opMode=僅篩選 ---
 
 real	1m18.673s
 user	0m0.008s
@@ -71,4 +71,4 @@ sys	0m0.010s
 --- (pretty JSON saved: json/03_fashion.json) ---
 
 === 4. 房貸優惠 — 房仲業者 ===
---- REQUEST: GET http://100.96.79.33:8000/personadb/candidates --data-urlencode questions=房貸優惠方案 --data-urlencode role=房仲業者 --data-urlencode top_k=5 --data-urlencode opMode=僅篩選 ---
+--- REQUEST: GET http://NODE-A:8000/personadb/candidates --data-urlencode questions=房貸優惠方案 --data-urlencode role=房仲業者 --data-urlencode top_k=5 --data-urlencode opMode=僅篩選 ---

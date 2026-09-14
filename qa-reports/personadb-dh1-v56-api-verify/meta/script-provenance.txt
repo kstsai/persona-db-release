@@ -3,8 +3,8 @@ url: https://raw.githubusercontent.com/kstsai/persona-db-release/main/upDockerVe
 33749d4e5218f3860f15f4296c5fc5ea90f0fa93f441bc4eba9faf2274dad2e3  meta/original-test-persona-db-api.sh
 
 === 五輪 runner sha256 -- 必須完全相同 ===
-  personadb-lzcdh5-api-verify                ffc7b10642f72f4120a43b77848ed722c6cf865c23b3267a3eb87bd48c74695d
+  personadb-NODE-A-api-verify                ffc7b10642f72f4120a43b77848ed722c6cf865c23b3267a3eb87bd48c74695d
   personadb-dh1-api-verify                   ffc7b10642f72f4120a43b77848ed722c6cf865c23b3267a3eb87bd48c74695d
-  personadb-lzcdh5-v531-api-verify           ffc7b10642f72f4120a43b77848ed722c6cf865c23b3267a3eb87bd48c74695d
+  personadb-NODE-A-v531-api-verify           ffc7b10642f72f4120a43b77848ed722c6cf865c23b3267a3eb87bd48c74695d
   personadb-dh1-v54-api-verify               ffc7b10642f72f4120a43b77848ed722c6cf865c23b3267a3eb87bd48c74695d
   .                                          ffc7b10642f72f4120a43b77848ed722c6cf865c23b3267a3eb87bd48c74695d

@@ -1,12 +1,12 @@
 ############################################################
-# persona-db API verification against lzcdh5
-# BASE_URL = http://100.100.112.108:8000
+# persona-db API verification against NODE-A
+# BASE_URL = http://NODE-B:8000
 # started  = 2026-09-13T23:40:52Z
 # original = kstsai/persona-db-release/upDockerVerHermes/test-persona-db-api.sh
 ############################################################
 
 === 0. /personadb/status ===
---- REQUEST: GET http://100.100.112.108:8000/personadb/status  ---
+--- REQUEST: GET http://NODE-B:8000/personadb/status  ---
 
 real	0m1.135s
 user	0m0.004s
@@ -38,7 +38,7 @@ Persona DB Status
 jq: parse error: Invalid numeric literal at line 1, column 8
 
 === 1. 康是美的目標客戶 ===
---- REQUEST: GET http://100.100.112.108:8000/personadb/candidates --data-urlencode questions=康是美的目標客戶 --data-urlencode top_k=3 --data-urlencode opMode=僅篩選 ---
+--- REQUEST: GET http://NODE-B:8000/personadb/candidates --data-urlencode questions=康是美的目標客戶 --data-urlencode top_k=3 --data-urlencode opMode=僅篩選 ---
 
 real	2m5.462s
 user	0m0.009s
@@ -49,7 +49,7 @@ sys	0m0.013s
 --- (pretty JSON saved: json/01_kangshimei.json) ---
 
 === 2. TESLA的目標客戶 ===
---- REQUEST: GET http://100.100.112.108:8000/personadb/candidates --data-urlencode questions=TESLA的目標客戶 --data-urlencode top_k=3 --data-urlencode opMode=僅篩選 ---
+--- REQUEST: GET http://NODE-B:8000/personadb/candidates --data-urlencode questions=TESLA的目標客戶 --data-urlencode top_k=3 --data-urlencode opMode=僅篩選 ---
 
 real	1m0.111s
 user	0m0.008s
@@ -60,7 +60,7 @@ sys	0m0.012s
 --- (pretty JSON saved: json/02_tesla.json) ---
 
 === 3. 時尚服裝設計師的目標客戶 ===
---- REQUEST: GET http://100.100.112.108:8000/personadb/candidates --data-urlencode questions=時尚服裝設計師的目標客戶 --data-urlencode top_k=10 --data-urlencode opMode=僅篩選 ---
+--- REQUEST: GET http://NODE-B:8000/personadb/candidates --data-urlencode questions=時尚服裝設計師的目標客戶 --data-urlencode top_k=10 --data-urlencode opMode=僅篩選 ---
 
 real	1m8.879s
 user	0m0.008s
@@ -71,7 +71,7 @@ sys	0m0.011s
 --- (pretty JSON saved: json/03_fashion.json) ---
 
 === 4. 房貸優惠 — 房仲業者 ===
---- REQUEST: GET http://100.100.112.108:8000/personadb/candidates --data-urlencode questions=房貸優惠方案 --data-urlencode role=房仲業者 --data-urlencode top_k=5 --data-urlencode opMode=僅篩選 ---
+--- REQUEST: GET http://NODE-B:8000/personadb/candidates --data-urlencode questions=房貸優惠方案 --data-urlencode role=房仲業者 --data-urlencode top_k=5 --data-urlencode opMode=僅篩選 ---
 
 real	2m18.889s
 user	0m0.009s
@@ -82,7 +82,7 @@ sys	0m0.014s
 --- (pretty JSON saved: json/04_role_fangzhong.json) ---
 
 === 5. 房貸優惠 — 銀行業者 ===
---- REQUEST: GET http://100.100.112.108:8000/personadb/candidates --data-urlencode questions=房貸優惠方案 --data-urlencode role=銀行業者 --data-urlencode top_k=5 --data-urlencode opMode=僅篩選 ---
+--- REQUEST: GET http://NODE-B:8000/personadb/candidates --data-urlencode questions=房貸優惠方案 --data-urlencode role=銀行業者 --data-urlencode top_k=5 --data-urlencode opMode=僅篩選 ---
 
 real	1m12.070s
 user	0m0.008s
@@ -93,7 +93,7 @@ sys	0m0.013s
 --- (pretty JSON saved: json/05_role_banker.json) ---
 
 === 6. 醫美診所的目標客戶（dimension 20: aesthetic_procedure） ===
---- REQUEST: GET http://100.100.112.108:8000/personadb/candidates --data-urlencode questions=醫美診所的目標客戶 --data-urlencode role=醫美診所行銷主管 --data-urlencode top_k=10 --data-urlencode opMode=僅篩選 ---
+--- REQUEST: GET http://NODE-B:8000/personadb/candidates --data-urlencode questions=醫美診所的目標客戶 --data-urlencode role=醫美診所行銷主管 --data-urlencode top_k=10 --data-urlencode opMode=僅篩選 ---
 
 real	1m52.895s
 user	0m0.009s
@@ -104,7 +104,7 @@ sys	0m0.013s
 --- (pretty JSON saved: json/06_aesthetic.json) ---
 
 === 7. 債務整合的目標客戶（dimension 21: debt_status） ===
---- REQUEST: GET http://100.100.112.108:8000/personadb/candidates --data-urlencode questions=債務整合貸款方案的目標客戶 --data-urlencode role=銀行債務整合專員 --data-urlencode top_k=10 --data-urlencode opMode=僅篩選 ---
+--- REQUEST: GET http://NODE-B:8000/personadb/candidates --data-urlencode questions=債務整合貸款方案的目標客戶 --data-urlencode role=銀行債務整合專員 --data-urlencode top_k=10 --data-urlencode opMode=僅篩選 ---
 
 real	1m43.350s
 user	0m0.008s
@@ -115,7 +115,7 @@ sys	0m0.011s
 --- (pretty JSON saved: json/07_debt.json) ---
 
 === 8. 小吃攤老闆的目標客群（dimension 22: employment_status） ===
---- REQUEST: GET http://100.100.112.108:8000/personadb/candidates --data-urlencode questions=小吃攤老闆的目標客群 --data-urlencode role=夜市商圈協會 --data-urlencode top_k=10 --data-urlencode opMode=僅篩選 ---
+--- REQUEST: GET http://NODE-B:8000/personadb/candidates --data-urlencode questions=小吃攤老闆的目標客群 --data-urlencode role=夜市商圈協會 --data-urlencode top_k=10 --data-urlencode opMode=僅篩選 ---
 
 real	1m44.186s
 user	0m0.009s

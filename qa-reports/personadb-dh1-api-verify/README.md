@@ -1,9 +1,9 @@
-# lzc-dh1-1 persona-db **v5.2** API 實測 — 證據包
+# NODE-B persona-db **v5.2** API 實測 — 證據包
 
 **結論摘要**：9/9 請求 HTTP 200。v5.2 **新增 3 個 persona 維度**（`aesthetic_procedure`/`debt_status`/`employment_status`）並實際投入篩選；收入桶飽和大幅改善。但端點仍不可重現（同查詢 `total_matched` 1↔62）、`employment_status` 從未被套用。
-**完整分析**：見 **`ANALYSIS.md`**。**對照組**：`../personadb-lzcdh5-api-verify/`（v4.9.2）。
+**完整分析**：見 **`ANALYSIS.md`**。**對照組**：`../personadb-NODE-A-api-verify/`（v4.9.2）。
 
-> ⚠️ **與 lzcdh5 的關鍵差異**：v5.2 多了 3 個維度，`summary[]` 由 14 欄增至 17 欄。若你的 consumer 做嚴格 schema 驗證，會在此失敗（top-level key 不變，屬相容性新增）。
+> ⚠️ **與 NODE-A 的關鍵差異**：v5.2 多了 3 個維度，`summary[]` 由 14 欄增至 17 欄。若你的 consumer 做嚴格 schema 驗證，會在此失敗（top-level key 不變，屬相容性新增）。
 
 ---
 
@@ -13,7 +13,7 @@
 personadb-dh1-api-verify/
 ├── ANALYSIS.md                    ← 【主報告】逐案例分析 + 7 項跨版本對照發現
 ├── README.md                      ← 本檔（證據地圖 + 複驗步驟）
-├── run-test.sh                    ← 實際執行的 runner（sha256 與 lzcdh5 run 完全相同）
+├── run-test.sh                    ← 實際執行的 runner（sha256 與 NODE-A run 完全相同）
 ├── compare-versions.py            ← v4.9.2 ⟷ v5.2 自動對照工具
 ├── run.log                        ← 完整執行 stdout（含每案例標籤 + 完整 response body）
 │
@@ -26,7 +26,7 @@ personadb-dh1-api-verify/
 │                                       屬**預期行為**（status 回傳 text/plain，非 JSON）
 ├── headers/                       ← 每案例完整 HTTP response headers
 ├── meta/                          ← 每案例 http_code / 耗時 / bytes / curl 參數 + provenance
-│   ├── instance-provenance.txt    ←   tailscale 節點資訊（含 lzc-dh1-1 vs lzcdh5）
+│   ├── instance-provenance.txt    ←   tailscale 節點資訊（含 NODE-B vs NODE-A）
 │   ├── original-test-persona-db-api.sh  ← 上游原始腳本存檔
 │   └── script-provenance.txt      ←   （見下方「雜湊」）
 │
@@ -54,7 +54,7 @@ personadb-dh1-api-verify/
 cd /Users/kstsai/Documents/personadb-dh1-api-verify
 shasum -a 256 run-test.sh meta/original-test-persona-db-api.sh
 # runner 應為 ffc7b10642f72f4120a43b77848ed722c6cf865c23b3267a3eb87bd48c74695d
-#   ← 與 lzcdh5 那次執行「完全相同」，確保是同一份測試
+#   ← 與 NODE-A 那次執行「完全相同」，確保是同一份測試
 # 上游腳本應為 33749d4e5218f3860f15f4296c5fc5ea90f0fa93f441bc4eba9faf2274dad2e3
 ```
 
@@ -82,7 +82,7 @@ done
 
 # (c) ★ v5.2 新增 3 維度：summary[] 應為 17 欄（v4.9.2 為 14 欄）
 echo "v5.2  : $(jq -r '.summary[0]|keys|length' json/01_kangshimei.json) 欄"
-echo "v4.9.2: $(jq -r '.summary[0]|keys|length' ../personadb-lzcdh5-api-verify/json/01_kangshimei.json) 欄"
+echo "v4.9.2: $(jq -r '.summary[0]|keys|length' ../personadb-NODE-A-api-verify/json/01_kangshimei.json) 欄"
 
 # (d) ★ 新維度是否被「套用為篩選」（vs 僅出現在 summary 欄位）
 for f in json/0[1-8]*.json; do
@@ -102,7 +102,7 @@ jq -r '[.summary[].aesthetic_procedure]|group_by(.)|map("\(.[0]):\(length)")|joi
 jq -r '.applied_filters.debt_status, ([.summary[].debt_status]|group_by(.)|map("\(.[0]):\(length)")|join("  "))' json/07_debt.json
 
 # (h) ★ 收入桶飽和對照（v5.2 vs v4.9.2）
-for d in . ../personadb-lzcdh5-api-verify; do
+for d in . ../personadb-NODE-A-api-verify; do
   echo "--- $d ---"
   for f in $d/json/0[1-8]*.json; do
     printf "%s %s/%s  " "$(basename $f .json | cut -c1-2)" \
@@ -139,7 +139,7 @@ python3 compare-versions.py
 
 ```bash
 cd /Users/kstsai/Documents/personadb-dh1-api-verify
-OUT=/tmp/dh1-rerun BASE_URL=http://100.100.112.108:8000 bash run-test.sh
+OUT=/tmp/dh1-rerun BASE_URL=http://NODE-B:8000 bash run-test.sh
 ```
 
 > **重要**：v5.2 的不可重現性比 v4.9.2 更嚴重（同查詢 `total_matched` 1↔62）。重跑請保留本包 `summary-per-case.csv` 作 baseline。
@@ -150,17 +150,17 @@ OUT=/tmp/dh1-rerun BASE_URL=http://100.100.112.108:8000 bash run-test.sh
 
 | 項目 | 值 |
 |------|-----|
-| 目標 | `lzc-dh1-1` = tailscale `100.100.112.108`，`lzc-dh1-1.tail6cb434.ts.net` |
-| **節點內部 HostName** | **`lzc-dh1`**（與 tailnet 名 `lzc-dh1-1` 不同 —— 用 `HostName` 查 `tailscale status --json` 會查不到，須用 `DNSName`） |
-| 連線 | tailscale 直連 `1.169.214.22:21888`（非 relay），`Online: true` |
+| 目標 | `NODE-B` = tailscale `NODE-B`，`NODE-B.[tailnet]` |
+| **節點內部 HostName** | **`NODE-B-host`**（與 tailnet 名 `NODE-B` 不同 —— 用 `HostName` 查 `tailscale status --json` 會查不到，須用 `DNSName`） |
+| 連線 | tailscale 直連 `[public-ip]:21888`（非 relay），`Online: true` |
 | 服務 | uvicorn / Persona DB **v5.2**，1069 personas（persona 檔 1.72 MB） |
 | LLM 後端 | `deepseek-v4-flash` → `https://api.deepseek.com` |
 | 其他 | Python 3.11.15；Name diversity 172 unique (16.1%)，max repeat 16×；32 Python files |
 | 時間 | 2026-09-12 02:53 – 03:17 UTC（≈24 分鐘） |
 
-**v4.9.2 (lzcdh5) vs v5.2 (lzc-dh1-1) 環境對照**
+**v4.9.2 (NODE-A) vs v5.2 (NODE-B) 環境對照**
 
-| | lzcdh5 | lzc-dh1-1 |
+| | NODE-A | NODE-B |
 |---|---|---|
 | Version | v4.9.2 | **v5.2** |
 | persona 檔大小 | 1.60 MB | **1.72 MB** |
@@ -170,12 +170,12 @@ OUT=/tmp/dh1-rerun BASE_URL=http://100.100.112.108:8000 bash run-test.sh
 | Python | 3.11.16 | 3.11.15 |
 | Supporting Artifices | 30 | 32 |
 | candidates 平均延遲 | 144.1s | **203.5s** |
-| 公網 IP | `1.169.214.22` | `1.169.214.22`（**同一 NAT**） |
+| 公網 IP | `[public-ip]` | `[public-ip]`（**同一 NAT**） |
 
 ## 已知偏離原腳本之處
 
-**請求參數、順序、斷言邏輯 100% 不變**（runner sha256 與 lzcdh5 run 相同）。僅三處：
-1. Base URL `localhost:8000` → `100.100.112.108:8000`（遠端執行）
+**請求參數、順序、斷言邏輯 100% 不變**（runner sha256 與 NODE-A run 相同）。僅三處：
+1. Base URL `localhost:8000` → `NODE-B:8000`（遠端執行）
 2. 新增逐案例證據落盤（`raw/` `headers/` `meta/`）
 3. Role QA diff check 由 `python3` 讀 `/tmp` 改為 `jq` 讀 `json/`（等效，避免 `/tmp` 依賴）
 

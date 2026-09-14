@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Compare two persona-db API evidence packages (e.g. v4.9.2 @ lzcdh5 vs v5.2 @ lzc-dh1-1)."""
+"""Compare two persona-db API evidence packages (e.g. v4.9.2 @ NODE-A vs v5.2 @ NODE-B)."""
 import json, glob, os, sys, csv
 
-A_DIR = sys.argv[1] if len(sys.argv) > 1 else '/Users/kstsai/Documents/personadb-lzcdh5-api-verify'
+A_DIR = sys.argv[1] if len(sys.argv) > 1 else '/Users/kstsai/Documents/personadb-NODE-A-api-verify'
 B_DIR = sys.argv[2] if len(sys.argv) > 2 else '/Users/kstsai/Documents/personadb-dh1-api-verify'
 A_LAB = os.path.basename(A_DIR.rstrip('/'))
 B_LAB = os.path.basename(B_DIR.rstrip('/'))

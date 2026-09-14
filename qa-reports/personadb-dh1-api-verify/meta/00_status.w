@@ -1,1 +1,1 @@
-200	1.455065	790	http://100.100.112.108:8000/personadb/status
+200	1.455065	790	http://NODE-B:8000/personadb/status

@@ -3,5 +3,5 @@ label: 5. 房貸優惠 — 銀行業者
 http_code: 200
 time_total_sec: 218.256676
 size_download_bytes: 5052
-url_effective: http://100.100.112.108:8000/personadb/candidates?questions=%e6%88%bf%e8%b2%b8%e5%84%aa%e6%83%a0%e6%96%b9%e6%a1%88&role=%e9%8a%80%e8%a1%8c%e6%a5%ad%e8%80%85&top_k=5&opMode=%e5%83%85%e7%af%a9%e9%81%b8
+url_effective: http://NODE-B:8000/personadb/candidates?questions=%e6%88%bf%e8%b2%b8%e5%84%aa%e6%83%a0%e6%96%b9%e6%a1%88&role=%e9%8a%80%e8%a1%8c%e6%a5%ad%e8%80%85&top_k=5&opMode=%e5%83%85%e7%af%a9%e9%81%b8
 curl_args: --data-urlencode questions=房貸優惠方案 --data-urlencode role=銀行業者 --data-urlencode top_k=5 --data-urlencode opMode=僅篩選

@@ -1,4 +1,4 @@
-# lzc-dh1-1 persona-db **v5.6** API 實測 — 證據包（第五輪，五版對照）
+# NODE-B persona-db **v5.6** API 實測 — 證據包（第五輪，五版對照）
 
 **結論摘要**：9/9 HTTP 200（零錯誤）。v5.6 **契約型別化**（落實 v5.4 報告的建議）、**延遲全系列最快 98.2s**、**收入桶飽和降至五輪最低 2/8**（非清零）。但 `employment_status` **連續五輪從未被套用**，且重現性探針出現一次 **75.00s 硬切、無 HTTP 回應**的 transient 異常。
 **完整分析**：見 **`ANALYSIS.md`**。
@@ -9,11 +9,11 @@
 
 | 版本 | 節點 | 目錄 |
 |:---|:---|:---|
-| v4.9.2 | lzcdh5 | `../personadb-lzcdh5-api-verify/` |
-| v5.2 | lzc-dh1-1 | `../personadb-dh1-api-verify/` |
-| v5.3.1 | lzcdh5 | `../personadb-lzcdh5-v531-api-verify/` |
-| v5.4 | lzc-dh1-1 | `../personadb-dh1-v54-api-verify/` |
-| **v5.6** | **lzc-dh1-1** | **本目錄** |
+| v4.9.2 | NODE-A | `../personadb-NODE-A-api-verify/` |
+| v5.2 | NODE-B | `../personadb-dh1-api-verify/` |
+| v5.3.1 | NODE-A | `../personadb-NODE-A-v531-api-verify/` |
+| v5.4 | NODE-B | `../personadb-dh1-v54-api-verify/` |
+| **v5.6** | **NODE-B** | **本目錄** |
 
 五輪 `run-test.sh` **sha256 完全相同**（`ffc7b106…`）。
 
@@ -70,8 +70,8 @@ cat meta/instance-provenance.txt    # 確認 node ID 與 v5.2/v5.4 相同（就�
 ### 2. 確認 v5.6 契約是新的（第四種）
 
 ```bash
-for d in ../personadb-lzcdh5-api-verify ../personadb-dh1-api-verify \
-         ../personadb-lzcdh5-v531-api-verify ../personadb-dh1-v54-api-verify .; do
+for d in ../personadb-NODE-A-api-verify ../personadb-dh1-api-verify \
+         ../personadb-NODE-A-v531-api-verify ../personadb-dh1-v54-api-verify .; do
   printf "%-42s %6d B  %s\n" "$(basename $d)" "$(wc -c < $d/raw/openapi.json)" \
     "$(shasum -a 256 $d/raw/openapi.json | cut -c1-16)"
 done
@@ -110,8 +110,8 @@ cat repeat/PROBE_FAILURE_round1.txt
 cat probe/outage_r1.json | jq -r '"  重試成功: matched=\(.total_matched) returned=\(.returned)"'
 
 # (g) ★ employment_status 五輪皆未套用
-for d in ../personadb-lzcdh5-api-verify ../personadb-dh1-api-verify \
-         ../personadb-lzcdh5-v531-api-verify ../personadb-dh1-v54-api-verify .; do
+for d in ../personadb-NODE-A-api-verify ../personadb-dh1-api-verify \
+         ../personadb-NODE-A-v531-api-verify ../personadb-dh1-v54-api-verify .; do
   printf "%-42s " "$(basename $d)"
   n=0; for f in $d/json/0[1-8]*.json; do
     jq -e 'has("total_matched")' "$f" >/dev/null 2>&1 || continue
@@ -120,8 +120,8 @@ for d in ../personadb-lzcdh5-api-verify ../personadb-dh1-api-verify \
 done
 
 # (h) ★ 收入桶飽和：五輪趨勢 7/8 → 3/8 → 5/8 → 3/7 → 2/8（v5.6 最低，但未清零）
-for d in ../personadb-lzcdh5-api-verify ../personadb-dh1-api-verify \
-         ../personadb-lzcdh5-v531-api-verify ../personadb-dh1-v54-api-verify .; do
+for d in ../personadb-NODE-A-api-verify ../personadb-dh1-api-verify \
+         ../personadb-NODE-A-v531-api-verify ../personadb-dh1-v54-api-verify .; do
   printf "%-42s " "$(basename $d)"
   full=0
   for f in $d/json/0[1-8]*.json; do
@@ -147,7 +147,7 @@ PY
 # (j) ★ 重現性（v5.6 應 13..57）
 python3 - <<'PY'
 import json,glob,os
-for lab,d in (('v5.6','.'),('v5.4','../personadb-dh1-v54-api-verify'),('v5.3.1','../personadb-lzcdh5-v531-api-verify'),('v5.2','../personadb-dh1-api-verify')):
+for lab,d in (('v5.6','.'),('v5.4','../personadb-dh1-v54-api-verify'),('v5.3.1','../personadb-NODE-A-v531-api-verify'),('v5.2','../personadb-dh1-api-verify')):
     ms=[]
     p=os.path.join(d,'json','01_kangshimei.json')
     try:
@@ -173,7 +173,7 @@ python3 compare-nway.py
 
 ```bash
 cd /Users/kstsai/Documents/personadb-dh1-v56-api-verify
-OUT=/tmp/v56-rerun BASE_URL=http://100.100.112.108:8000 bash run-test.sh
+OUT=/tmp/v56-rerun BASE_URL=http://NODE-B:8000 bash run-test.sh
 ```
 
 > v5.6 的 `total_matched` 變異約 4.4×。**建議保留本包作 baseline。**
@@ -185,8 +185,8 @@ OUT=/tmp/v56-rerun BASE_URL=http://100.100.112.108:8000 bash run-test.sh
 
 | 項目 | 值 |
 |:---|:---|
-| 目標 | `lzc-dh1-1` = tailscale `100.100.112.108`（node ID `nVS9uUUusZ11CNTRL`；節點內部 HostName 為 `lzc-dh1`） |
-| 連線 | 直連 `1.169.214.22:23251`（非 relay） |
+| 目標 | `NODE-B` = tailscale `NODE-B`（node ID `NODE-B-NODEID`；節點內部 HostName 為 `NODE-B-host`） |
+| 連線 | 直連 `[public-ip]:23251`（非 relay） |
 | 服務 | uvicorn / Persona DB **v5.6**，1069 personas（1.72 MB） |
 | LLM 後端 | `deepseek-v4-flash` → `https://api.deepseek.com` |
 | 其他 | Python 3.11.15；Name diversity 172 (16.1%) max 16×；32 Python files |
@@ -196,7 +196,7 @@ OUT=/tmp/v56-rerun BASE_URL=http://100.100.112.108:8000 bash run-test.sh
 
 | | v4.9.2 | v5.2 | v5.3.1 | v5.4 | **v5.6** |
 |:---|:---|:---|:---|:---|:---|
-| 節點 | lzcdh5 | lzc-dh1-1 | lzcdh5 | lzc-dh1-1 | **lzc-dh1-1** |
+| 節點 | NODE-A | NODE-B | NODE-A | NODE-B | **NODE-B** |
 | 契約 sha256(16) | `8ac54b95…` | `8b869ae2…` | `8b869ae2…` | `30a22878…` | **`aafe647f…`** |
 | openapi bytes | 9298 | 9706 | 9706 | 10131 | **12332** |
 | top-level keys | 10 | 10 | 10 | 12 | **12** |

@@ -2,22 +2,22 @@
 
 === tailscale status (full) ===
 Warning: client version "1.98.8-t05a918293" != tailscaled server version "1.102.1-t8ebe8f7c3-gda6192991"
-100.125.195.64   a945            tkhand@  macOS    -                                                        
-100.83.52.97     bangoo          tkhand@  windows  -                                                        
-100.84.129.98    hermesa3-clone  tkhand@  linux    -                                                        
-100.100.112.108  lzc-dh1-1       tkhand@  linux    -                                                        
-100.66.58.123    lzc             tkhand@  linux    active; direct 1.169.214.22:41641, tx 488080 rx 1309576  
-100.96.79.33     lzcdh5          tkhand@  linux    active; relay "hkg", tx 9972 rx 29724                    
+[ts-peer-ip]   [peer]            [account]@  macOS    -                                                        
+[ts-peer-ip]     [peer]          [account]@  windows  -                                                        
+[ts-peer-ip]    [peer]  [account]@  linux    -                                                        
+NODE-B  NODE-B       [account]@  linux    -                                                        
+[ts-peer-ip]    [peer]             [account]@  linux    active; direct [public-ip]:41641, tx 488080 rx 1309576  
+NODE-A     NODE-A          [account]@  linux    active; relay "hkg", tx 9972 rx 29724                    
 
-=== node detail: lzcdh5 (now v5.3.1) ===
+=== node detail: NODE-A (now v5.3.1) ===
 {
-  "ID": "niegcmVrhm11CNTRL",
-  "HostName": "lzcdh5",
-  "DNSName": "lzcdh5.tail6cb434.ts.net.",
+  "ID": "NODE-A-NODEID",
+  "HostName": "NODE-A",
+  "DNSName": "NODE-A.[tailnet].",
   "OS": "linux",
   "TailscaleIPs": [
-    "100.96.79.33",
-    "fd7a:115c:a1e0::2939:4f22"
+    "NODE-A",
+    "[ts-ipv6]"
   ],
   "Online": true,
   "Active": true,
@@ -27,6 +27,6 @@ Warning: client version "1.98.8-t05a918293" != tailscaled server version "1.102.
   "KeyExpiry": "2027-01-20T07:51:59Z"
 }
 
-=== NOTE: no node named 'lzcdh5-1' exists on this tailnet ===
-  matches for lzcdh5-1: 0
-  (0 = not present; 100.96.79.33 lzcdh5 was upgraded v4.9.2 -> v5.3.1 in place)
+=== NOTE: no node named 'NODE-A-1' exists on this tailnet ===
+  matches for NODE-A-1: 0
+  (0 = not present; NODE-A NODE-A was upgraded v4.9.2 -> v5.3.1 in place)

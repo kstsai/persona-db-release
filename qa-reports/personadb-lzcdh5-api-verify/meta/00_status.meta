@@ -3,5 +3,5 @@ label: 0. /personadb/status
 http_code: 200
 time_total_sec: 0.858230
 size_download_bytes: 792
-url_effective: http://100.96.79.33:8000/personadb/status
+url_effective: http://NODE-A:8000/personadb/status
 curl_args: 

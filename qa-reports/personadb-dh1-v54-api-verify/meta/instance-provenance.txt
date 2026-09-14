@@ -2,26 +2,26 @@
 
 === tailscale status (full) ===
 Warning: client version "1.98.8-t05a918293" != tailscaled server version "1.102.1-t8ebe8f7c3-gda6192991"
-100.125.195.64   a945            tkhand@  macOS    -                                                     
-100.83.52.97     bangoo          tkhand@  windows  -                                                     
-100.84.129.98    hermesa3-clone  tkhand@  linux    -                                                     
-100.100.112.108  lzc-dh1-1       tkhand@  linux    active; direct 1.169.214.22:21845, tx 10308 rx 30332  
-100.66.58.123    lzc             tkhand@  linux    active; direct 1.169.214.22:41641, tx 75692 rx 50436  
-100.96.79.33     lzcdh5          tkhand@  linux    -                                                     
+[ts-peer-ip]   [peer]            [account]@  macOS    -                                                     
+[ts-peer-ip]     [peer]          [account]@  windows  -                                                     
+[ts-peer-ip]    [peer]  [account]@  linux    -                                                     
+NODE-B  NODE-B       [account]@  linux    active; direct [public-ip]:21845, tx 10308 rx 30332  
+[ts-peer-ip]    [peer]             [account]@  linux    active; direct [public-ip]:41641, tx 75692 rx 50436  
+NODE-A     NODE-A          [account]@  linux    -                                                     
 
-=== node detail: lzc-dh1-1 (now reportedly v5.4; was v5.2) ===
+=== node detail: NODE-B (now reportedly v5.4; was v5.2) ===
 {
-  "ID": "nVS9uUUusZ11CNTRL",
-  "HostName": "lzc-dh1",
-  "DNSName": "lzc-dh1-1.tail6cb434.ts.net.",
+  "ID": "NODE-B-NODEID",
+  "HostName": "NODE-B-host",
+  "DNSName": "NODE-B.[tailnet].",
   "OS": "linux",
   "TailscaleIPs": [
-    "100.100.112.108",
-    "fd7a:115c:a1e0::f139:706d"
+    "NODE-B",
+    "[ts-ipv6]"
   ],
   "Online": true,
   "Active": true,
-  "CurAddr": "1.169.214.22:21845",
+  "CurAddr": "[public-ip]:21845",
   "Relay": "tok",
   "LastHandshake": "2026-09-12T19:41:21.346644+08:00",
   "KeyExpiry": "2027-02-07T06:37:12Z"

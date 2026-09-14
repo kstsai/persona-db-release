@@ -2,14 +2,14 @@
 """Three-way comparison of persona-db API evidence packages.
 
 Usage: compare-three.py <A_dir> <B_dir> <C_dir>
-Default: v4.9.2 (lzcdh5) / v5.2 (lzc-dh1-1) / v5.3.1 (lzcdh5 upgraded)
+Default: v4.9.2 (NODE-A) / v5.2 (NODE-B) / v5.3.1 (NODE-A upgraded)
 """
 import json, glob, os, sys, csv
 
 DIRS = sys.argv[1:4] if len(sys.argv) >= 4 else [
-    '/Users/kstsai/Documents/personadb-lzcdh5-api-verify',
+    '/Users/kstsai/Documents/personadb-NODE-A-api-verify',
     '/Users/kstsai/Documents/personadb-dh1-api-verify',
-    '/Users/kstsai/Documents/personadb-lzcdh5-v531-api-verify',
+    '/Users/kstsai/Documents/personadb-NODE-A-v531-api-verify',
 ]
 CASES = ['01_kangshimei','02_tesla','03_fashion','04_role_fangzhong',
          '05_role_banker','06_aesthetic','07_debt','08_boss']

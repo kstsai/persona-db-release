@@ -1,9 +1,9 @@
-# lzcdh5 persona-db **v5.3.1** API 實測 — 證據包（第三輪，三版對照）
+# NODE-A persona-db **v5.3.1** API 實測 — 證據包（第三輪，三版對照）
 
 **結論摘要**：9/9 請求 HTTP 200。v5.3.1 是**修正版** —— `dims_counted` 計分宣告不一致由 **33 → 11 → 0**、可重現性變異由 **62× 收斂到 1.3×**、broadening 空轉率 **41% → 10%**。但 `employment_status` **連續三版從未被套用**。
 **完整分析**：見 **`ANALYSIS.md`**。
 
-> ⚠️ **目標節點澄清**：任務指定的 `lzcdh5-1` **不存在**於 tailnet；既有的 `lzcdh5` (`100.96.79.33`) 已被**就地升級** v4.9.2 → v5.3.1（同 node ID `niegcmVrhm11CNTRL`）。因版本精確相符，本次以該節點為目標。詳見 `ANALYSIS.md` §0。
+> ⚠️ **目標節點澄清**：任務指定的 `NODE-A-1` **不存在**於 tailnet；既有的 `NODE-A` (`NODE-A`) 已被**就地升級** v4.9.2 → v5.3.1（同 node ID `NODE-A-NODEID`）。因版本精確相符，本次以該節點為目標。詳見 `ANALYSIS.md` §0。
 
 ---
 
@@ -11,9 +11,9 @@
 
 | 版本 | 節點 | 目錄 |
 |------|------|------|
-| v4.9.2 | lzcdh5 (100.96.79.33) | `../personadb-lzcdh5-api-verify/` |
-| v5.2 | lzc-dh1-1 (100.100.112.108) | `../personadb-dh1-api-verify/` |
-| **v5.3.1** | **lzcdh5 (100.96.79.33)** | **本目錄** |
+| v4.9.2 | NODE-A (NODE-A) | `../personadb-NODE-A-api-verify/` |
+| v5.2 | NODE-B (NODE-B) | `../personadb-dh1-api-verify/` |
+| **v5.3.1** | **NODE-A (NODE-A)** | **本目錄** |
 
 三輪的 `run-test.sh` **sha256 完全相同**（`ffc7b106…`），確保測試本身零差異。
 
@@ -22,7 +22,7 @@
 ## 目錄結構
 
 ```
-personadb-lzcdh5-v531-api-verify/
+personadb-NODE-A-v531-api-verify/
 ├── ANALYSIS.md                    ← 【主報告】三版對照 + 逐案例 + 9 項發現
 ├── README.md                      ← 本檔
 ├── run-test.sh                    ← runner（sha256 與前兩輪相同）
@@ -39,7 +39,7 @@ personadb-lzcdh5-v531-api-verify/
 │                                       屬**預期行為**（status 回傳 text/plain）
 ├── headers/                       ← 每案例完整 HTTP response headers
 ├── meta/                          ← 每案例 http_code / 耗時 / bytes / curl 參數
-│   ├── instance-provenance.txt    ←   tailscale 節點 +「lzcdh5-1 不存在」證據
+│   ├── instance-provenance.txt    ←   tailscale 節點 +「NODE-A-1 不存在」證據
 │   ├── original-test-persona-db-api.sh
 │   └── script-provenance.txt      ←   三輪 runner sha256 對照
 │
@@ -61,9 +61,9 @@ personadb-lzcdh5-v531-api-verify/
 ### 1. 確認三輪可比對
 
 ```bash
-cd /Users/kstsai/Documents/personadb-lzcdh5-v531-api-verify
+cd /Users/kstsai/Documents/personadb-NODE-A-v531-api-verify
 cat meta/script-provenance.txt        # 三輪 runner sha256 應完全相同
-cat meta/instance-provenance.txt      # 確認 lzcdh5-1 不存在、lzcdh5 = v5.3.1
+cat meta/instance-provenance.txt      # 確認 NODE-A-1 不存在、NODE-A = v5.3.1
 ```
 
 ### 2. 確認 v5.2 與 v5.3.1 的契約完全相同（這是判讀前提）
@@ -109,7 +109,7 @@ jq -r '.summary | to_entries[] | "  rank \(.key+1): \(.value.score)  \(.value.de
 # (e) ★ employment_status 三版皆未套用
 for f in json/0[1-8]*.json; do jq -r '.applied_filters.employment_status // empty' $f; done
 echo "(無輸出 = 證實未套用)"
-for d in ../personadb-lzcdh5-api-verify ../personadb-dh1-api-verify .; do
+for d in ../personadb-NODE-A-api-verify ../personadb-dh1-api-verify .; do
   printf "%-42s " "$(basename $d)"
   n=0; for f in $d/json/0[1-8]*.json; do [ -n "$(jq -r '.applied_filters.employment_status // empty' $f)" ] && n=$((n+1)); done
   echo "applied in $n/8 cases"
@@ -146,8 +146,8 @@ python3 compare-three.py
 ### 4. 重跑整套（⚠️ 約 21 分鐘，結果**不會**完全相同 — 見 §5.2）
 
 ```bash
-cd /Users/kstsai/Documents/personadb-lzcdh5-v531-api-verify
-OUT=/tmp/v531-rerun BASE_URL=http://100.96.79.33:8000 bash run-test.sh
+cd /Users/kstsai/Documents/personadb-NODE-A-v531-api-verify
+OUT=/tmp/v531-rerun BASE_URL=http://NODE-A:8000 bash run-test.sh
 ```
 
 > v5.3.1 的樣本數變異已收斂到 1.3×（v5.2 為 62×），但**最終 top-k persona 集合仍會不同**（6 組配對中 5 組重疊 0/3）。本包仍應保留作 baseline。
@@ -158,7 +158,7 @@ OUT=/tmp/v531-rerun BASE_URL=http://100.96.79.33:8000 bash run-test.sh
 
 | 項目 | 值 |
 |------|-----|
-| 目標 | `lzcdh5` = tailscale `100.96.79.33`，`lzcdh5.tail6cb434.ts.net`（node ID `niegcmVrhm11CNTRL`） |
+| 目標 | `NODE-A` = tailscale `NODE-A`，`NODE-A.[tailnet]`（node ID `NODE-A-NODEID`） |
 | 連線 | **DERP relay `hkg`**（`CurAddr` 空；v4.9.2 那輪為直連 —— 可能影響延遲比較） |
 | 服務 | uvicorn / Persona DB **v5.3.1**，1069 personas（1.72 MB） |
 | LLM 後端 | `deepseek-v4-flash` → `https://api.deepseek.com` |
@@ -169,7 +169,7 @@ OUT=/tmp/v531-rerun BASE_URL=http://100.96.79.33:8000 bash run-test.sh
 
 | | v4.9.2 | v5.2 | **v5.3.1** |
 |---|---|---|---|
-| 節點 | lzcdh5 | lzc-dh1-1 | **lzcdh5**（就地升級） |
+| 節點 | NODE-A | NODE-B | **NODE-A**（就地升級） |
 | OpenAPI sha256 | `8ac54b95228d85fc` | `8b869ae266992056` | **`8b869ae266992056`**（= v5.2） |
 | persona 維度 | 22 | 25 | **25** |
 | `summary[]` 欄數 | 14 | 17 | **17** |
