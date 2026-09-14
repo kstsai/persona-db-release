@@ -1,10 +1,14 @@
-# LLM Verify QA Reports — persona-db API 跨版本實測
+# LLM Verify QA Reports — persona-db API 實測
 
-> **同一份測試腳本**（`upDockerVerHermes/test-persona-db-api.sh`）對**多個版本／節點**重複執行，
-> 逐案例保存 **byte 級證據**，產出可交叉比對的跨版本報告。
+> **同一份測試腳本**（`upDockerVerHermes/test-persona-db-api.sh`）對受測環境執行，
+> 逐案例保存 **byte 級證據**。
 >
 > 方法論：`api-version-sweep` skill（dsh 系共用 kit）。
-> 執行者：dsh1（DeepSeek Harness）。**五輪的 runner sha256 完全相同** ⇒ 跨輪可比。
+> 執行者：dsh1（DeepSeek Harness）。
+>
+> ⚠️ **方法在第九輪改變**：skill **v2.0.0**（2026-09-14 依 kstsai 指示）**取消跨版本比對**，
+> 之後每一輪**只分析當前版本的回應**。第 1–8 輪的跨輪材料與 `compare-nway.py` 保留為**歷史紀錄**；
+> **第 9 輪起不再產出 `version-comparison-nway.csv`，也不參與跨輪對照**。
 
 > **⚠️ 判讀修正請先看 [`CORRECTIONS.md`](CORRECTIONS.md)** —— 個別報告的判讀若被後續證據推翻（例如取得伺服器端 log），修正記於該檔，**原文保留不動**。
 
@@ -19,7 +23,7 @@
 
 ---
 
-## 八輪一覽
+## 九輪一覽
 
 | # | 版本 | 節點 | runner | 日期 | 契約 sha256(16) | 結果 | 該輪重點 |
 |:-:|:-----|:-----|:-----|:-----|:----------------|:-----|:---------|
@@ -31,8 +35,9 @@
 | 6 | **v5.6** | `NODE-B` | **upstream 223 行** | 2026-09-14 | `aafe647f46ee8abe` | **10/10** | **結案 issue #51**（`employment_status` 實為量測工件）；負向測試**驗收 #47 已修復** |
 | 7 | **v5.6** | `NODE-A` | upstream 223 行 | 2026-09-14 | `aafe647f46ee8abe` | **10/10** | **主機端驗收**（Docker 部署）：語意正確性 9/9；**判讀不跨版本比對**，聚焦 response 內容分析 |
 | 8 | **v5.7** | `NODE-B` | **upstream 227 行** | 2026-09-14 | **`cb5b08084daea8af`** | **10/10** | **上游斷言 13/13 全過**；`summary` 擴充 **17→24 欄**（回應可自我驗證）；**不與前版本比對** |
+| 9 | **v5.8** | `NODE-A` | **upstream 301 行** | 2026-09-14 | **`6d3c1508b53a3f56`** | **10/10** | 斷言 **31✅/1⚠️/0❌/0 N/A**（**首次在節點本機執行 ⇒ 沒有 N/A**）；`#42` 的 ⚠️ 證實為「放寬把分析步驟認定的必要維度移掉」（案例 07 同案例自我矛盾、8→58）；**案例 06/09 重跑不可重現**；**不與前版本比對** |
 
-**共 5 種不同契約**（v5.2 與 v5.3.1 同 hash ⇒ 純行為 patch；第 5–7 輪同為 `aafe647f`；**v5.7 為新契約 `cb5b0808`**）。
+**共 6 種不同契約**（v5.2 與 v5.3.1 同 hash ⇒ 純行為 patch；第 5–7 輪同為 `aafe647f`；v5.7 為 `cb5b0808`；**v5.8 為新契約 `6d3c1508`**）。
 
 > ⚠️ **第 5 輪與第 6 輪版本、契約完全相同，只差 runner**。兩輪案例 1–8 的 **query 與參數完全相同**
 > （已機械比對），故其差異**純屬 LLM 抽樣**、**不可歸因於 runner** —— 這組對照反而提供最乾淨的
@@ -53,7 +58,8 @@ qa-reports/
 ├── round5-v5.6-nodeB-frozenrunner/        ← 第 5 輪（凍結 runner）
 ├── round6-v5.6-nodeB-upstreamrunner/      ← 第 6 輪（upstream runner）
 ├── round7-v5.6-nodeA-upstreamrunner/      ← 第 7 輪（同 runner，`NODE-A` Docker 部署；**不做版本比對**）
-└── round8-v5.7-nodeB-upstreamrunner/      ← 第 8 輪（**v5.7**，upstream 227 行；**不做版本比對**）
+├── round8-v5.7-nodeB-upstreamrunner/      ← 第 8 輪（**v5.7**，upstream 227 行；**不做版本比對**）
+└── round9-v5.8-nodeA-upstreamrunner/      ← 第 9 輪（**v5.8**，upstream 301 行；**節點本機執行**；**不做版本比對**、無 `version-comparison-nway.csv`）
 ```
 
 > **命名 = `round<輪次>-v<版本>-node<代號>[-<runner 別>]`。** 三個理由：
@@ -72,8 +78,8 @@ qa-reports/
 
 | 代號 | 對應 |
 |:---|:---|
-| `NODE-A` | 第一／三輪的受測節點 |
-| `NODE-B` | 第二／四／五輪的受測節點（同一節點三次就地升級）|
+| `NODE-A` | 第一／三／七／九輪的受測節點 |
+| `NODE-B` | 第二／四／五／六／八輪的受測節點（同一節點多次就地升級）|
 | `NODE-B-host` | `NODE-B` 的節點內部 HostName（與 tailnet 名不同）|
 | `[public-ip]` / `[ts-ipv6]` / `[ts-peer-ip]` | 已遮蔽的位址 |
 | `[tailnet]` | tailnet DNS 後綴 |
@@ -90,18 +96,18 @@ qa-reports/
 |:---|:---|
 | `ANALYSIS.md` | **主報告**：逐案例分析 + 跨版本對照 + 發現（每條標嚴重度與「證據/觀察/空轉」級別） |
 | `README.md` | 證據地圖 + **可執行複驗指令**（每條都經實跑、輸出與文件一致） |
-| `run-test.sh` | 實際執行的 runner（五輪 sha256 相同） |
+| `run-test.sh` | runner（第 1–5 輪 sha256 相同；**第 9 輪另有 `meta/run-test-as-executed.sh` = 實際執行的那一份**） |
 | `run.log` | 完整執行 stdout（含每案例 echo 標籤與完整 response body） |
 | `raw/` | **逐位元組** response body（+ `openapi.json` 契約） |
 | `headers/` | 每案例完整 HTTP response headers |
 | `meta/` | http_code / 耗時 / bytes / **curl 參數** / 節點 provenance |
 | `json/` | `raw/` 的 pretty-print 版 |
-| `repeat/` | 重現性探針（同查詢 N≥3 次；逾時也是證據） |
+| `repeat/`（舊）／`probe/`（第 9 輪） | 重現性探針（同查詢 N≥3 次；逾時或 5xx 也是證據）＋定向探針 |
 | `probe/` | 定向探針（驗證新欄位語意、端點異常診斷） |
 | `supplemental/` | `/personadb/detail` 樣本（維度字典查證） |
 | `summary-per-case.csv` | 逐案例彙總（Excel 可開） |
 | `summary-per-persona.csv` | 逐 persona 明細 |
-| `version-comparison-nway.csv` | 跨版本對照表 |
+| `version-comparison-nway.csv` | 跨版本對照表（**僅第 1–8 輪；第 9 輪起依 skill v2.0.0 不再產出**） |
 
 ---
 
@@ -122,7 +128,9 @@ cat meta/07_debt.meta              # HTTP code / 耗時 / curl 參數
 cat headers/07_debt.headers
 ```
 
-### 八輪交叉對照（不需重跑，用已保存的證據）
+### 第 1–8 輪交叉對照（**歷史材料**；不需重跑，用已保存的證據）
+
+> ⚠️ 依 skill v2.0.0，**第 9 輪起不做跨版本比對**，故此節僅適用第 1–8 輪。
 
 > ⚠️ 以下指令**在 `round6-…/` 目錄內執行**（故用 `../` 指到其他輪）；從 `qa-reports/` 執行請去掉 `../`。
 
@@ -239,6 +247,48 @@ OUT=/tmp/rerun BASE_URL=http://<node>:8000 bash run-test.sh
 - **版本落差**：部署服務自報 **v5.7**，repo `RELEASE-VERSION` 為 **v5.6**。
   上游 `#50` 正是檢查此事，惟需 host 權限 → 遠端 runner **N/A**，**無法判定**
 
+### 第 9 輪（`NODE-A` **v5.8**）✅
+> 本輪依 skill **v2.1.0** 執行：**只分析 v5.8 的回應，不做跨版本比對**。以下為該輪自身的發現。
+
+- **斷言 31 ✅ / 1 ⚠️ / 0 ❌ / 0 N/A**。**首次在節點本機執行**（`localhost`），因此主機層斷言
+  `#50`（部署版本 == `RELEASE-VERSION`、含 `finish_reason` 診斷碼）與 `#55`（例外型別診斷碼）
+  **原生執行、無任何 N/A** —— 補上了第 8 輪只能標 N/A 的那一項
+- **部署保真度以 byte 級證明**：release tarball sha256 與節點上同一檔相同；
+  `/srv/persona-db-data/api/*.py` 與 tarball 內 `api/*.py` **8/8 檔 sha256 相同**；
+  容器 `/app` 為該目錄的 **bind mount** ⇒ 執行中的程式碼 == 發佈的 v5.8 產物
+- **可觀測性缺口為 0**：`summary` 24 欄全數曝露，本輪所有 `applied_filters`／`dims_counted`
+  維度**全部**可從回應自我驗證（15/15 項通過）
+- **計分宣告誠實**：9 個具檢定效力的配對中，低報 **(b) = 0**
+- **`#47`–`#49`、`#53`、`#56` 全部 ✅**；本輪額外觸發 **503**，錯誤同樣走統一的 `ErrorResponse` 形狀
+  （把 `#47` 的涵蓋從 400 延伸到 503）
+- **資料不足時不編造**：`matched=0` 時回 `returned=0`；語意無法解析時回 503 而非隨機名單
+- **新欄位 `broadening_stop_reason` 與「連續空轉 ≤2」有效**：10 輪放寬中 `no_op` 僅 1 輪（10%），
+  且 `no_op`／`overshoot` 旗標與 `match_count_before/after` **10/10 一致**（此一致性 upstream 未驗）
+
+### 第 9 輪新增 ⚠️
+- **放寬步驟會移除「分析步驟自己說必須用」的維度**（5/9 案例）。最尖銳者為案例 07（債務整合）：
+  **同一案例的相鄰兩輪自我矛盾** —— loop1 稱 `debt_status`「為本題核心條件…**不可放寬**」，
+  loop2 卻「**移除** `debt_status`…該維度非核心」⇒ `8→58`（7.25×、`overshoot=True`），
+  回傳第 9、10 名為 `debt_status='無'`（分數把它們壓在 4.54/4.48，前 8 名為 5.07–5.38）。
+  **`#42` 斷言正確地發 ⚠️**（`保留=False 符合率=8/10`）—— 是護欄在做事，不是誤報
+- **兩個案例的重跑結果不可重現**：案例 06 四次執行得到**四種**結果（`total_matched` 9–16、
+  套用維度 **1→5 個**、停止原因在 `no_op_limit`/`loop_limit` 間跳）；案例 09 的 `total_matched`
+  為 **20 ↔ 61（3×）**（惟 `employment_status` 4/4 都套用 ⇒ must-use 的結論**是**可重現的）
+- **`status='ok'` 伴隨 `returned=0`**：兩次定向探針都回 0 筆卻報 `ok`（`too_strict` 需跑滿 3 輪才觸發）
+- **503 的指引文字會誤導維運**：`message`/`details` 指向「LLM 分析失敗／檢查 API key」，
+  但 server log 顯示 **LLM 呼叫成功、只是產不出 filter**（`LLM returned no filters`）
+- **契約宣告了不可達的停止原因**（源碼層推論）：`""` 與 `budget_limit` 在現行常數下不會出現
+
+### 第 9 輪的方法論新增（已回寫 skill v2.1.0）
+- **要驗「執行時行為」，不能只驗「腳本字面」**：本輪的儀器忠實度檢查（比對腳本內容）全數通過，
+  但 runner 執行時把案例標題印成了 tmpname —— 因為我的 helper 參數位移錯誤。已補
+  `meta/test-runner-harness.sh`（stub `curl`、11 項）把「執行時印出什麼」變成可驗證的
+- **背景 watcher 不可用 `pgrep -f "<script>"`**：會 match 到 watcher 自己的 cmdline 而永不結束；
+  改用完成標記檔
+- **「執行時的那一份 runner」必須另存**：本輪在執行後才修 helper，故 `run-test.sh` 已非產出證據的
+  那一份；已另存 `meta/run-test-as-executed.sh`（`1557c38e…`）並證明**兩份**的請求參數與斷言段
+  都與 upstream 逐字相同
+
 ### 仍未解 ⚠️（經更正後仍成立）
 - **ranking 層不可重現**：版本內 top-3 交集多為 0–1/3。第 5↔6 輪同版本對照顯示抽樣變異可達 **5×**
 - **分數尺度跨版本漂移**（案例 04：v5.4 `4.86` → v5.6 `2.54`）⇒ 有絕對分數門檻的下游邏輯升級會失效
@@ -257,6 +307,13 @@ OUT=/tmp/rerun BASE_URL=http://<node>:8000 bash run-test.sh
 - 改寫後 runner sha256：`ffc7b10642f72f4120a43b77848ed722c6cf865c23b3267a3eb87bd48c74695d`（**五輪相同**）
 - 相對原腳本的改動**只有三項**（base URL、證據落盤、diff check 解析工具），
   **請求參數／順序／斷言邏輯 100% 未變**。詳見各包 `ANALYSIS.md` §8。
+
+**第 9 輪（v5.8）的儀器**（上游腳本已改版，故與上述數字不同）：
+- 上游腳本 sha256：`e6c6fe7797a21600e6ec9f7f769e2ab80462d11374996986a16335772bddc677`（**301 行**）
+- **實際執行的 runner**：`1557c38eb85215c16a6a4ea4209eae52da3a6395a731eff5e41eb4c554b2ef64`
+  = `meta/run-test-as-executed.sh`（該輪執行後才修 helper，故此檔必須另存）
+- 忠實度以 `meta/verify-instrument.py` 機械證明：**請求參數 32/32 相同且順序一致**、
+  斷言段 `L88–L301` **逐字相同（0 差異）**、案例標籤 9/9 相同；改動逐條列於該輪 `ANALYSIS.md` §7
 
 ## 已知限制
 

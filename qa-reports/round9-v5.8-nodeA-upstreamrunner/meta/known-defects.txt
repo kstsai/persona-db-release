@@ -1,0 +1,37 @@
+# 本輪證據的已知缺陷（Known defects）— round9 v5.8 NODE-A
+
+> 記錄「這包證據有什麼瑕疵、影響範圍到哪裡」，以免讀者高估或誤用。
+> 每一項都附**影響範圍**與**如何確認不影響結論**。
+
+---
+
+## 缺陷 1：主套件 `run.log` 的案例標題印成了 tmpname，不是標籤原文
+
+| | 內容 |
+|:--|:--|
+| 症狀 | `run.log` 裡每個案例印出 `kangshimei` / `tesla` / `aesthetic_closing` …，而不是 upstream 的標籤原文（例：`=== 1. 康是美的目標客戶 ===（藥妝零售語意 — 不應套 aesthetic_procedure, #36）`）。`meta/<case>.meta` 的 `# label` 欄位同樣受影響。 |
+| 成因 | 我寫的 `case_run()` helper 參數位移錯誤：<br>`local id="$1"; shift` 之後 `$2` 已經不是 label（label 此時是 `$1`），所以 `local label="$2"` 抓到 tmpname。 |
+| **影響範圍** | **只影響「印出來的字」**。以下全部不受影響（逐項驗證過）：<br>① **請求參數與順序** —— `url_effective` 逐案核對，9/9 命中正確 query<br>② **斷言結果** —— 斷言讀 `/tmp/<tmpname>.json`，該檔名正是 helper 用同一個（正確的）tmpname 寫的<br>③ **http_code / time_total / bytes** —— 由 curl `-w` 直接落盤，與 label 無關<br>④ **raw body / headers** —— 由 `-o` / `-D` 落盤，與 label 無關<br>⑤ 案例 id（`01_kangshimei` …）取用正確 |
+| 如何確認 | `bash meta/test-runner-harness.sh`（stub curl、不連網）11 項全過 → 修好後「執行時印出什麼」已被驗證；另見 `meta/script-provenance.txt` 的忠實度證明 [1]~[4] |
+| 處置 | **不重跑**（重跑要 35 分鐘，且會產生第二份不可比的 LLM 抽樣；request 已證實正確，無資訊損失）。改為：<br>① 修好 helper（`local id="$1" label="$2" tmp="$3"; shift 3`）<br>② 新增 `meta/test-runner-harness.sh` 回歸測試，讓這類「執行時行為」的錯以後抓得到<br>③ `run.log` **原文保留不動**（證據不可改寫）；正確標籤由 `make-summaries.py` 從（已修好的）`run-test.sh` 取回，供報告表格使用<br>④ 標籤→案例 id 對照見 `summary-per-case.csv` 的 `label` 欄 |
+
+---
+
+## 缺陷 2：watcher 的 `pgrep -f "bash run-test.sh"` 會 match 自己（已修）
+
+| | 內容 |
+|:--|:--|
+| 症狀 | 背景 watcher `while pgrep -f "bash run-test.sh"; do sleep 20; done` 永遠不結束 —— 因為 watcher 自己的 command line 就含有 `bash run-test.sh` 字串，`pgrep -f` 會 match 到它。 |
+| 影響 | **無資料影響**（watcher 只負責等待與抓檔；套件本身早已跑完）。代價是我一度以為還在跑。 |
+| 修法 | 探針改用**完成標記檔**（`probe/PROBE_DONE`）判斷結束，不再用 pgrep。 |
+
+---
+
+## 缺陷 3（來源層，非本包證據瑕疵）：`broadening_stop_reason` 宣告了不可達的值
+
+| | 內容 |
+|:--|:--|
+| 症狀 | 契約 `Literal` 宣告 8 個非空停止原因，含 `budget_limit`；但依部署碼常數（`tokens_spent=12000`、`TOKEN_BUDGET=40000`、`broaden_max_tokens=8000`、`max_loops=3`），預算只可能在**跑滿 3 輪後**才擋住下一輪，而分類順序 `target_reached → loop_limit → no_filters → budget_limit` 會先命中 `loop_limit`。 |
+| 性質 | **源碼層推論**（依部署碼，sha 已驗），**不是**由回應觀測到的現象；`budget_limit` 不可達本身也無法用回應否證。 |
+| 影響 | 消費端若 switch `broadening_stop_reason`，`budget_limit` 分支實務上不會被走到（無害，但屬宣告與行為的落差）。 |
+| 佐證 | 主套件 + 探針合計觀測到的停止原因僅涵蓋部分值；見報告 §4.6 與 §5。 |

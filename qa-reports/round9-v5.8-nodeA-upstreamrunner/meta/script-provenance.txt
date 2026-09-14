@@ -1,0 +1,56 @@
+=== 目標（本輪不做版本比對；此處僅記錄受測環境）===
+  node: NODE-A (NODE-A)   tailscale NODE-A   node ID NODE-A-NODEID
+  部署型態: Docker（upDockerVerHermes：hermes + persona-db-api 兩個容器）
+  RELEASE-VERSION: v5.8（repo == 節點）
+  服務版本: v5.8（/personadb/status）
+  執行位置: **節點本機**（BASE_URL=http://localhost:8000，與 upstream 原生環境相同）
+            ← 本輪刻意改在節點上跑：① #50/#55 主機層斷言可原生執行（sudo 免密碼）
+              ② 移除我的 Mac ↔ 節點的 tailnet 網路變數（延遲解讀更乾淨）
+  收集時間(UTC): 2026-09-14T12:28:13Z
+
+=== 部署保真度（「裝的到底是什麼」的機械證明）===
+  release tarball sha256 : 716eeedf0f38f4c8f323e4a2650072594fb9e15c5cd88fed5112144710cb136d
+                           （repo upDockerVerHermes/persona-db-rel-v5.8.tar.gz == 節點上那份）
+  /srv/persona-db-data/api/*.py == tarball 內 api/*.py → 8/8 檔 sha256 相同
+  容器 mount: /srv/persona-db-data → /app（bind mount，非複製）
+  容器內 /app/api/*.py sha256 同 tarball；容器 VERSION=v5.8
+  映像: persona-db-api:latest sha256:43742307e4e6… built 2026-09-14T12:21:07Z
+  容器: started 2026-09-14T12:22:39Z  restarts=0
+  → 結論：**執行中的服務程式碼 == 發佈的 v5.8 產物（byte 級）**
+
+=== repo 狀態（本輪參照點）===
+  persona-db-release HEAD = 34b128bcaabb72feb36d43eeaf851e316dd2ceab（== origin/main）
+  節點上的 clone HEAD    = 34b128bcaabb72feb36d43eeaf851e316dd2ceab
+
+=== 儀器 ===
+  upstream sha256: e6c6fe7797a21600e6ec9f7f769e2ab80462d11374996986a16335772bddc677
+  upstream 行數  :      301
+  來源           : https://raw.githubusercontent.com/kstsai/persona-db-release/main/upDockerVerHermes/test-persona-db-api.sh
+  （GitHub 上抓到的 sha 與 repo 內檔一致 → 同一份）
+  runner   sha256: 1557c38eb85215c16a6a4ea4209eae52da3a6395a731eff5e41eb4c554b2ef64
+            （= meta/run-test-as-executed.sh，298 行 —— **實際產出本輪證據的那一份**）
+
+=== 兩個 runner 的區別（重要）===
+  A. meta/run-test-as-executed.sh   1557c38eb85215c1…  298 行  ← 執行的就是這一份
+  B. run-test.sh                    6d3a97d2ca3da055…  297 行  ← 修好 helper 後重建的版本
+  
+  為什麼有兩份：執行完才發現我的 case_run()/probe() helper 有參數位移錯誤
+  （`local label="$2"; shift` → 印出的是 tmpname 而不是標籤原文；詳見 known-defects.txt 缺陷 1）。
+  修好後重建了 B，但**證據是 A 產出的**，故 A 必須原樣留存（不可只留 B）。
+  
+  兩份都通過 meta/verify-instrument.py 的忠實度檢查：
+    A：請求參數 32/32 相同且順序一致；斷言段 L88–L301 逐字相同（0 差異）；標籤 9/9 相同
+    B：同上
+  A 與 B 的差異只在 helper 的參數取值（標籤與 tmp 檔名的接線），**不涉及請求參數或斷言運算式**。
+  另：`meta/test-runner-harness.sh` 是針對 B 的回歸測試（11 項全過），用以防止同類錯誤再發生。
+
+=== 儀器忠實度（meta/verify-instrument.py 的輸出）===
+  [1] 請求參數／順序  upstream=32 runner=32  ✅ 相同（含順序）
+  [2] 前段 L1-L14     ✅ 逐字相同
+  [3] 斷言段 L88-L301 ✅ 逐字相同（0 差異）
+  [4] 案例標籤 9/9    ✅ 逐案相同（標籤原文取自 upstream，非手寫）
+  → 唯一改動：證據落盤（-D/-o/-w）、curl -s、runner 自加的 status 標籤與 openapi 快照
+
+=== 本輪範圍 ===
+  ✗ 不做跨版本比對（skill v2.0.0 明令）
+  ✓ 純 API response 結果分析（§6.1–6.9）

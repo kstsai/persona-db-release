@@ -1,0 +1,7 @@
+# probe = t3_broad_topk3
+# label = §6.9 t3 極寬查詢 → stop_reason 空字串分支（未進入迴圈）
+# cmd   = curl -s --get http://localhost:8000/personadb/candidates --data-urlencode questions=目標客戶 --data-urlencode top_k=3 --data-urlencode opMode=僅篩選
+http_code=503
+time_total=46.596471
+size_download=239
+url_effective=http://localhost:8000/personadb/candidates?questions=%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&top_k=3&opMode=%E5%83%85%E7%AF%A9%E9%81%B8
