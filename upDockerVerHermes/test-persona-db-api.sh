@@ -243,7 +243,46 @@ for cname, cd in _cases.items():
 #54：housing_cost 必須可篩（不再被靜默丟棄）—— LLM 是否選用依抽樣，故僅記錄不判定
 _hc_seen = [c for c, cd in _cases.items() if "housing_cost" in (cd.get("applied_filters") or {})]
 print(f"  #54 housing_cost 進入 applied_filters 的案例: {_hc_seen if _hc_seen else '（本輪未觸發，LLM 選用依抽樣）'}")
+
+# ── v5.8 (#55/#56) 斷言：放寬停止原因 + 連續空轉上限 + 預算 ──
+print("")
+print("  --- v5.8 (#56 放寬停止原因 / #55 可診斷性) ---")
+_ALLOWED_SR = {"", "target_reached", "no_op_limit", "loop_limit", "budget_limit",
+               "llm_empty", "llm_parse_error", "llm_no_filters", "no_filters"}
+for cname, cd in _cases.items():
+    rows = cd.get("summary") or []
+    if not rows and not cd.get("broadening_attempts"):
+        continue
+    sr = cd.get("broadening_stop_reason", None)
+    ba = cd.get("broadening_attempts") or []
+    if sr is None:
+        print(f"  #56 {cname}: 回應缺 broadening_stop_reason 欄位 → ❌")
+        continue
+    ok_sr = sr in _ALLOWED_SR
+    # 連續 no_op 上限 ≤ 2
+    streak = mx = 0
+    for b in ba:
+        streak = streak + 1 if b.get("no_op") else 0
+        mx = max(mx, streak)
+    ok_streak = mx <= 2
+    # 一致性：no_op_limit ⇒ 最後兩輪皆 no_op；target_reached ⇒ matched ≥ 20
+    consistent = True
+    if sr == "no_op_limit":
+        consistent = len(ba) >= 2 and ba[-1].get("no_op") and ba[-2].get("no_op")
+    elif sr == "target_reached":
+        consistent = (cd.get("total_matched") or 0) >= 20
+    print(f"  #56 {cname}: stop_reason={sr!r} loops={len(ba)} 連續空轉max={mx} → "
+          + ("✅" if (ok_sr and ok_streak and consistent) else f"❌ (合法={ok_sr} 空轉={ok_streak} 一致={consistent})"))
+_sr_seen = sorted({cd.get("broadening_stop_reason") for cd in _cases.values()})
+print(f"  #56 本輪出現的停止原因: {_sr_seen}")
 PYEOF
+
+# #55：失敗 log 需帶例外型別（主機層：確認映像內 code 有該診斷）
+if sudo docker exec persona-db-api grep -q "LLM call failed \[" /app/api/llm.py 2>/dev/null; then
+  echo "  #55 映像含例外型別診斷碼（LLM call failed [Type]）→ ✅"
+else
+  echo "  #55 映像缺例外型別診斷碼 → ⚠️（stale 映像？）"
+fi
 echo ""
 echo "  --- v5.6 (#50) / 部署版本一致性 ---"
 # #50: 部署映像必須是含 finish_reason 診斷碼的版本（避免 stale 映像通過測試）
