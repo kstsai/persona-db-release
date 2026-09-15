@@ -290,14 +290,19 @@ _viol = {c: sorted(set(cd.get("protected_dims") or []) & set(cd.get("relaxed_dim
          for c, cd in _cases.items()}
 _viol = {c: v for c, v in _viol.items() if v}
 print(f"  ★ #57 不變式（受保護維度未被放寬）→ " + ("✅" if not _viol else f"❌ {_viol}"))
-# protected_veto ⇒ 有對應 attempt 標記
+# protected_veto 兩條路徑（見下方迴圈）
 _bad_veto = []
 for c, cd in _cases.items():
-    if cd.get("broadening_stop_reason") == "protected_veto":
-        if not any(b.get("protected_veto") and b.get("vetoed_dims")
-                   for b in (cd.get("broadening_attempts") or [])):
-            _bad_veto.append(c)
-print(f"  #57 protected_veto 均有 attempt 標記 → " + ("✅" if not _bad_veto else f"❌ {_bad_veto}"))
+    if cd.get("broadening_stop_reason") != "protected_veto":
+        continue
+    _ba = cd.get("broadening_attempts") or []
+    # 兩條路徑（#57/#59）：① 硬性 veto（attempt 記 protected_veto + vetoed_dims）
+    #                     ② 模型自行拒絕（最後一輪 no_op=true 且 filters 未變更）
+    _p1 = any(b.get("protected_veto") and b.get("vetoed_dims") for b in _ba)
+    _p2 = bool(_ba) and bool(_ba[-1].get("no_op")) and not _ba[-1].get("filters_changed")
+    if not (_p1 or _p2):
+        _bad_veto.append(c)
+print(f"  #57 protected_veto 符合其一條路徑（硬性 veto 或模型拒絕）→ " + ("✅" if not _bad_veto else f"❌ {_bad_veto}"))
 _sr_seen_v59 = sorted({cd.get("broadening_stop_reason") for cd in _cases.values()})
 if "protected_veto" not in _sr_seen_v59:
     print("  #57 本輪未觸發 veto（保護維度皆未被嘗試移除）→ ℹ️")
@@ -314,10 +319,35 @@ try:
     print("  #59 OpenAPI 含 protected_dims → " + ("✅" if "protected_dims" in _props else "❌"))
     print("  #59 stop_reason enum 含 protected_veto → " + ("✅" if "protected_veto" in _enum else "❌"))
     _bad_enum = [v for v in _sr_seen_v59 if v not in _enum]
-    print("  #59 回應出的停止原因皆在 enum 內 → " + ("✅" if not _bad_enum else f"❌ {_bad_enum}"))
+    print(f"  #59 回應出的停止原因皆在 enum 內 → " + ("✅" if not _bad_enum else f"❌ {_bad_enum}"))
 except Exception as e:
     print(f"  #59 OpenAPI 檢查失敗（非致命）: {type(e).__name__}")
+
+# ── v5.10 (#60 root logger / #61 protect-only) 斷言 ──
+print("  --- v5.10 (#61 commute_mode 保護) ---")
+_tesla = load('/tmp/tesla.json')
+if _tesla:
+    _tp = _tesla.get('protected_dims') or []
+    _tr = _tesla.get('relaxed_dims') or []
+    print(f"  #61 TESLA protected={_tp} relaxed={_tr}")
+    print("  #61 TESLA 保護集含 commute_mode → " + ("✅" if "commute_mode" in _tp else "❌"))
+    print("  #61 TESLA 未放寬 commute_mode → " + ("✅" if "commute_mode" not in _tr else "❌"))
+else:
+    print("  #61 TESLA 案例檔缺失 → ⚠️（無法驗證）")
 PYEOF
+
+# ── #60：app 的 INFO 行是否真的進 log（root logger 設定生效）──
+_n_info=$(sudo docker logs persona-db-api 2>&1 | grep -c "Protected dims")
+_n_broad=$(sudo docker logs persona-db-api 2>&1 | grep -c "Broadening loop")
+echo "  --- v5.10 (#60 root logger) ---"
+echo "  #60 app INFO 行：Protected dims=${_n_info} ｜ Broadening loop=${_n_broad}"
+if [ "${_n_info}" -gt 0 ] || [ "${_n_broad}" -gt 0 ]; then
+  echo "  #60 INFO 行已進 log（root logger 設定生效）→ ✅"
+else
+  echo "  #60 INFO 行 0 筆 → ⚠️（檢查 LOG_LEVEL 是否為 WARNING，或映像為舊版）"
+fi
+printf "  #60 容器 LOG_LEVEL: "
+sudo docker exec persona-db-api sh -c 'grep LOG_LEVEL /app/.env' 2>/dev/null || echo "(未設定 → 預設 INFO)"
 
 # #55：失敗 log 需帶例外型別（主機層：確認映像內 code 有該診斷）
 if sudo docker exec persona-db-api grep -q "LLM call failed \[" /app/api/llm.py 2>/dev/null; then

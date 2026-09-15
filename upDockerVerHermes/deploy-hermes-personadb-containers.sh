@@ -420,6 +420,8 @@ docker run -d \
   --name persona-db-api \
   -p ${API_PORT}:8000 \
   --env-file "${PERSONA_DB_DATA}/.env" \
+  --log-opt max-size=10m \
+  --log-opt max-file=3 \
   -v "${PERSONA_DB_DATA}:/app" \
   -v "${HERMES_HOME}:/hermes-config:ro" \
   persona-db-api:latest
