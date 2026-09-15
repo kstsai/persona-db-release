@@ -35,7 +35,7 @@ echo "=== 3. 時尚服裝設計師的目標客戶 ==="
 time curl --get "http://localhost:8000/personadb/candidates" \
           --data-urlencode "questions=時尚服裝設計師的目標客戶" \
             --data-urlencode "top_k=10" \
-              --data-urlencode "opMode=僅篩選" | jq > fashion_closing.json
+              --data-urlencode "opMode=僅篩選" | jq > /tmp/fashion_closing.json
 
 
 echo ""
