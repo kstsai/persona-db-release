@@ -1,0 +1,60 @@
+=== 目標（本輪不做版本比對；此處僅記錄受測環境）===
+  node: NODE-A (NODE-A)   tailscale NODE-A   node ID NODE-A-NODEID
+  部署型態: Docker（upDockerVerHermes：hermes + persona-db-api 兩個容器）
+  RELEASE-VERSION: v5.10（repo == 節點）
+  服務版本: v5.10（/personadb/status）；容器內 /app/VERSION = v5.10
+  執行位置: **節點本機**（BASE_URL=http://localhost:8000，與 upstream 原生環境相同）
+            ⇒ #50/#55/#60 等主機層斷言可原生執行（sudo 免密碼），本輪不應出現 N/A
+  收集時間(UTC): 2026-09-15T03:31:47Z
+
+=== 部署保真度（「裝的到底是什麼」的機械證明）===
+  release tarball sha256 : 22ae9c04099c105eee338e037a9161ec110bb1a0579398900aa47ce61cf40347
+                           （repo == 節點上那一份）
+  /srv/persona-db-data/api/*.py == tarball 內 api/*.py → 8/8 檔 sha256 相同
+  容器 mount: /srv/persona-db-data → /app（bind mount）；容器內 /app/api/*.py sha256 亦同
+  映像: persona-db-api:latest 6504bbea0208 built 2026-09-15T02:20:32Z
+  容器: started 2026-09-15T02:25:56Z  restarts=0  Up (healthy)
+  → 結論：**執行中的服務程式碼 == 發佈的 v5.10 產物（byte 級）**
+
+=== repo 狀態（本輪參照點）===
+  persona-db-release HEAD = 286ad849fd689e3736447ec5cd17951501639217
+  節點上的 clone HEAD    = 286ad849fd689e3736447ec5cd17951501639217（一致）
+  相關 commit: 62a3852 release v5.9（核心維度保護機制）→ 19ab05e v5.9 出貨斷言
+               → f5417c4 release v5.10 → 286ad84 fix(deploy) 轉發 LOG_LEVEL（#60）
+
+=== 契約（v5.10）===
+  openapi.json sha256: 588772d4afbc095eb12c2f2239ba473fd0236dc34aec65d707c2abe14da460d5
+  CandidatesResponse 14 欄（新增 protected_dims）
+  broadening_stop_reason enum 10 值（新增 protected_veto）
+  BroadeningAttempt 9 欄（新增 protected_veto / vetoed_dims）
+  PersonaSummary 24 欄（與 v5.8 同）
+
+=== 儀器 ===
+  upstream sha256: f57392bb9d35f0a2351ea96d67b3e7b2cd1a7af7f0d7916ad573a4b10c99eb0
+  upstream 行數  : 372
+  來源           : https://raw.githubusercontent.com/kstsai/persona-db-release/main/upDockerVerHermes/test-persona-db-api.sh
+  取得時間(UTC)  : 2026-09-15T03:30Z（GitHub 上抓到的 sha 與 repo 內檔一致）
+  runner   sha256: 985fdb8198c08500354555a6223cdfc04e498743568bde7a9defa5c2cce4c068
+  runner   行數  : 368
+  ※ **runner sha 於執行前即記錄**（skill v2.1.0：執行後若改動 runner，須把執行時那份另存）
+
+=== 第一次啟動的失敗（已中止，不產出本輪證據）===
+  中止的那份 runner : efa7f666c3e9bdb9b01f52d1441598c0c8c9641ea2f06f754c59d302cc35f286
+                       = meta/aborted-attempt-runner-efa7f666.sh（保留供追溯）
+  原因               : 我複製第九輪工具時**忘了改 runner 內寫死的 OUT**（`$HOME/qa-round9`），
+                       導致證據被寫進第九輪在節點上的工作副本（7 檔被覆寫）。
+                       本機 master 與已發布的第九輪**均未受影響**（已逐項驗證）。
+  處置               : make-runner.py 改為由本輪目錄名推導 OUT，並加三道殘留檢查。
+  詳見               : meta/known-defects.txt 缺陷 1
+
+=== 儀器忠實度（meta/verify-instrument.py 的輸出）===
+  [1] 請求參數／順序  upstream=32 runner=32  ✅ 相同（含順序）
+  [2] 前段 L1-L14     ✅ 逐字相同
+  [3] 斷言段 L88-L372 ✅ 逐字相同（0 差異）
+  [4] 案例標籤 9/9    ✅ 逐案相同（標籤原文取自 upstream，非手寫）
+  → 唯一改動：證據落盤（-D/-o/-w）、curl -s、runner 自加的 status 標題與 openapi 快照
+  另：meta/test-runner-harness.sh（stub curl、11 項）驗「執行時行為」，全部通過
+
+=== 本輪範圍 ===
+  ✗ 不做跨版本比對（skill v2.0.0 起明令；本輪為 v2.1.0）
+  ✓ 純 API response 結果分析（§6.1–6.9）

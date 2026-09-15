@@ -23,7 +23,7 @@
 
 ---
 
-## 九輪一覽
+## 十輪一覽
 
 | # | 版本 | 節點 | runner | 日期 | 契約 sha256(16) | 結果 | 該輪重點 |
 |:-:|:-----|:-----|:-----|:-----|:----------------|:-----|:---------|
@@ -36,8 +36,9 @@
 | 7 | **v5.6** | `NODE-A` | upstream 223 行 | 2026-09-14 | `aafe647f46ee8abe` | **10/10** | **主機端驗收**（Docker 部署）：語意正確性 9/9；**判讀不跨版本比對**，聚焦 response 內容分析 |
 | 8 | **v5.7** | `NODE-B` | **upstream 227 行** | 2026-09-14 | **`cb5b08084daea8af`** | **10/10** | **上游斷言 13/13 全過**；`summary` 擴充 **17→24 欄**（回應可自我驗證）；**不與前版本比對** |
 | 9 | **v5.8** | `NODE-A` | **upstream 301 行** | 2026-09-14 | **`6d3c1508b53a3f56`** | **10/10** | 斷言 **31✅/1⚠️/0❌/0 N/A**（**首次在節點本機執行 ⇒ 沒有 N/A**）；`#42` 的 ⚠️ 證實為「放寬把分析步驟認定的必要維度移掉」（案例 07 同案例自我矛盾、8→58）；**案例 06/09 重跑不可重現**；**不與前版本比對** |
+| 10 | **v5.10** | `NODE-A` | **upstream 372 行** | 2026-09-15 | **`588772d4afbc095e`** | **10/10** | 斷言 **42✅/0⚠️/0❌/0 N/A**；**核心維度保護（`protected_dims`）經重跑驗證有效**（`protected ∩ relaxed = ∅` 4/4）；定向探針**逼出硬性 veto**（`protected_veto`）；`status` 語意 18/18；10 輪放寬 **0 空轉 0 overshoot**；**不與前版本比對** |
 
-**共 6 種不同契約**（v5.2 與 v5.3.1 同 hash ⇒ 純行為 patch；第 5–7 輪同為 `aafe647f`；v5.7 為 `cb5b0808`；**v5.8 為新契約 `6d3c1508`**）。
+**共 7 種不同契約**（v5.2 與 v5.3.1 同 hash ⇒ 純行為 patch；第 5–7 輪同為 `aafe647f`；v5.7 為 `cb5b0808`；v5.8 為 `6d3c1508`；**v5.10 為新契約 `588772d4`**）。
 
 > ⚠️ **第 5 輪與第 6 輪版本、契約完全相同，只差 runner**。兩輪案例 1–8 的 **query 與參數完全相同**
 > （已機械比對），故其差異**純屬 LLM 抽樣**、**不可歸因於 runner** —— 這組對照反而提供最乾淨的
@@ -59,7 +60,8 @@ qa-reports/
 ├── round6-v5.6-nodeB-upstreamrunner/      ← 第 6 輪（upstream runner）
 ├── round7-v5.6-nodeA-upstreamrunner/      ← 第 7 輪（同 runner，`NODE-A` Docker 部署；**不做版本比對**）
 ├── round8-v5.7-nodeB-upstreamrunner/      ← 第 8 輪（**v5.7**，upstream 227 行；**不做版本比對**）
-└── round9-v5.8-nodeA-upstreamrunner/      ← 第 9 輪（**v5.8**，upstream 301 行；**節點本機執行**；**不做版本比對**、無 `version-comparison-nway.csv`）
+├── round9-v5.8-nodeA-upstreamrunner/      ← 第 9 輪（**v5.8**，upstream 301 行；**節點本機執行**；**不做版本比對**）
+└── round10-v5.10-nodeA-upstreamrunner/    ← 第 10 輪（**v5.10**，upstream 372 行；節點本機執行；**不做版本比對**）
 ```
 
 > **命名 = `round<輪次>-v<版本>-node<代號>[-<runner 別>]`。** 三個理由：
@@ -78,7 +80,7 @@ qa-reports/
 
 | 代號 | 對應 |
 |:---|:---|
-| `NODE-A` | 第一／三／七／九輪的受測節點 |
+| `NODE-A` | 第一／三／七／九／十輪的受測節點 |
 | `NODE-B` | 第二／四／五／六／八輪的受測節點（同一節點多次就地升級）|
 | `NODE-B-host` | `NODE-B` 的節點內部 HostName（與 tailnet 名不同）|
 | `[public-ip]` / `[ts-ipv6]` / `[ts-peer-ip]` | 已遮蔽的位址 |
@@ -96,7 +98,7 @@ qa-reports/
 |:---|:---|
 | `ANALYSIS.md` | **主報告**：逐案例分析 + 跨版本對照 + 發現（每條標嚴重度與「證據/觀察/空轉」級別） |
 | `README.md` | 證據地圖 + **可執行複驗指令**（每條都經實跑、輸出與文件一致） |
-| `run-test.sh` | runner（第 1–5 輪 sha256 相同；**第 9 輪另有 `meta/run-test-as-executed.sh` = 實際執行的那一份**） |
+| `run-test.sh` | runner（第 1–5 輪 sha256 相同；**第 9 輪另有 `meta/run-test-as-executed.sh`**；**第 10 輪另有 `meta/aborted-attempt-runner-efa7f666.sh`** —— 都是「實際執行的那一份」的留存） |
 | `run.log` | 完整執行 stdout（含每案例 echo 標籤與完整 response body） |
 | `raw/` | **逐位元組** response body（+ `openapi.json` 契約） |
 | `headers/` | 每案例完整 HTTP response headers |
@@ -289,6 +291,48 @@ OUT=/tmp/rerun BASE_URL=http://<node>:8000 bash run-test.sh
   那一份；已另存 `meta/run-test-as-executed.sh`（`1557c38e…`）並證明**兩份**的請求參數與斷言段
   都與 upstream 逐字相同
 
+### 第 10 輪（`NODE-A` **v5.10**）✅
+> 依 skill **v2.1.0**：只分析 v5.10 的回應，**不做跨版本比對**。以下為該輪自身的發現。
+
+- **斷言 42 ✅ / 0 ⚠️ / 0 ❌ / 0 N/A**（新增 `#57` 核心維度保護、`#58` `status` 語意、`#59` enum、
+  `#60` root logger、`#61` `commute_mode` 保護）
+- **部署保真度以 byte 級證明**：release tarball sha256 與節點上同一檔相同；
+  `/srv/persona-db-data/api/*.py` 與 tarball 內 `api/*.py` **8/8 檔 sha256 相同**；
+  容器 `/app` 為該目錄的 **bind mount** ⇒ 執行中的程式碼 == 發佈的 v5.10 產物
+- **核心維度保護機制經重跑驗證有效**：兩個被探針的案例各 4 次執行，
+  **`protected ∩ relaxed = ∅` 4/4 成立**、**核心維度認定 4/4 一致**；
+  第九輪「把 `debt_status` 放寬掉、`8→58` overshoot」**4/4 未再出現**；`#42` 由 ⚠️ 轉 ✅；
+  `#61` 的 TESLA `commute_mode` 也受保護且未被放寬
+- **硬性 veto 有牙齒**：定向探針逼出模型試圖移除受保護的 `employment_status` →
+  系統**還原該輪並以 `protected_veto` 停止**（`vetoed_dims=['employment_status']`）。
+  額外驗證了 upstream 未驗的不變式：`vetoed_dims ⊆ protected_dims`、veto 必有非空 `vetoed_dims`、
+  且 veto 確實是一次 rollback（`no_op=True`、`filters_changed=False`、計數不變）
+- **`status` 語意修正**：`matched==0 ⇔ status!='ok'` 在 **18/18 筆**（含 3 筆空池）成立
+- **放寬行為收斂**：10 輪放寬中 **`no_op` 0 輪、`overshoot` 0 輪**；
+  自述與實作的矛盾 **0 件**（第九輪同型態有 5/9）；`no_op`/`overshoot` 旗標與數字 **10/10 一致**
+- **可觀測性缺口 0**（13/13 自證通過）、計分低報 **(b) = 0**（並出現 3 個合法的 (a) 同分碰撞）
+
+### 第 10 輪新增 ⚠️
+- **同一 query 的 `matched` 變異仍極大**：案例 07（債務整合）四次執行得到 **0 ↔ 30**；
+  案例 06（醫美）為 14–16。**單次 sweep 的數字不可作為品質結論**
+- **「值集放寬」沒有護欄、也不留痕**：案例 06 的 loop2 把 `sex` 由 `['女']` 放寬為 `['女','男']`，
+  而同案例 reasoning 說「以女性為主」。因為是值集放寬而非移除維度，**不進 `relaxed_dims`**，
+  任何檢查都看不到（該輪回傳 10 筆恰好全為女性，實務後果為零）
+- **`applied_filters` 可出現空值清單，等同「排除全部」**：部署碼 `filter_personas()` 對字串型維度做
+  `if val not in accepted`，`accepted == []` 時**恆為真**。這解釋了探針 `r07_debt_1` 的
+  `loop2: 6→0` 與最終 `matched=0`。觀測到 1/18 筆，無機制阻止
+- **`broadening_stop_reason` 仍宣告 2 個不可達的值**（`""` 與 `budget_limit`）—— 源碼層推論，
+  在 v5.10 重新驗證仍成立
+- 案例 08（小吃攤）的 `protected_dims` 為**空**（該題若需放寬，沒有任何維度受保護）
+
+### 第 10 輪的作業疏失（已記錄於該包 `meta/known-defects.txt`）
+- 第一次啟動時，runner 因**寫死 `OUT="$HOME/qa-round9"`**（複製上一輪工具時忘了改），
+  把 v5.10 的證據寫進了**第九輪在節點上的工作副本**（7 檔被覆寫）。
+  **本機 master 與已發布的第九輪均未受影響**（以 sha256 逐項驗證）。
+  該節點目錄已更名隔離為 `qa-round9-POLLUTED-by-round10-attempt`；
+  中止那次的 runner 保留為 `meta/aborted-attempt-runner-efa7f666.sh`；
+  `make-runner.py` 已改為**由目錄名推導 `OUT`** 並加三道殘留檢查。
+
 ### 仍未解 ⚠️（經更正後仍成立）
 - **ranking 層不可重現**：版本內 top-3 交集多為 0–1/3。第 5↔6 輪同版本對照顯示抽樣變異可達 **5×**
 - **分數尺度跨版本漂移**（案例 04：v5.4 `4.86` → v5.6 `2.54`）⇒ 有絕對分數門檻的下游邏輯升級會失效
@@ -314,6 +358,14 @@ OUT=/tmp/rerun BASE_URL=http://<node>:8000 bash run-test.sh
   = `meta/run-test-as-executed.sh`（該輪執行後才修 helper，故此檔必須另存）
 - 忠實度以 `meta/verify-instrument.py` 機械證明：**請求參數 32/32 相同且順序一致**、
   斷言段 `L88–L301` **逐字相同（0 差異）**、案例標籤 9/9 相同；改動逐條列於該輪 `ANALYSIS.md` §7
+
+**第 10 輪（v5.10）的儀器**（上游腳本再次改版）：
+- 上游腳本 sha256：`f57392bb9d35f0a2351ea96d67b3e7b2cd1a7af7f0d7916ad573a4b10c99eb0`（**372 行**）
+- runner sha256：`985fdb8198c08500354555a6223cdfc04e498743568bde7a9defa5c2cce4c068`
+  （**執行前即記錄**）；另留存中止那次啟動的 runner `meta/aborted-attempt-runner-efa7f666.sh`
+- 忠實度以 `meta/verify-instrument.py` 機械證明：**請求參數 32/32 相同且順序一致**、
+  斷言段 `L88–L372` **逐字相同（0 差異）**、案例標籤 9/9 相同；
+  另以 `meta/test-runner-harness.sh`（stub `curl`、11 項）驗「**執行時行為**」
 
 ## 已知限制
 

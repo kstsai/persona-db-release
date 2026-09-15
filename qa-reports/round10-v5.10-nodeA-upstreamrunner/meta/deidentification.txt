@@ -1,0 +1,23 @@
+# 去識別化說明（發布版）
+
+本包是 `round10-v5.10-nodeA-upstreamrunner` 的**去識別化副本**，供 public repo
+`kstsai/persona-db-release` 的 `qa-reports/` 使用。
+
+| 原本 | 發布版代號 |
+|:--|:--|
+| 節點主機名 | `NODE-A` |
+| 節點 tailscale IP | `NODE-A` |
+| tailscale node ID | `NODE-A-NODEID` |
+
+**只替換了這三類字串，其餘逐字未動**（含所有 `raw/*.body`、`headers/`、`meta/*.meta`、
+`probe/` 的證據檔）。
+
+受影響的檔案只有三個（皆為環境標識行，不影響任何量測值）：
+- `meta/script-provenance.txt`：`node:` 那一行
+- `run.log`：檔頭的 `host=` 欄位
+- `probe/probe.log`：檔頭的 `host=` 欄位
+
+> ⚠️ 本包的 `run.log` 是**原始證據**。作者端保留的 master 副本中該欄位仍是原值；
+> 發布時才替換，以免公開節點位址。**除該欄位外，`run.log` 與 master 逐字相同。**
+>
+> 代號↔實際值的對照表**不在本 repo**（否則去識別化即失效）。

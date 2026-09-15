@@ -1,0 +1,66 @@
+# probe start 2026-09-15T03:56:02Z  BASE_URL=http://localhost:8000  host=NODE-A
+
+=== §6.8 重現性 — case06 醫美 r1/3 ===
+
+real	3m29.364s
+user	0m0.017s
+sys	0m0.061s
+  → http_code=200 time_total=209.341612 size_download=8662 url_effective=http://localhost:8000/personadb/candidates?questions=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E8%A1%8C%E9%8A%B7%E4%B8%BB%E7%AE%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case06 醫美 r2/3 ===
+
+real	3m22.708s
+user	0m0.015s
+sys	0m0.065s
+  → http_code=200 time_total=202.666448 size_download=8661 url_effective=http://localhost:8000/personadb/candidates?questions=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E8%A1%8C%E9%8A%B7%E4%B8%BB%E7%AE%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case06 醫美 r3/3 ===
+
+real	2m58.412s
+user	0m0.009s
+sys	0m0.067s
+  → http_code=200 time_total=178.381928 size_download=8651 url_effective=http://localhost:8000/personadb/candidates?questions=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E8%A1%8C%E9%8A%B7%E4%B8%BB%E7%AE%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case07 債務整合 r1/3 ===
+
+real	2m20.135s
+user	0m0.027s
+sys	0m0.029s
+  → http_code=200 time_total=140.106802 size_download=2608 url_effective=http://localhost:8000/personadb/candidates?questions=%E5%82%B5%E5%8B%99%E6%95%B4%E5%90%88%E8%B2%B8%E6%AC%BE%E6%96%B9%E6%A1%88%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%8A%80%E8%A1%8C%E5%82%B5%E5%8B%99%E6%95%B4%E5%90%88%E5%B0%88%E5%93%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case07 債務整合 r2/3 ===
+
+real	2m46.484s
+user	0m0.041s
+sys	0m0.021s
+  → http_code=200 time_total=166.453673 size_download=8721 url_effective=http://localhost:8000/personadb/candidates?questions=%E5%82%B5%E5%8B%99%E6%95%B4%E5%90%88%E8%B2%B8%E6%AC%BE%E6%96%B9%E6%A1%88%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%8A%80%E8%A1%8C%E5%82%B5%E5%8B%99%E6%95%B4%E5%90%88%E5%B0%88%E5%93%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case07 債務整合 r3/3 ===
+
+real	2m15.142s
+user	0m0.035s
+sys	0m0.028s
+  → http_code=200 time_total=135.116914 size_download=8783 url_effective=http://localhost:8000/personadb/candidates?questions=%E5%82%B5%E5%8B%99%E6%95%B4%E5%90%88%E8%B2%B8%E6%AC%BE%E6%96%B9%E6%A1%88%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%8A%80%E8%A1%8C%E5%82%B5%E5%8B%99%E6%95%B4%E5%90%88%E5%B0%88%E5%93%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.9 t1 極窄查詢 top_k=10 → matched=0 → #58 status 語意 ===
+
+real	3m3.876s
+user	0m0.013s
+sys	0m0.037s
+  → http_code=200 time_total=183.859573 size_download=2230 url_effective=http://localhost:8000/personadb/candidates?questions=%E6%83%B3%E6%89%BE%E5%90%8C%E6%99%82%E6%93%81%E6%9C%89%E9%81%8A%E8%89%87%E8%88%87%E7%A7%81%E4%BA%BA%E9%A3%9B%E6%A9%9F%E7%9A%8445%E6%AD%B2%E5%96%AE%E8%BA%AB%E5%A5%B3%E6%80%A7%E4%BC%81%E6%A5%AD%E4%B8%BB&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.9 t2 窄查詢 top_k=100 → pool_exhausted=true ===
+
+real	3m34.912s
+user	0m0.048s
+sys	0m0.041s
+  → http_code=200 time_total=214.863672 size_download=2532 url_effective=http://localhost:8000/personadb/candidates?questions=%E6%83%B3%E6%89%BE%E5%90%8C%E6%99%82%E6%93%81%E6%9C%89%E9%81%8A%E8%89%87%E8%88%87%E7%A7%81%E4%BA%BA%E9%A3%9B%E6%A9%9F%E7%9A%8445%E6%AD%B2%E5%96%AE%E8%BA%AB%E5%A5%B3%E6%80%A7%E4%BC%81%E6%A5%AD%E4%B8%BB&top_k=100&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.9 t3 TESLA top_k=20 → 逼出 protected_veto（#61 commute_mode） ===
+
+real	2m11.447s
+user	0m0.040s
+sys	0m0.039s
+  → http_code=200 time_total=131.394070 size_download=11375 url_effective=http://localhost:8000/personadb/candidates?questions=TESLA%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&top_k=20&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+# probe end 2026-09-15T04:22:05Z

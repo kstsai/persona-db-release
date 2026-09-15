@@ -1,0 +1,6 @@
+# case  = 00_status
+# cmd   = curl -s --get http://localhost:8000/personadb/status
+http_code=200
+time_total=0.860155
+size_download=792
+url_effective=http://localhost:8000/personadb/status
