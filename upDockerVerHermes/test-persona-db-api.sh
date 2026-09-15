@@ -306,6 +306,28 @@ print(f"  #57 protected_veto 符合其一條路徑（硬性 veto 或模型拒絕
 _sr_seen_v59 = sorted({cd.get("broadening_stop_reason") for cd in _cases.values()})
 if "protected_veto" not in _sr_seen_v59:
     print("  #57 本輪未觸發 veto（保護維度皆未被嘗試移除）→ ℹ️")
+# veto 的三條延伸不變式（來源：round10 §3.1 的 K/L/M — 由 dsh1 提出，我方採納為出貨斷言）
+_k = _l = _m = []
+for c, cd in _cases.items():
+    _prot = set(cd.get("protected_dims") or [])
+    for b in (cd.get("broadening_attempts") or []):
+        if not b.get("protected_veto"):
+            continue
+        if not set(b.get("vetoed_dims") or []) <= _prot:
+            _k.append(c)                                    # K: vetoed_dims ⊆ protected_dims
+        if not (b.get("vetoed_dims") or []):
+            _l.append(c)                                    # L: veto 必有非空 vetoed_dims
+        if not (b.get("no_op") and not b.get("filters_changed")   # M: veto 必須是 rollback
+                and b.get("match_count_before") == b.get("match_count_after")):
+            _m.append(c)
+print("  #57 veto 不變式 K（vetoed_dims ⊆ protected_dims）→ " + ("✅" if not _k else f"❌ {sorted(set(_k))}"))
+print("  #57 veto 不變式 L（veto 必有非空 vetoed_dims）→ " + ("✅" if not _l else f"❌ {sorted(set(_l))}"))
+print("  #57 veto 不變式 M（veto 是 rollback：no_op 且 filters 未變更且計數不變）→ " + ("✅" if not _m else f"❌ {sorted(set(_m))}"))
+# 空值清單守門（#62）：applied_filters 的值清單不得為空（空清單 = 排除全部，語意陷阱）
+_empty = {c: [k2 for k2, v2 in (cd.get("applied_filters") or {}).items() if isinstance(v2, list) and not v2]
+          for c, cd in _cases.items()}
+_empty = {c: v2 for c, v2 in _empty.items() if v2}
+print("  #62 applied_filters 無空值清單（空清單＝排除全部）→ " + ("✅" if not _empty else f"❌ {_empty}"))
 # #58 status 語意：matched==0 ⇔ status != 'ok'
 _bad_status = [c for c, cd in _cases.items()
                if ((cd.get("total_matched") or 0) == 0) != (cd.get("status") != "ok")]
