@@ -309,6 +309,8 @@ CANON="${SCRIPT_DIR}/pocDemo.env"
 SRC_MODEL=$(grep '^LLM_MODEL=' "$CANON" 2>/dev/null | head -1 | cut -d= -f2-)
 SRC_ANALYSIS_MODEL=$(grep '^LLM_ANALYSIS_MODEL=' "$CANON" 2>/dev/null | head -1 | cut -d= -f2-)
 SRC_URL=$(grep '^LLM_BASE_URL=' "$CANON" 2>/dev/null | head -1 | cut -d= -f2-)
+# #60: log 層級（預設 INFO = 可診斷；WARNING = 安靜模式）。未轉發的話容器只會用到程式碼預設值。
+SRC_LOG_LEVEL=$(grep '^LOG_LEVEL=' "$CANON" 2>/dev/null | head -1 | cut -d= -f2-)
 # API key：~/.env 優先（user secret），否則回退 pocDemo.env
 KEY_SRC="$CANON"
 if [ -f ~/.env ] && grep -q '^LLM_API_KEY=' ~/.env 2>/dev/null; then
@@ -325,6 +327,7 @@ LLM_API_KEY=${SRC_KEY:-}
 LLM_MODEL=${SRC_MODEL:-deepseek-v4-flash}
 LLM_ANALYSIS_MODEL=${SRC_ANALYSIS_MODEL:-}
 LLM_BASE_URL=${SRC_URL:-https://api.deepseek.com}
+LOG_LEVEL=${SRC_LOG_LEVEL:-INFO}
 ENVEOF
 echo "  ✅ .env written for persona-db API (from pocDemo.env)"
 
