@@ -248,7 +248,19 @@ print(f"  #54 housing_cost 進入 applied_filters 的案例: {_hc_seen if _hc_se
 print("")
 print("  --- v5.8 (#56 放寬停止原因 / #55 可診斷性) ---")
 _ALLOWED_SR = {"", "target_reached", "no_op_limit", "loop_limit", "budget_limit",
-               "llm_empty", "llm_parse_error", "llm_no_filters", "no_filters"}
+               "llm_empty", "llm_parse_error", "llm_no_filters", "no_filters", "protected_veto"}
+# v5.11：改為「動態以 OpenAPI enum 為準」（硬編清單曾在 v5.9 新增 protected_veto 後誤報；
+# 以契約為準才不會隨版本腐化）—— 取不到時回退上面的靜態集合。
+try:
+    import urllib.request as _u56
+    _os56 = json.load(_u56.urlopen("http://localhost:8000/openapi.json", timeout=10))
+    _enum56 = set(_os56["components"]["schemas"]["CandidatesResponse"]
+                  ["properties"]["broadening_stop_reason"]["enum"])
+    if _enum56:
+        _ALLOWED_SR = _enum56
+        print(f"  #56 停止原因白名單取自 OpenAPI enum（{len(_enum56)} 值）")
+except Exception as _e56:
+    print(f"  #56 OpenAPI 不可用（{type(_e56).__name__}）→ 使用靜態白名單")
 for cname, cd in _cases.items():
     rows = cd.get("summary") or []
     if not rows and not cd.get("broadening_attempts"):
@@ -259,6 +271,10 @@ for cname, cd in _cases.items():
         print(f"  #56 {cname}: 回應缺 broadening_stop_reason 欄位 → ❌")
         continue
     ok_sr = sr in _ALLOWED_SR
+    # 契約不變式（v5.9 起）：受保護維度不得出現在 relaxed_dims（與 stop_reason 無關）
+    if set(cd.get("protected_dims") or []) & set(cd.get("relaxed_dims") or []):
+        ok_sr = False
+        print(f"  #56 {cname}: ⚠️ protected ∩ relaxed 非空 → 不變式違反")
     # 連續 no_op 上限 ≤ 2
     streak = mx = 0
     for b in ba:
@@ -328,18 +344,17 @@ _empty = {c: [k2 for k2, v2 in (cd.get("applied_filters") or {}).items() if isin
           for c, cd in _cases.items()}
 _empty = {c: v2 for c, v2 in _empty.items() if v2}
 print("  #62 applied_filters 無空值清單（空清單＝排除全部）→ " + ("✅" if not _empty else f"❌ {_empty}"))
-# #63(a)：受保護維度不得被「值集放寬」（若放寬，veto 應已觸發 → 不一致）
+# #63：值集放寬的留痕（v5.11.1 起：放寬＝合法、只留痕；故僅資訊性呈現，不判定 ❌）
 _wd = {}
 for c, cd in _cases.items():
-    prot = set(cd.get("protected_dims") or [])
     wide = set()
     for b in (cd.get("broadening_attempts") or []):
         wide |= set(b.get("widened_dims") or [])
-    if prot & wide:
-        _wd[c] = sorted(prot & wide)
-print("  #63 受保護維度未被放寬值集（與 veto 一致）→ " + ("✅" if not _wd else f"❌ {_wd}"))
+    if wide:
+        _wd[c] = sorted(wide)
+print(f"  #63 本輪值集放寬留痕: {_wd if _wd else '（無）'}")
 _n_wide = sum(1 for cd in _cases.values() for b in (cd.get("broadening_attempts") or []) if b.get("widened_dims"))
-print(f"  #63 widened_dims 留痕輪數: {_n_wide}（0 也合法 —— 代表本輪沒有值集放寬）")
+print(f"  #63 widened_dims 留痕輪數: {_n_wide}（放寬為合法行為；此欄位供稽核）")
 # #58 status 語意：matched==0 ⇔ status != 'ok'
 _bad_status = [c for c, cd in _cases.items()
                if ((cd.get("total_matched") or 0) == 0) != (cd.get("status") != "ok")]
