@@ -1,4 +1,4 @@
-> 產品文件（來源：kstsai/linkEazyCenter wiki `entities/persona-db.md`，更新 2026-09-14）
+> 產品文件（來源：kstsai/linkEazyCenter wiki `entities/persona-db.md`，更新 2026-09-15）
 > 進度看板：GitHub issues（kstsai/persona-db）為 ground truth。
 
 
@@ -20,8 +20,11 @@
 | 性別比 | 男 49.7% / 女 50.3% |
 | Repos | `kstsai/persona-db`（source）+ `kstsai/persona-db-release`（delivery） |
 | API | FastAPI `/personadb/candidates`（LLM 分析→篩選人設） |
-| 版本 | **v5.8**（`VERSION` / `RELEASE-VERSION` / `dim_weights._meta.version` 三者一致，由 `check_dim_weights.py` 守門） |
-| 部署 | **nodeB**（原 lzc-dh1）= **v5.8**；**nodeA**（原 lzcdh5）= **v5.6**（較早 baseline）（Docker containers；nodeA 另含 hermes 容器） |
+| 版本 | **v5.11.1**（`VERSION` / `RELEASE-VERSION` / `dim_weights._meta.version` 三者一致，由 `check_dim_weights.py` 守門） |
+| 部署 | **nodeB**（原 lzc-dh1）= **v5.11.1**（`--restart unless-stopped` 已生效）；**nodeA**（原 lzcdh5）= **v5.10**（`--restart` 於下一輪部署帶上）（Docker containers；nodeA 另含 hermes 容器） |
+| 核心維度保護集 | **五來源聯集**（凍結於請求開始）：domain 關鍵字／分析 `reasoning` 必要性宣告（詞界比對）／分析 `core_dims` 結構化宣告／模型每輪 `protected_dims`（單調累積）／protect-only 語意表 |
+| veto 條件 | **移除維度，或值集不再是原值集超集（縮小／替換）** → 還原該輪；**值集放寬（嚴格超集）＝合法**，僅記入 `widened_dims` 留痕（v5.11.1 回退了「雙向凍結」） |
+| 運維 | `LOG_LEVEL`（預設 `INFO`，非法值回退）；容器 `--log-opt max-size=10m --max-file=3`（log rotation）＋ `--restart unless-stopped`（v5.11） |
 | per-request token 預算 | analysis 12000（重試 18000）+ 放寬 ≤3×8000 → `TOKEN_BUDGET` **40000** |
 
 ## 22 維度
@@ -88,6 +91,10 @@
 | **v5.6** | #50 `finish_reason` 從 `call_llm` 傳到消費層（解析失敗 log 可一句話分辨「截斷 vs 格式問題」）；`content` 非空但被截斷在來源即告警 | 09/13 |
 | **v5.7** | #53 `summary` 補齊 7 個可篩維度（`sex`/`region`/`education`/`marriage`/`hobby`/`politics`/`media_diet` → `valid_dims ⊆ summary`）；#54 `housing_cost` prompt 指示使用但 `valid_dims` 缺、靜默丟棄修正 | 09/14 |
 | **v5.8** | #56 **放寬策略改善**（逐維度約束分析 `dim_constraint_report()` + 核心維度排除 + 連續 2 輪空轉即停 + `broadening_stop_reason`）；#55 失敗 log 帶例外型別；analysis 基礎預算 8000 → **12000**（重試 18000）、`TOKEN_BUDGET` 32000 → 40000 | 09/14 |
+| **v5.9** | #57 **核心維度保護機制**（保護集四來源 + 硬性 veto + `protected_dims`/`protected_veto` 揭露）；#58 `matched=0` 不再回 `status='ok'`（→ `too_strict`）；#59 503 分兩型態、`no_op` 與「刻意拒絕」分離 | 09/14–15 |
+| **v5.10** | #60 root logger 設定（`LOG_LEVEL`，修「app INFO 在生產被靜默丟棄」）+ log rotation；#61 protect-only 語意表（**第五來源**，`電動車`/`汽車` → `commute_mode`）；#45 `usage_suggestion` 補選擇準則 | 09/15 |
+| **v5.11** | #62 **空值清單正規化**（`[]` ＝「未指定」⇒ 丟棄，修「排除全部」的靜默語意反轉）；#63(a) `broadening_attempts[].widened_dims` **值集放寬留痕**；#56 停止原因白名單改由 OpenAPI **動態取得**（出貨腳本曾因硬編白名單誤報）；infra：`persona-db-api` 加 `--restart unless-stopped` | 09/15 |
+| **v5.11.1** | **回退**：受保護維度「雙向凍結」→ 回到「移除／縮小才 veto」（值集放寬＝合法但留痕，醫美 `matched` 14→3 的代價）；**回退** #64 的 prompt 改動 → 轉 known-limitation（must-not-use 回歸）。兩項皆由**我方自己的驗收條件**抓回 | 09/15 |
 
 ## API 品質演進（v4.3.2→v4.4.3）
 
@@ -243,14 +250,35 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 - 權重表由 v4.3.2 分布更新為現行分布（12/15 既有維度值改變，例 `family_size=1` 0.7259→2.0）＋ 新維度正式計分 → **同一 query 的 top-k 與 score 與 v5.2 不同**；longitudinal 比較以 v5.3 為新基準。
 - `scoring_basis.dims_counted` 現在列出**所有實際計分維度**（含 `dim_importance`-only）；`broadening_attempts[]` 多 `no_op`/`filters_changed` 欄位。
 
-### 部署 / 交付現況（2026-09-12）
+### 部署 / 交付現況（2026-09-15）
 
 | 項目 | 狀態 |
 |:----|:----|
-| lzcdh5 | **v5.3.1**（fresh install，QA 通過） |
-| lzc-dh1（lzc-dh1-1） | **v5.2**（kstsai 指定保留為跨版本 baseline，未動） |
+| lzcdh5（nodeA） | **v5.10**（第九／十輪驗證在此執行） |
+| lzc-dh1（nodeB，lzc-dh1-1） | **v5.11.1**（`--restart unless-stopped` 已生效） |
 | 交付包 | v5.3.1 起含 `concepts/`（設計知識）；`references/` 仍為內部 |
 | QA host 慣例 | 由 kstsai 指定進版的那台跑 SOP，**另一台保留 baseline** |
+
+## v5.9 → v5.11.1 — 核心維度保護機制與驗證閉環（2026-09-15）
+
+第九輪驗證把第八輪的離群現象收斂成一條**產品缺陷**：放寬步驟會移除「分析步驟自己說必須用」的維度（5/9 案例），最尖銳的一例是**同一案例相鄰兩輪自我矛盾**（案例 07 債務整合：loop1「`debt_status` 為核心、不可放寬」→ loop2「移除、非核心」，8 → 58 並首度 `overshoot`）。根因是「核心維度保護」**只是 prompt 提示、判定只靠一張關鍵字表**，而 v5.8 剛好把「移除各維度後的倍率」這個數學槓桿交給了模型 → 模型拿它去移除語意核心。
+
+- **v5.9（#57）＝提示升為機制**：保護集**凍結於請求開始**、五來源聯集、任一輪移除或縮小受保護維度即**還原該輪**（純新增值＝合法放寬），並在回應揭露 `protected_dims`/`protected_veto`/`vetoed_dims`。機制頁見 核心維度保護機制
+- **#58 / #59**：`matched=0` 不再回 `status='ok'`（→ `too_strict`）；503 分「呼叫失敗／產不出 filter」兩型態，`no_op` 與「刻意拒絕」分離
+- **v5.10（#60 / #61 / #45）**：root logger（`LOG_LEVEL`）修「app 的 INFO 在生產被靜默丟棄」；protect-only 語意表補上 `commute_mode`（連續 5 次被放寬的電動車動機維度，只保護、不補 filter）；`usage_suggestion` 補選擇準則
+- **實測（同節點同 runner）**：空轉率 60% → 12% → **7%**；總延遲 2072s → 907s → **766s**；不變式 `protected_dims ∩ relaxed_dims = ∅` 全案通過；**部署環境實際觸發 veto**（案例 05 銀行房貸題：模型想移除受保護的 `family_income` → 還原）；代價是部分題目回傳數更少（`matched` 36 → 8，`returned=5` 仍滿足 `top_k`）
+
+**方法論產出**：斷言設計：寫不變式（6 個版本連續 6 次「新增斷言第一次在部署環境執行就抓到自己的瑕疵」）與 log 證據的盲點（`grep` 回 0 不是「沒發生」）。
+
+### 第十輪 → v5.11 / v5.11.1：驗證方指出的三個缺口，與我方驗收抓回的兩項迴歸
+
+第十輪（dsh，v5.10，nodeA）是**系列首次零瑕疵**：**42 ✅ / 0 ⚠️ / 0 ❌ / 0 N/A**，「自述必要卻被放寬」**9/9 為 0**（第九輪 5/9）→ 保護機制在另一台節點被獨立驗證有效（硬 veto 路徑由**定向探針**逼出）。報告同時指出三個新缺口，我方**逐條獨立複驗**（源碼 + 實測 + 自有資料頻率）後開 #62/#63/#64：
+
+- **#62 空值清單**：`applied_filters` 的 `[]` 語意是**排除全部**（實測 `age=[]` → 0 人 vs 未指定 → 129 人），由放寬路徑帶進來（分析路徑會丟棄空清單、放寬路徑不會）→ v5.11 在所有 LLM 產出的 filters 被套用**前**統一正規化（空值清單陷阱）
+- **#63(a) 值集放寬不留痕**：`['女'] → ['女','男']` 這類稀釋長期不收錄、不受 veto 管，我方資料中**至少 15 輪**屬此型 → v5.11 記入 `widened_dims`（值集放寬）
+- **#63(b) / #64 的修法在驗收中被否決**：受保護維度「雙向凍結」讓醫美題 `matched` **14 → 3**（保護集被模型撐到 5 維時封死放寬空間）；#64 的兩版 prompt 各有一邊不達標（保護集暴增 / must-not-use 回歸）→ **v5.11.1 回退兩者**，`#64` 依 ticket fallback 轉 known-limitation
+
+**這一輪最重要的產出是閉環本身**：第十輪的建議促使我方建立了原本沒有的驗收條件（**保護集不得暴增**、**must-not-use 不得回歸**），而這兩個條件隨後抓到了**我方自己**的兩項迴歸。護欄來源④的單調累積無上限仍是未解觀察（保護集失控）；長驗證工作的執行紀律（不要在同一 turn 串長 wait）見 長 turn idle watchdog。
 
 ## LLM 模型決策
 
@@ -265,7 +293,13 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 - **分數**：`score` 僅供**版本內相對排序**（`score_scale: "relative-within-version"`）；`weight_version` 可偵測尺度換版；`score_schema` 為分數定義版號（與資料版號脫鉤）
 - **`opMode` 可省略**，預設 `僅篩選`
 - **可篩維度可見（v5.7）**：`summary[].sex/region/education/marriage/hobby/politics/media_diet`（`valid_dims ⊆ summary`），消費端可從回應驗證 filter 生效
-- **`broadening_stop_reason`（v5.8）**：放寬停止原因（`target_reached` / `no_op_limit` / `loop_limit` / `budget_limit` / `llm_*`）；`loop_limit` + `total_matched < top_k` ⇒ 池子真的小
+- **`broadening_stop_reason`（v5.8）**：放寬停止原因（`target_reached` / `no_op_limit` / `loop_limit` / `budget_limit` / `llm_*`）；`loop_limit` + `total_matched < top_k` ⇒ 池子真的小；**`protected_veto`（v5.9）＝放寬被核心維度擋下**，有兩條路徑（硬性 veto／模型自行拒絕），不應視為「放寬失敗」
+- **`protected_dims`（v5.9）**：本請求受保護的核心維度（凍結於請求開始）—— 消費者能看穿「為何名單比預期小」；`broadening_attempts[].protected_veto` / `vetoed_dims` 為違規嘗試的稽核紀錄
+- **`status`（v5.9）**：有符合樣本 → `ok`；**`total_matched == 0` → `too_strict`**（不再依賴輪數）
+- **`llm_analysis.usage_suggestion.mode`（v5.10）**：依題意判斷（決策者立場→模擬詢問／族群態度→問卷答題者／兼具→兩者皆可）；v5.3.1 起曾 8/8 常數
+- **`applied_filters`（v5.11）**：實際套用的篩選條件 —— **值清單保證非空**。空清單的語意是「排除全部」（`age=[]` → 0 人 vs 未指定 → 129 人），已在套用前統一正規化為「未指定」而丟棄 → 見 空值清單陷阱
+- **`broadening_attempts[].widened_dims`（v5.11）**：該輪**值集被放寬**（嚴格超集）的維度，**稽核用、不併入 `relaxed_dims`**（併入會與不變式 `protected_dims ∩ relaxed_dims = ∅` 衝突）→ 見 值集放寬
+- **`broadening_stop_reason`（v5.11 註記）**：enum **以 OpenAPI 為準，消費端不要硬編白名單**（我方出貨腳本曾因硬編白名單在新增值後誤報）
 
 ## 未解項（追蹤用）
 
@@ -274,15 +308,19 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 | #38 | known-limitation | 端點不可重現（filter 層同版本內即變動，見 抽樣變異 vs 版本效應） |
 | #39 | known-limitation | 延遲偏高；四個成分與可解/不可控區分見 LLM pipeline 延遲解剖 |
 | #40 | known-limitation | 候選池頭部集中（第 8 輪：跨案例重複 top-3 persona **19%**） |
-| #45 | bug（低） | `usage_suggestion` 失去區辨力（待 k=5 變異檢定） |
+| #45 | bug（低） | `usage_suggestion` 失去區辨力 → v5.10 補選擇準則後 5 案例出現 2 種值 |
 | （新觀察） | 未開票 | TESLA 案例連續三輪放寬 `commute_mode`（語意核心）→ 語意判準與約束數學衝突（見 broadening 約束維度分析） |
+| （殘留） | 未開票 | **未被五來源選中的語意核心仍可能被放寬** → 需下一輪證據再開票補表（見 核心維度保護機制） |
+| **#64** | **known-limitation**（enhancement） | 部分**顧客語意題**（案例 08 小吃攤）`protected_dims` 為空 → 該類題若需放寬則無維度受保護。**修法已嘗試並回退**（兩版 prompt 各有一邊不達標：一版保護集暴增、一版 must-not-use 回歸），目前**無實際受害案例** |
+| （觀察） | 未開票 | **保護集來源④（模型每輪宣告）單調累積無上限／無檢核** → 過度保護時樣本數崩落（醫美 `matched` 14→3）；需跨輪證據（見 保護集失控） |
+| （已結案） | infra | `persona-db-api` 容器缺 `--restart`（僅 hermes 容器有）→ v5.11 已加 `--restart unless-stopped`；nodeA 下一輪部署帶上 |
 
-> 已關閉：#1–#37、#41–#44、#46–#56（含 v5.4–v5.8 全部修復）。
+> 已關閉：#1–#37、#41–#44、#46–#63（含 v5.4–v5.11.1 全部修復）；**open：`#38 #39 #40 #64`**。
 
 ## 部署環境
 
-- **lzc-dh1**（100.100.112.108）：deploy host，跑 Pre-release SOP — **nodeB，目前 v5.8**（2026-09-14 20:00 實查）
-- **lzcdh5**（100.96.79.33）：tailscale 測試 VM — **nodeA，目前 v5.6**（2026-09-14 20:00 實查；Docker 部署，另含 hermes 容器）
+- **lzc-dh1**（100.100.112.108）：deploy host，跑 Pre-release SOP — **nodeB，目前 v5.11.1**（2026-09-15 實查；`--restart unless-stopped` 已生效）
+- **lzcdh5**（100.96.79.33）：tailscale 測試 VM — **nodeA，目前 v5.10**（2026-09-15 實查；Docker 部署，另含 hermes 容器；第九／十輪驗證在此執行）
 - QA host 慣例：由 kstsai 指定進版的那台跑完整 SOP，另一台保留 baseline
 
 ## QA 系統
@@ -341,3 +379,12 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 - broadening 約束維度分析 — 不告訴模型誰是真正的限制，等於讓它瞎猜（空轉 60%）
 - LLM pipeline 延遲解剖 — 把「慢」拆成四個成分的可複用取證流程
 - 預算算術的隱性耦合 — 改單次預算 → 所有加總上限跟著變（靜默降輪次）
+- 核心維度保護機制 — 提示不是保護：五來源保護集 + 硬性 veto + 可稽核欄位
+- 斷言設計：寫不變式 — 寫狀態不變式不寫預期序列；斷言自給自足
+- log 證據的盲點 — 用 log 當證據前先驗證該訊息真的會輸出
+- 第九輪 + v5.9/v5.10 摘要 — 空轉率 7%、延遲 766s、生產環境實際觸發 veto
+- 空值清單陷阱 — `[]` ＝排除全部；同一份資料的多條路徑正規化必須共用
+- 值集放寬 — 變更有可見的（移除）與不可見的（值域調整）；對稀釋的處置是揭露而非禁止
+- 保護集失控 — 護欄來源自己會長大（單調累積 + prompt 敏感）；改 prompt 就是改護欄
+- 長 turn idle watchdog — harness 的「活著」＝有新的 turn 週期，不是有程序在跑
+- 第十輪 + v5.11/v5.11.1 摘要 — 首次 42/42 全清；三個缺口 → 兩修一回退
