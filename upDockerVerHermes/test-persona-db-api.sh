@@ -383,6 +383,65 @@ if _tesla:
     print("  #61 TESLA 未放寬 commute_mode → " + ("✅" if "commute_mode" not in _tr else "❌"))
 else:
     print("  #61 TESLA 案例檔缺失 → ⚠️（無法驗證）")
+
+# ── v5.12 (#65 主體判準 / forbidden / 揭露) 斷言 ──
+print("  --- v5.12 (#65 顧客 vs 業主語意護欄) ---")
+_nosubj = [c for c, cd in _cases.items() if "subject" not in cd]
+print("  #65 所有案例都有 subject/warnings 欄位 → " + ("✅" if not _nosubj else f"❌ 缺 {_nosubj}"))
+_boss_cd = load('/tmp/boss_closing.json') or _cases.get("小吃攤") or {}
+_owner_cd = load('/tmp/owner_closing.json') or _cases.get("業主") or {}
+if _boss_cd:
+    _bef = _boss_cd.get("applied_filters") or {}
+    print(f"  #65 顧客案例（小吃攤）: subject={_boss_cd.get('subject')!r} "
+          f"applied={list(_bef)} warnings={_boss_cd.get('warnings')}")
+    print("  #65 顧客語意未套 employment_status → "
+          + ("✅" if "employment_status" not in _bef else "❌ 仍被套用！"))
+    print("  #65 顧客案例 subject='customer' → "
+          + ("✅" if _boss_cd.get("subject") == "customer" else f"❌ {_boss_cd.get('subject')!r}"))
+    print("  #65 顧客語意 protected 不含 employment_status → "
+          + ("✅" if "employment_status" not in (_boss_cd.get("protected_dims") or []) else "❌"))
+else:
+    print("  #65 顧客案例檔缺失 → ⚠️（無法驗證）")
+if _owner_cd:
+    _oaf = _owner_cd.get("applied_filters") or {}
+    print("  #65 業主案例（#34 must-use 不回歸）: subject=%r 套用=%s → "
+          % (_owner_cd.get("subject"), _oaf.get("employment_status"))
+          + ("✅" if (_owner_cd.get("subject") == "owner"
+                      and _oaf.get("employment_status")) else "❌"))
+
+# S/T 不變式（來源：round11 §3.2 — dsh1 提出，我方採納）
+_s_bad, _t_bad = [], []
+for c, cd in _cases.items():
+    _af = set(cd.get("applied_filters") or {})
+    _rel = set(cd.get("relaxed_dims") or [])
+    _wide = set()
+    for b in (cd.get("broadening_attempts") or []):
+        _wide |= set(b.get("widened_dims") or [])
+    if _wide - _af:
+        _s_bad.append((c, sorted(_wide - _af)))          # S: widened ⊆ applied
+    if _wide & _rel:
+        _t_bad.append((c, sorted(_wide & _rel)))         # T: widened ∩ relaxed = ∅
+print("  #63 不變式 S（widened_dims ⊆ applied_filters）→ " + ("✅" if not _s_bad else f"❌ {_s_bad}"))
+print("  #63 不變式 T（widened_dims ∩ relaxed_dims = ∅）→ " + ("✅" if not _t_bad else f"❌ {_t_bad}"))
+
+# 同質化矩陣（語意反轉的指紋）：回傳名單兩兩重疊
+import itertools
+_names = {}
+for _f, _lab in [("kangshimei", "01康是美"), ("tesla", "02TESLA"), ("fashion_closing", "03時尚")]:
+    _d = load(f"/tmp/{_f}.json")
+    if _d:
+        _names[_lab] = set(_d.get("persona_ids") or [])
+for _lab, _d in (("08小吃攤", _boss_cd), ("09業主", _owner_cd)):
+    if _d:
+        _names[_lab] = set(_d.get("persona_ids") or [])
+_hi = []
+for (_a, _sa), (_b, _sb) in itertools.combinations(sorted(_names.items()), 2):
+    if _sa and _sb:
+        _ov = len(_sa & _sb)
+        if _ov >= 8:
+            _hi.append((_a, _b, _ov))
+print(f"  #65 同質化矩陣（回傳名單兩兩重疊）: " +
+      (f"⚠️ 高度重疊配對 {_hi}（語意反轉指紋，需人工確認）" if _hi else "✅ 無 ≥8/10 的配對"))
 PYEOF
 
 # ── #60：app 的 INFO 行是否真的進 log（root logger 設定生效）──
