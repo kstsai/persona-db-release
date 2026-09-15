@@ -33,6 +33,21 @@
 | `analyze.py` / `verify-extended.py` / `make-summaries.py` | 分析與檢查腳本 |
 | `summary-*.csv` / `summary-all-cases.json` | 表格化摘要 |
 
+### 探針題目原文（供查核）
+
+`t1`／`t2`（第 10、11 輪另有 `t1`–`t4`）使用的是**刻意設計為「超出 schema、必然不可滿足」**的查詢：
+
+```
+questions=想找同時擁有遊艇與私人飛機的45歲單身女性企業主
+```
+
+Persona DB 的 24 個欄位沒有「遊艇」也沒有「私人飛機」，所以這題會逼 LLM 只能：
+① 用最接近的財富代理指標（`income`／`family_income`／`clothing_spend`／`commute_mode`）硬套 → 命中極少或 0 筆；
+② 產不出任何 filter。目的是**逼出主套件碰不到的分支**（`matched=0`、`pool_exhausted=true`、隨之而來的停止原因）。
+
+> ⚠️ **這是探針，不是業務案例，也不是產品缺陷主張。** 在 `ps`／log／`summary` 看到這道題時請以此為準。
+> 自第九輪起**同一題重複作為回歸哨兵**。**限制**：人造查詢驗的是分支機制，不是真實流量。
+
 ---
 
 ## 複驗指令（每一條都已實跑過）

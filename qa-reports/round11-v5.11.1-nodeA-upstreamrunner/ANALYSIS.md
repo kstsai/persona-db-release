@@ -373,11 +373,26 @@ upstream 的標籤也明寫 `【顧客語意】不應套 employment_status`。
 
 #### §6.9 定向探針 —— 逼出主套件未涵蓋的分支
 
+> **探針題目原文（2026-09-15 補充）**：`t1`／`t2` 用的是同一個**刻意設計為「超出 schema、必然不可滿足」**的查詢：
+
+> ```
+> questions=想找同時擁有遊艇與私人飛機的45歲單身女性企業主
+> ```
+
+> Persona DB 的 24 個欄位**沒有**「遊艇」也沒有「私人飛機」，所以這題會把 LLM 逼到兩條路之一：
+> ① 用最接近的財富代理指標（`income`／`family_income`／`clothing_spend`／`commute_mode`）硬套 → 命中極少或 0 筆；
+> ② 產不出任何 filter。目的就是**逼出主套件碰不到的分支**（`matched=0`、`pool_exhausted=true`、以及隨之而來的停止原因）。
+>
+> ⚠️ **這是探針，不是業務案例，也不是產品缺陷主張。** 任何人在 `ps`／log／`summary` 裡看到這道題時請以此為準
+> ——「夜市小吃攤的老闆不會真的想找擁有遊艇的人」。同一題自第九輪起**重複使用作為回歸哨兵**
+> （第九輪的報告已以「遊艇＋私人飛機」提及）。**限制**：這種人造查詢驗的是**分支機制**，不是真實流量；
+> 「`matched=0`」在真實使用者身上可能由不同機制產生，兩者不能互相替代。
+
 主套件只涵蓋 `{target_reached, loop_limit}`，且 `pool_exhausted` 全為 `False`。四個定向請求：
 
 | 探針 | 設計意圖 | 實際結果 | 判定 |
 |:--|:--|:--|:--|
-| `t1` 極窄 top_k=10 | 逼出 `matched=0` + 驗 `#62` 空清單 | 200，`matched=0`、`status='too_strict'`、`pool_exhausted=True`、**`stop='protected_veto'`**、`vetoed_dims=['employment_status']`、**無空值清單** | ✅ 達標 |
+| `t1` 不可滿足查詢 top_k=10（題目原文見上方方框） | 逼出 `matched=0` + 驗 `#62` 空清單 | 200，`matched=0`、`status='too_strict'`、`pool_exhausted=True`、**`stop='protected_veto'`**、`vetoed_dims=['employment_status']`、**無空值清單** | ✅ 達標 |
 | `t2` 極窄 top_k=100 | 逼出 `pool_exhausted=true` | 200，`matched=8`、`status='ok'`、`pool_exhausted=True`、`stop='loop_limit'`、無空值清單 | ✅ 達標 |
 | `t3` TESLA top_k=20 | 驗 `#61` `commute_mode` 保護 | 200，`matched=26`、`returned=20`、`pool_exhausted=False`、`relaxed=[clothing_spend]`、**`commute_mode` 未被放寬** | ✅ 達標 |
 | `t4` 房貸(銀行) top_k=20 | 誘發值集放寬（`#63`）＋逼 veto | 200，`matched=8`、`widened=['age']`、**loop2 `protected_veto` `vetoed_dims=['family_income']`** | ✅ 達標 |
