@@ -1,0 +1,73 @@
+# probe start 2026-09-15T12:11:13Z  BASE_URL=http://localhost:8000  host=NODE-A  OUT=/home/ubuntu/qa-round11
+
+=== §6.8 重現性 — case06 醫美 r1/3（#63 值集放寬留痕） ===
+
+real	4m43.809s
+user	0m0.025s
+sys	0m0.069s
+  → http_code=200 time_total=283.778543 size_download=8811 url_effective=http://localhost:8000/personadb/candidates?questions=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E8%A1%8C%E9%8A%B7%E4%B8%BB%E7%AE%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case06 醫美 r2/3（#63 值集放寬留痕） ===
+
+real	3m31.472s
+user	0m0.042s
+sys	0m0.061s
+  → http_code=200 time_total=211.418620 size_download=8697 url_effective=http://localhost:8000/personadb/candidates?questions=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E8%A1%8C%E9%8A%B7%E4%B8%BB%E7%AE%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case06 醫美 r3/3（#63 值集放寬留痕） ===
+
+real	4m38.309s
+user	0m0.014s
+sys	0m0.083s
+  → http_code=200 time_total=278.271538 size_download=8820 url_effective=http://localhost:8000/personadb/candidates?questions=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E8%A1%8C%E9%8A%B7%E4%B8%BB%E7%AE%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case07 債務整合 r1/3（#62 空清單／#58 status） ===
+
+real	3m44.890s
+user	0m0.030s
+sys	0m0.054s
+  → http_code=200 time_total=224.845183 size_download=9001 url_effective=http://localhost:8000/personadb/candidates?questions=%E5%82%B5%E5%8B%99%E6%95%B4%E5%90%88%E8%B2%B8%E6%AC%BE%E6%96%B9%E6%A1%88%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%8A%80%E8%A1%8C%E5%82%B5%E5%8B%99%E6%95%B4%E5%90%88%E5%B0%88%E5%93%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case07 債務整合 r2/3（#62 空清單／#58 status） ===
+
+real	3m46.429s
+user	0m0.045s
+sys	0m0.034s
+  → http_code=200 time_total=226.391104 size_download=8676 url_effective=http://localhost:8000/personadb/candidates?questions=%E5%82%B5%E5%8B%99%E6%95%B4%E5%90%88%E8%B2%B8%E6%AC%BE%E6%96%B9%E6%A1%88%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%8A%80%E8%A1%8C%E5%82%B5%E5%8B%99%E6%95%B4%E5%90%88%E5%B0%88%E5%93%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case07 債務整合 r3/3（#62 空清單／#58 status） ===
+
+real	4m9.847s
+user	0m0.035s
+sys	0m0.061s
+  → http_code=200 time_total=249.791237 size_download=8806 url_effective=http://localhost:8000/personadb/candidates?questions=%E5%82%B5%E5%8B%99%E6%95%B4%E5%90%88%E8%B2%B8%E6%AC%BE%E6%96%B9%E6%A1%88%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%8A%80%E8%A1%8C%E5%82%B5%E5%8B%99%E6%95%B4%E5%90%88%E5%B0%88%E5%93%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.9 t1 極窄查詢 top_k=10 → #62 空值清單正規化 ===
+
+real	3m12.105s
+user	0m0.031s
+sys	0m0.044s
+  → http_code=200 time_total=192.066035 size_download=2359 url_effective=http://localhost:8000/personadb/candidates?questions=%E6%83%B3%E6%89%BE%E5%90%8C%E6%99%82%E6%93%81%E6%9C%89%E9%81%8A%E8%89%87%E8%88%87%E7%A7%81%E4%BA%BA%E9%A3%9B%E6%A9%9F%E7%9A%8445%E6%AD%B2%E5%96%AE%E8%BA%AB%E5%A5%B3%E6%80%A7%E4%BC%81%E6%A5%AD%E4%B8%BB&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.9 t2 窄查詢 top_k=100 → pool_exhausted / status ===
+
+real	3m53.054s
+user	0m0.014s
+sys	0m0.042s
+  → http_code=200 time_total=233.034447 size_download=7564 url_effective=http://localhost:8000/personadb/candidates?questions=%E6%83%B3%E6%89%BE%E5%90%8C%E6%99%82%E6%93%81%E6%9C%89%E9%81%8A%E8%89%87%E8%88%87%E7%A7%81%E4%BA%BA%E9%A3%9B%E6%A9%9F%E7%9A%8445%E6%AD%B2%E5%96%AE%E8%BA%AB%E5%A5%B3%E6%80%A7%E4%BC%81%E6%A5%AD%E4%B8%BB&top_k=100&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.9 t3 TESLA top_k=20 → protected_veto / #61 保護 ===
+
+real	3m9.630s
+user	0m0.011s
+sys	0m0.045s
+  → http_code=200 time_total=189.607140 size_download=13255 url_effective=http://localhost:8000/personadb/candidates?questions=TESLA%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&top_k=20&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.9 t4 房貸(銀行) top_k=20 → #63 widened_dims 留痕 ===
+
+real	2m49.701s
+user	0m0.153s
+sys	0m0.157s
+  → http_code=200 time_total=169.440770 size_download=7642 url_effective=http://localhost:8000/personadb/candidates?questions=%E6%88%BF%E8%B2%B8%E5%84%AA%E6%83%A0%E6%96%B9%E6%A1%88&role=%E9%8A%80%E8%A1%8C%E6%A5%AD%E8%80%85&top_k=20&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+# probe end 2026-09-15T12:48:52Z

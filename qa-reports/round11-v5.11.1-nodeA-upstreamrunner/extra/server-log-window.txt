@@ -1,0 +1,128 @@
+2026-09-15 11:47:20,085 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+INFO:     172.17.0.1:33824 - "GET /personadb/status HTTP/1.1" 200 OK
+2026-09-15 11:47:20,695 INFO api.server: LLM analyzing 1 questions...
+2026-09-15 11:47:20,997 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:58504 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58114 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46648 - "GET /health HTTP/1.1" 200 OK
+2026-09-15 11:48:44,822 INFO api.server: Protected dims (#57): ['clothing_spend', 'sex'] (domain=['clothing_spend'], reasoning=[], analysis_declared=['clothing_spend', 'sex'], protect_only=[])
+INFO:     172.17.0.1:33830 - "GET /personadb/candidates?questions=%E5%BA%B7%E6%98%AF%E7%BE%8E%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&top_k=3&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 HTTP/1.1" 200 OK
+2026-09-15 11:48:44,875 INFO api.server: LLM analyzing 1 questions...
+2026-09-15 11:48:45,139 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56240 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42334 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52332 - "GET /health HTTP/1.1" 200 OK
+2026-09-15 11:50:13,633 INFO api.server: Protected dims (#57): ['commute_mode', 'income'] (domain=['income'], reasoning=[], analysis_declared=['income'], protect_only=['commute_mode'])
+2026-09-15 11:50:13,634 INFO api.server: Broadening loop 1/3: 10 matches < 20
+2026-09-15 11:50:13,939 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:58754 - "GET /health HTTP/1.1" 200 OK
+2026-09-15 11:50:46,973 INFO api.server: Broadening loop 1: 模型宣告保護維度 ['commute_mode', 'income']（累積）
+2026-09-15 11:50:46,975 INFO api.server: Broadening loop 2/3: 16 matches < 20
+2026-09-15 11:50:47,260 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:35890 - "GET /health HTTP/1.1" 200 OK
+2026-09-15 11:51:20,660 INFO api.server: Broadening loop 2: 值集放寬 dims=['clothing_spend']（#63 留痕）
+INFO:     172.17.0.1:60148 - "GET /personadb/candidates?questions=TESLA%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&top_k=3&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 HTTP/1.1" 200 OK
+2026-09-15 11:51:20,704 INFO api.server: LLM analyzing 1 questions...
+2026-09-15 11:51:21,056 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:40900 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38770 - "GET /health HTTP/1.1" 200 OK
+2026-09-15 11:52:10,814 INFO api.server: Protected dims (#57): ['clothing_spend'] (domain=['clothing_spend'], reasoning=[], analysis_declared=['clothing_spend'], protect_only=[])
+INFO:     172.17.0.1:41670 - "GET /personadb/candidates?questions=%E6%99%82%E5%B0%9A%E6%9C%8D%E8%A3%9D%E8%A8%AD%E8%A8%88%E5%B8%AB%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 HTTP/1.1" 200 OK
+2026-09-15 11:52:10,883 INFO api.server: LLM analyzing 1 questions...
+2026-09-15 11:52:11,169 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:57150 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49018 - "GET /health HTTP/1.1" 200 OK
+2026-09-15 11:53:10,256 INFO api.server: Protected dims (#57): ['family_income', 'family_size', 'housing_burden'] (domain=['family_income', 'housing_burden'], reasoning=['family_size', 'housing_burden'], analysis_declared=['housing_burden'], protect_only=[])
+2026-09-15 11:53:10,257 INFO api.server: Broadening loop 1/3: 6 matches < 20
+2026-09-15 11:53:10,547 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:33024 - "GET /health HTTP/1.1" 200 OK
+2026-09-15 11:53:49,153 INFO api.server: Broadening loop 1: 模型宣告保護維度 ['family_income', 'family_size', 'housing_burden']（累積）
+2026-09-15 11:53:49,154 INFO api.server: Broadening loop 2/3: 16 matches < 20
+2026-09-15 11:53:49,386 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:59694 - "GET /health HTTP/1.1" 200 OK
+INFO:     172.17.0.1:50278 - "GET /personadb/candidates?questions=%E6%88%BF%E8%B2%B8%E5%84%AA%E6%83%A0%E6%96%B9%E6%A1%88&role=%E6%88%BF%E4%BB%B2%E6%A5%AD%E8%80%85&top_k=5&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 HTTP/1.1" 200 OK
+2026-09-15 11:54:12,816 INFO api.server: LLM analyzing 1 questions...
+2026-09-15 11:54:13,078 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:46674 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40994 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50540 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54496 - "GET /health HTTP/1.1" 200 OK
+2026-09-15 11:56:23,226 INFO api.server: Protected dims (#57): ['debt_status'] (domain=[], reasoning=[], analysis_declared=['debt_status'], protect_only=[])
+2026-09-15 11:56:23,229 INFO api.server: Broadening loop 1/3: 5 matches < 20
+2026-09-15 11:56:23,516 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:37902 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58946 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56892 - "GET /health HTTP/1.1" 200 OK
+2026-09-15 11:57:41,832 INFO api.server: Broadening loop 1: 模型宣告保護維度 ['debt_status']（累積）
+2026-09-15 11:57:41,833 INFO api.server: Broadening loop 2/3: 7 matches < 20
+2026-09-15 11:57:42,084 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+2026-09-15 11:58:00,584 INFO api.server: Broadening loop 2: 值集放寬 dims=['income']（#63 留痕）
+2026-09-15 11:58:00,584 INFO api.server: Broadening loop 3/3: 8 matches < 20
+2026-09-15 11:58:00,847 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:60026 - "GET /health HTTP/1.1" 200 OK
+INFO:     172.17.0.1:52708 - "GET /personadb/candidates?questions=%E6%88%BF%E8%B2%B8%E5%84%AA%E6%83%A0%E6%96%B9%E6%A1%88&role=%E9%8A%80%E8%A1%8C%E6%A5%AD%E8%80%85&top_k=5&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 HTTP/1.1" 200 OK
+2026-09-15 11:58:25,581 INFO api.server: LLM analyzing 1 questions...
+2026-09-15 11:58:25,872 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:53606 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48758 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58194 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46600 - "GET /health HTTP/1.1" 200 OK
+2026-09-15 12:00:23,421 INFO api.server: Domain reinforcement (醫療美容（醫美診所）): added aesthetic_procedure=['有']
+2026-09-15 12:00:23,421 INFO api.server: Protected dims (#57): ['aesthetic_procedure'] (domain=['aesthetic_procedure'], reasoning=[], analysis_declared=['aesthetic_procedure'], protect_only=[])
+2026-09-15 12:00:23,422 INFO api.server: Broadening loop 1/3: 13 matches < 20
+2026-09-15 12:00:23,656 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:41330 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51836 - "GET /health HTTP/1.1" 200 OK
+2026-09-15 12:01:14,756 INFO api.server: Broadening loop 1: 模型宣告保護維度 ['aesthetic_procedure']（累積）
+2026-09-15 12:01:14,758 INFO api.server: Broadening loop 2/3: 14 matches < 20
+2026-09-15 12:01:15,037 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:48234 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47176 - "GET /health HTTP/1.1" 200 OK
+2026-09-15 12:02:17,952 INFO api.server: Broadening loop 2: 值集放寬 dims=['age']（#63 留痕）
+2026-09-15 12:02:17,952 INFO api.server: Broadening loop 3/3: 16 matches < 20
+2026-09-15 12:02:18,284 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:54932 - "GET /health HTTP/1.1" 200 OK
+2026-09-15 12:02:34,165 INFO api.server: Broadening loop 3: 值集放寬 dims=['age']（#63 留痕）
+2026-09-15 12:02:34,165 INFO api.server: Broadening loop 3: filters 有變更但樣本數不變（16→16，連續空轉 1）
+INFO:     172.17.0.1:39774 - "GET /personadb/candidates?questions=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E8%A1%8C%E9%8A%B7%E4%B8%BB%E7%AE%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 HTTP/1.1" 200 OK
+2026-09-15 12:02:34,265 INFO api.server: LLM analyzing 1 questions...
+2026-09-15 12:02:34,566 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:54148 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49586 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57172 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42814 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45084 - "GET /health HTTP/1.1" 200 OK
+2026-09-15 12:05:17,325 INFO api.server: Protected dims (#57): ['debt_status'] (domain=['debt_status'], reasoning=[], analysis_declared=['debt_status'], protect_only=[])
+2026-09-15 12:05:17,329 INFO api.server: Broadening loop 1/3: 6 matches < 20
+2026-09-15 12:05:17,606 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:58836 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57956 - "GET /health HTTP/1.1" 200 OK
+2026-09-15 12:06:14,105 INFO api.server: Broadening loop 1: 模型宣告保護維度 ['debt_status']（累積）
+2026-09-15 12:06:14,107 INFO api.server: Broadening loop 2/3: 8 matches < 20
+2026-09-15 12:06:14,927 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:43938 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46074 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58434 - "GET /health HTTP/1.1" 200 OK
+2026-09-15 12:07:40,704 INFO api.server: Broadening loop 3/3: 9 matches < 20
+2026-09-15 12:07:40,948 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:39608 - "GET /health HTTP/1.1" 200 OK
+2026-09-15 12:08:27,757 INFO api.server: Broadening loop 3: 值集放寬 dims=['family_income']（#63 留痕）
+INFO:     172.17.0.1:51924 - "GET /personadb/candidates?questions=%E5%82%B5%E5%8B%99%E6%95%B4%E5%90%88%E8%B2%B8%E6%AC%BE%E6%96%B9%E6%A1%88%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%8A%80%E8%A1%8C%E5%82%B5%E5%8B%99%E6%95%B4%E5%90%88%E5%B0%88%E5%93%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 HTTP/1.1" 200 OK
+2026-09-15 12:08:27,846 INFO api.server: LLM analyzing 1 questions...
+2026-09-15 12:08:28,113 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:59436 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38594 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34780 - "GET /health HTTP/1.1" 200 OK
+2026-09-15 12:09:53,347 INFO api.server: Protected dims (#57): ['employment_status'] (domain=['employment_status'], reasoning=['employment_status'], analysis_declared=['employment_status'], protect_only=[])
+INFO:     172.17.0.1:40124 - "GET /personadb/candidates?questions=%E5%B0%8F%E5%90%83%E6%94%A4%E8%80%81%E9%97%86%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E7%BE%A4&role=%E5%A4%9C%E5%B8%82%E5%95%86%E5%9C%88%E5%8D%94%E6%9C%83&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 HTTP/1.1" 200 OK
+2026-09-15 12:09:53,386 INFO api.server: LLM analyzing 1 questions...
+2026-09-15 12:09:53,670 INFO httpx: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:34830 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37686 - "GET /health HTTP/1.1" 200 OK
+2026-09-15 12:10:45,309 INFO api.server: Protected dims (#57): ['employment_status'] (domain=[], reasoning=['employment_status'], analysis_declared=['employment_status'], protect_only=[])
+INFO:     172.17.0.1:42952 - "GET /personadb/candidates?questions=%E6%83%B3%E6%89%BE%E4%BC%81%E6%A5%AD%E4%B8%BB%E6%88%96%E5%B7%A5%E5%BB%A0%E8%80%81%E9%97%86%E6%9C%AC%E4%BA%BA%E4%BD%9C%E7%82%BAB2B%E5%95%8F%E5%8D%B7%E5%8F%97%E8%A8%AA%E8%80%85&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 HTTP/1.1" 200 OK
+INFO:     172.17.0.1:34000 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     172.17.0.1:34004 - "GET /personadb/candidates?questions=x&opMode=%E4%BA%82%E5%AF%AB HTTP/1.1" 400 Bad Request
+INFO:     172.17.0.1:34008 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     172.17.0.1:34022 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     172.17.0.1:34030 - "GET /openapi.json HTTP/1.1" 200 OK

@@ -1,0 +1,54 @@
+=== 目標（本輪不做版本比對；此處僅記錄受測環境）===
+  node: NODE-A (NODE-A)   tailscale NODE-A   node ID NODE-A-NODEID
+  部署型態: Docker（upDockerVerHermes：hermes + persona-db-api 兩個容器）
+  RELEASE-VERSION: v5.11.1（repo == 節點）
+  服務版本: v5.11.1（/personadb/status）；容器內 /app/VERSION = v5.11.1
+  執行位置: **節點本機**（BASE_URL=http://localhost:8000，與 upstream 原生環境相同）
+            ⇒ #50/#55/#60 等主機層斷言可原生執行（sudo 免密碼），本輪不應出現 N/A
+  收集時間(UTC): 2026-09-15T11:47:06Z
+
+=== 部署保真度（「裝的到底是什麼」的機械證明）===
+  release tarball sha256 : 0be2543769cda6910f6025f9…（完整值見下）
+                           repo == 節點上那一份
+  /srv/persona-db-data/api/*.py == tarball 內 api/*.py → 8/8 檔 sha256 相同
+  容器 mount: /srv/persona-db-data → /app（bind mount）；容器內 /app/api/*.py sha256 亦同
+  容器: started 2026-09-15T11:43:48Z  restarts=0  Up (healthy)
+  → 結論：**執行中的服務程式碼 == 發佈的 v5.11.1 產物（byte 級）**
+
+=== repo 狀態（本輪參照點）===
+  persona-db-release HEAD = 1ac79d2…（== origin/main）；節點上的 clone 同一 sha
+  相關 commit: 714d266（採納 round10 的 K/L/M veto 不變式與 #62 空清單守門）
+               → 0b96e1b release v5.11 → 1ac79d2 release v5.11.1（#63 留痕、#56 白名單動態化）
+
+=== 契約（v5.11.1）===
+  openapi.json sha256: c17043b4022fbb328f672277ff0b4dc1bf1741d8f41e87708172db7f012d114b
+  CandidatesResponse 14 欄（含 protected_dims / broadening_stop_reason / status）
+  BroadeningAttempt **10 欄 —— 新增 widened_dims（#63 值集放寬留痕）**
+  stop_reason enum 10 值（含 protected_veto；仍宣告 "" 與 budget_limit）
+
+=== 儀器 ===
+  upstream sha256: f3cb96adc76aff3a01bee390c40bf3a0f4c3c39bf2ce344850b278a19cfbe28b
+  upstream 行數  : 421（v5.10 為 372）
+  來源           : https://raw.githubusercontent.com/kstsai/persona-db-release/main/upDockerVerHermes/test-persona-db-api.sh
+  取得時間(UTC)  : 2026-09-15T11:45Z（GitHub 上抓到的 sha 與 repo 內檔一致）
+  runner   sha256: ef6c0f36786937db29fddf4ee723815834bee6bb30a4655e6898d76675cec40a
+  runner   行數  : 417
+  ※ **runner sha 於執行前即記錄**（skill v2.1.0 紀律）
+
+=== 儀器忠實度（meta/verify-instrument.py 的輸出）===
+  [1] 請求參數／順序  upstream=32 runner=32  ✅ 相同（含順序）
+  [2] 前段 L1-L14     ✅ 逐字相同
+  [3] 斷言段 L88-L421 ✅ 逐字相同（0 差異）
+  [4] 案例標籤 9/9    ✅ 逐案相同（標籤原文取自 upstream，非手寫）
+  → 唯一改動：證據落盤（-D/-o/-w）、curl -s、runner 自加的 status 標題與 openapi 快照
+  另：meta/test-runner-harness.sh（stub curl、11 項）驗「執行時行為」，全部通過
+
+=== 本輪的跨輪防護（skill v2.2.0 的新檢查項）===
+  執行前已 grep 全部複製過來的工具，確認**沒有殘留其他輪次的目錄路徑**：
+  發現並修正了兩處（run-probe.sh 的寫死 OUT、make-runner.py 的殘留檢查寫死輪次），
+  現已改為**自我定位**：runner 用 `dirname $0`、probe 用 `dirname $0/..` 推導 OUT ——
+  不論目錄名或複製到哪一輪都正確。
+
+=== 本輪範圍 ===
+  ✗ 不做跨版本比對（skill v2.0.0 起明令；本輪為 v2.2.0）
+  ✓ 純 API response 結果分析（§6.1–6.9）

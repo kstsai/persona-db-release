@@ -1,0 +1,7 @@
+# probe = t3_tesla_topk20
+# label = §6.9 t3 TESLA top_k=20 → protected_veto / #61 保護
+# cmd   = curl -s --get http://localhost:8000/personadb/candidates --data-urlencode questions=TESLA的目標客戶 --data-urlencode top_k=20 --data-urlencode opMode=僅篩選
+http_code=200
+time_total=189.607140
+size_download=13255
+url_effective=http://localhost:8000/personadb/candidates?questions=TESLA%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&top_k=20&opMode=%E5%83%85%E7%AF%A9%E9%81%B8

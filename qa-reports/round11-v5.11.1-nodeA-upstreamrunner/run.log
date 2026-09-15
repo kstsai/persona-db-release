@@ -1,0 +1,587 @@
+# run start 2026-09-15T11:47:19Z  BASE_URL=http://localhost:8000  host=NODE-A
+
+=== 0. /personadb/status ===
+
+real	0m0.764s
+user	0m0.006s
+sys	0m0.006s
+Persona DB Status
+==================================================
+
+  Version         v5.11.1
+  Main personas   1069 (tw_persona_1069.json, 1.72 MB)
+  Backup          ✅ 1069 (tw_persona_1069_backup.json)
+  QA (23 rules)   ✅ ALL CHECKS PASSED
+  Name diversity  172 unique names (16.1%), max repeat 16×
+  Python          3.11.16
+  Git             not a repo (filesystem boundary)
+  LLM             ✅ deepseek-v4-flash → https://api.deepseek.com (responsive)
+  Hermes Skills   61 total, 3 persona-related
+
+  📁 Supporting Artifices: 32 Python files
+
+  QA Results:
+    [R21] BG/PP語氣一致: ✅ 0 violations
+    [R22] 未婚小孩開銷: ✅ 0 violations
+    [R23] 1人vs家庭描述: ✅ 0 violations
+    ==================================================
+    ✅ ALL CHECKS PASSED
+=== 1. 康是美的目標客戶 ===（藥妝零售語意 — 不應套 aesthetic_procedure, #36）
+
+real	1m24.223s
+user	0m0.008s
+sys	0m0.017s
+{"status":"ok","total_matched":27,"persona_ids":[768,185,878],"summary":[{"id":"TW-P-0768","name":"小艾","age":"19-24","occupation":"學生","income":"無收入","family_income":"5-7萬","residence":"基隆市","family_size":"5+","city_price_tier":"中","commute_mode":"機車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"3000~5000","aesthetic_procedure":"無","debt_status":"無","employment_status":"不適用","sex":"女","region":"北部","education":"大學","marriage":"未婚","hobby":["球類","登山","追劇"],"politics":"泛藍","media_diet":"社群為主","score":5.9917},{"id":"TW-P-0185","name":"小奈","age":"19-24","occupation":"學生","income":"無收入","family_income":"7萬","residence":"高雄市","family_size":"2","city_price_tier":"中","commute_mode":"機車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"1500~3000","aesthetic_procedure":"無","debt_status":"無","employment_status":"不適用","sex":"女","region":"都會區(六都)","education":"大學","marriage":"未婚","hobby":["打電動","烹飪","追劇"],"politics":"無政治傾向","media_diet":"社群為主","score":5.6528},{"id":"TW-P-0878","name":"小薇","age":"19-24","occupation":"學生","income":"無收入","family_income":"5-7萬","residence":"南投縣","family_size":"2","city_price_tier":"極低","commute_mode":"機車","housing_cost":"<5千","housing_burden":"低","clothing_spend":"500~1500","aesthetic_procedure":"無","debt_status":"無","employment_status":"不適用","sex":"女","region":"中部","education":"高中","marriage":"未婚","hobby":["追劇","閱讀","音樂"],"politics":"泛綠","media_diet":"社群為主","score":5.2785}],"returned":3,"pool_exhausted":false,"important_dimensions":[{"dim":"region","values":["北部","都會區(六都)","中部"]},{"dim":"family_income","values":["5-7萬","7萬"]},{"dim":"clothing_spend","values":["3000~5000","1500~3000","500~1500"]},{"dim":"housing_burden","values":["中","低"]}],"llm_analysis":{"domain":"零售/藥妝/美妝消費","reasoning":"康是美為台灣藥妝連鎖通路，問題在於分析其目標客戶，屬於零售消費領域，需以消費行為相關維度（如服飾消費、家庭可支配所得）進行過濾，而非僅依基本人口學。","question_analysis":[{"question":"康是美的目標客戶","topic":"藥妝零售目標客群分析","target_user":"康是美的潛在消費者，以注重美妝保養與日常用品的女性為主，年齡約19-44歲，具中等以上消費力，多為學生、上班族或家管。"}],"usage_suggestion":{"mode":"兩者皆可","reason":"可模擬這些目標客戶對康是美商品與服務的觀點及偏好，亦可作為後續問卷發放的目標族群名單，以了解其消費決策與需求。","recommended_opMode":"篩選+模擬"}},"relaxed_dims":[],"broadening_attempts":[],"broadening_stop_reason":"target_reached","protected_dims":["clothing_spend","sex"],"applied_filters":{"age":["19-24","25-34","35-44"],"occupation":["學生","服務","家管","金融","科技"],"sex":["女"],"income":["無收入","<3萬","3-8萬"],"marriage":["未婚","已婚"],"clothing_spend":["500~1500","1500~3000","3000~5000"],"family_income":["3-5萬","5-7萬","7萬",">8萬"],"housing_cost":["<5千","5千~1.5萬","1.5萬~3萬"],"commute_mode":["捷運/公車","機車","步行/腳踏車","汽車"]},"scoring_basis":{"method":"log-frequency × cross-dim normalized [0.5, 2.0]","weight_source":"DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024","weight_version":"v5.11.1","score_scale":"relative-within-version","score_schema":1,"dims_counted":["age","occupation","sex","income","marriage","clothing_spend","family_income","housing_cost","commute_mode","family_size"],"relaxed_dims_scored_at":null}}
+
+=== 2. TESLA的目標客戶 ===
+
+real	2m35.811s
+user	0m0.013s
+sys	0m0.026s
+{"status":"ok","total_matched":21,"persona_ids":[234,341,521],"summary":[{"id":"TW-P-0234","name":"艾力克","age":"25-34","occupation":"金融","income":">8萬","family_income":">8萬","residence":"台南市","family_size":"4","city_price_tier":"低","commute_mode":"汽車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"3000~5000","aesthetic_procedure":"無","debt_status":"有房貸","employment_status":"受僱者","sex":"男","region":"都會區(六都)","education":"大學","marriage":"已婚","hobby":["打電動","球類","追劇"],"politics":"無政治傾向","media_diet":"混合","score":5.6839},{"id":"TW-P-0341","name":"世昌","age":"35-44","occupation":"其他","income":">8萬","family_income":">8萬","residence":"台北市","family_size":"1","city_price_tier":"高","commute_mode":"汽車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"3000~5000","aesthetic_procedure":"無","debt_status":"無","employment_status":"受僱者","sex":"男","region":"都會區(六都)","education":"國中以下","marriage":"鰥寡","hobby":["烹飪","追劇","閱讀"],"politics":"泛綠","media_diet":"混合","score":5.609},{"id":"TW-P-0521","name":"怡君","age":"45-54","occupation":"其他","income":">8萬","family_income":">8萬","residence":"高雄市","family_size":"3","city_price_tier":"中","commute_mode":"汽車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":">5000","aesthetic_procedure":"無","debt_status":"無","employment_status":"自營作業者","sex":"女","region":"都會區(六都)","education":"大學","marriage":"已婚","hobby":["追劇","逛街購物"],"politics":"泛藍","media_diet":"混合","score":5.3225}],"returned":3,"pool_exhausted":false,"important_dimensions":[{"dim":"age","values":["25-34","35-44","45-54"]},{"dim":"sex","values":["男","女"]},{"dim":"occupation","values":["其他","金融"]},{"dim":"clothing_spend","values":["3000~5000",">5000"]},{"dim":"debt_status","values":["無","有房貸"]},{"dim":"employment_status","values":["受僱者","自營作業者"]}],"llm_analysis":{"domain":"電動車/汽車消費市場","reasoning":"問題在探討 TESLA 的目標客戶，屬於汽車產業的消費行為分析，需從收入、職業、通勤方式與消費力等維度界定可能購買電動車的族群。問題主體是消費者本身，不是業主或雇主，因此不需使用 employment_status。","question_analysis":[{"question":"TESLA的目標客戶","topic":"電動車目標客群輪廓","target_user":"高收入、科技或金融從業、目前以汽車通勤、具中高消費力的青壯年族群"}],"usage_suggestion":{"mode":"兩者皆可","reason":"這些 persona 同時適合被用來模擬其對 TESLA 的偏好與看法，也適合作為問卷對象收集實際購車考量。","recommended_opMode":"篩選+模擬"}},"relaxed_dims":["occupation"],"broadening_attempts":[{"loop":1,"change":"移除 occupation 維度限制，因其非本問題核心條件，且為當前篩選中限制最強的非核心維度（移除後樣本數倍率最高）。","match_count_before":10,"match_count_after":16,"filters_changed":true,"protected_veto":false,"vetoed_dims":[],"widened_dims":[],"no_op":false,"overshoot":false},{"loop":2,"change":"放寬 clothing_spend 維度，在原有高消費值中新增「1500~3000」中高消費區間，以擴大非核心條件的涵蓋範圍。","match_count_before":16,"match_count_after":21,"filters_changed":true,"protected_veto":false,"vetoed_dims":[],"widened_dims":["clothing_spend"],"no_op":false,"overshoot":false}],"broadening_stop_reason":"target_reached","protected_dims":["commute_mode","income"],"applied_filters":{"age":["25-34","35-44","45-54"],"income":[">8萬"],"family_income":[">8萬"],"commute_mode":["汽車"],"clothing_spend":["1500~3000","3000~5000",">5000"]},"scoring_basis":{"method":"log-frequency × cross-dim normalized [0.5, 2.0]","weight_source":"DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024","weight_version":"v5.11.1","score_scale":"relative-within-version","score_schema":1,"dims_counted":["age","occupation","income","family_income","commute_mode","clothing_spend","family_size"],"relaxed_dims_scored_at":null}}
+
+=== 3. 時尚服裝設計師的目標客戶 ===
+
+real	0m50.140s
+user	0m0.010s
+sys	0m0.016s
+{
+  "status": "ok",
+  "total_matched": 154,
+  "persona_ids": [
+    253,
+    275,
+    244,
+    285,
+    277,
+    248,
+    239,
+    256,
+    783,
+    254
+  ],
+  "summary": [
+    {
+      "id": "TW-P-0253",
+      "name": "小艾",
+      "age": "25-34",
+      "occupation": "醫療",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "桃園市",
+      "family_size": "3",
+      "city_price_tier": "中",
+      "commute_mode": "機車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "低",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "sex": "女",
+      "region": "都會區(六都)",
+      "education": "大學",
+      "marriage": "未婚",
+      "hobby": [
+        "追劇",
+        "閱讀"
+      ],
+      "politics": "泛藍",
+      "media_diet": "混合",
+      "score": 4.1669
+    },
+    {
+      "id": "TW-P-0275",
+      "name": "米亞",
+      "age": "25-34",
+      "occupation": "金融",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "台南市",
+      "family_size": "3",
+      "city_price_tier": "低",
+      "commute_mode": "步行/腳踏車",
+      "housing_cost": "5千~1.5萬",
+      "housing_burden": "低",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "sex": "女",
+      "region": "都會區(六都)",
+      "education": "高中",
+      "marriage": "已婚",
+      "hobby": [
+        "游泳",
+        "登山",
+        "逛街購物"
+      ],
+      "politics": "泛藍",
+      "media_diet": "國際來源",
+      "score": 4.1461
+    },
+    {
+      "id": "TW-P-0244",
+      "name": "可恩",
+      "age": "25-34",
+      "occupation": "金融",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "新北市",
+      "family_size": "2",
+      "city_price_tier": "中高",
+      "commute_mode": "機車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "sex": "女",
+      "region": "都會區(六都)",
+      "education": "研究所以上",
+      "marriage": "已婚",
+      "hobby": [
+        "球類",
+        "登山"
+      ],
+      "politics": "泛綠",
+      "media_diet": "混合",
+      "score": 4.1221
+    },
+    {
+      "id": "TW-P-0285",
+      "name": "安妮",
+      "age": "25-34",
+      "occupation": "金融",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "新北市",
+      "family_size": "2",
+      "city_price_tier": "中高",
+      "commute_mode": "捷運/公車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "sex": "女",
+      "region": "都會區(六都)",
+      "education": "大學",
+      "marriage": "未婚",
+      "hobby": [
+        "球類",
+        "追劇",
+        "閱讀"
+      ],
+      "politics": "泛綠",
+      "media_diet": "混合",
+      "score": 4.1221
+    },
+    {
+      "id": "TW-P-0277",
+      "name": "可恩",
+      "age": "25-34",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "台北市",
+      "family_size": "4",
+      "city_price_tier": "高",
+      "commute_mode": "汽車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "sex": "女",
+      "region": "都會區(六都)",
+      "education": "大學",
+      "marriage": "未婚",
+      "hobby": [
+        "打電動",
+        "球類",
+        "追劇"
+      ],
+      "politics": "泛綠",
+      "media_diet": "社群為主",
+      "score": 4.0297
+    },
+    {
+      "id": "TW-P-0248",
+      "name": "小奈",
+      "age": "25-34",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "台南市",
+      "family_size": "3",
+      "city_price_tier": "低",
+      "commute_mode": "捷運/公車",
+      "housing_cost": "<5千",
+      "housing_burden": "低",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "sex": "女",
+      "region": "都會區(六都)",
+      "education": "大學",
+      "marriage": "已婚",
+      "hobby": [
+        "打電動",
+        "追劇"
+      ],
+      "politics": "泛藍",
+      "media_diet": "國際來源",
+      "score": 4.023
+    },
+    {
+      "id": "TW-P-0239",
+      "name": "安妮",
+      "age": "25-34",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "新北市",
+      "family_size": "2",
+      "city_price_tier": "中高",
+      "commute_mode": "機車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "sex": "女",
+      "region": "都會區(六都)",
+      "education": "國中以下",
+      "marriage": "已婚",
+      "hobby": [
+        "園藝",
+        "追劇",
+        "逛街購物"
+      ],
+      "politics": "泛綠",
+      "media_diet": "傳統媒體為主",
+      "score": 3.9991
+    },
+    {
+      "id": "TW-P-0256",
+      "name": "若希",
+      "age": "25-34",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "新北市",
+      "family_size": "2",
+      "city_price_tier": "中高",
+      "commute_mode": "機車",
+      "housing_cost": "<5千",
+      "housing_burden": "低",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "sex": "女",
+      "region": "都會區(六都)",
+      "education": "大學",
+      "marriage": "已婚",
+      "hobby": [
+        "園藝",
+        "打電動"
+      ],
+      "politics": "泛綠",
+      "media_diet": "社群為主",
+      "score": 3.9991
+    },
+    {
+      "id": "TW-P-0783",
+      "name": "凱琳",
+      "age": "25-34",
+      "occupation": "科技",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "新竹縣",
+      "family_size": "2",
+      "city_price_tier": "高",
+      "commute_mode": "機車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "受僱者",
+      "sex": "女",
+      "region": "北部",
+      "education": "大學",
+      "marriage": "離婚",
+      "hobby": [
+        "打電動",
+        "球類",
+        "追劇"
+      ],
+      "politics": "無政治傾向",
+      "media_diet": "混合",
+      "score": 3.9991
+    },
+    {
+      "id": "TW-P-0254",
+      "name": "若希",
+      "age": "25-34",
+      "occupation": "服務",
+      "income": ">8萬",
+      "family_income": ">8萬",
+      "residence": "台中市",
+      "family_size": "3",
+      "city_price_tier": "中高",
+      "commute_mode": "捷運/公車",
+      "housing_cost": "1.5萬~3萬",
+      "housing_burden": "中",
+      "clothing_spend": ">5000",
+      "aesthetic_procedure": "無",
+      "debt_status": "無",
+      "employment_status": "自營作業者",
+      "sex": "女",
+      "region": "都會區(六都)",
+      "education": "大學",
+      "marriage": "未婚",
+      "hobby": [
+        "游泳",
+        "追劇"
+      ],
+      "politics": "白/第三勢力",
+      "media_diet": "國際來源",
+      "score": 3.9944
+    }
+  ],
+  "returned": 10,
+  "pool_exhausted": false,
+  "important_dimensions": [
+    {
+      "dim": "region",
+      "values": [
+        "都會區(六都)",
+        "北部"
+      ]
+    },
+    {
+      "dim": "occupation",
+      "values": [
+        "科技",
+        "金融",
+        "醫療",
+        "服務"
+      ]
+    },
+    {
+      "dim": "commute_mode",
+      "values": [
+        "機車",
+        "捷運/公車",
+        "步行/腳踏車",
+        "汽車"
+      ]
+    },
+    {
+      "dim": "housing_burden",
+      "values": [
+        "中",
+        "低"
+      ]
+    },
+    {
+      "dim": "employment_status",
+      "values": [
+        "受僱者",
+        "自營作業者"
+      ]
+    }
+  ],
+  "llm_analysis": {
+    "domain": "時尚/服裝設計零售產業",
+    "reasoning": "此題在問「時尚服裝設計師的目標客戶」，屬於時尚與服飾消費範疇，與購買行為高度相關，因此需以服飾月消費等級與家庭可支配所得來區分「會購買設計師服飾的人」與「不會購買的人」。",
+    "question_analysis": [
+      {
+        "question": "時尚服裝設計師的目標客戶",
+        "topic": "時尚服裝設計產業／目標客群定位",
+        "target_user": "對設計師品牌服飾有興趣、具服飾消費力的成年女性"
+      }
+    ],
+    "usage_suggestion": {
+      "mode": "問卷答題者",
+      "reason": "此題要找出目標客戶族群並了解其偏好與購買行為，適合先篩出這群消費者再做問卷或訪談。",
+      "recommended_opMode": "僅篩選"
+    }
+  },
+  "relaxed_dims": [],
+  "broadening_attempts": [],
+  "broadening_stop_reason": "target_reached",
+  "protected_dims": [
+    "clothing_spend"
+  ],
+  "applied_filters": {
+    "age": [
+      "25-34",
+      "35-44",
+      "45-54"
+    ],
+    "sex": [
+      "女"
+    ],
+    "income": [
+      "3-8萬",
+      ">8萬"
+    ],
+    "clothing_spend": [
+      "1500~3000",
+      "3000~5000",
+      ">5000"
+    ],
+    "family_income": [
+      "3-5萬",
+      "5-7萬",
+      "7萬",
+      ">8萬"
+    ]
+  },
+  "scoring_basis": {
+    "method": "log-frequency × cross-dim normalized [0.5, 2.0]",
+    "weight_source": "DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024",
+    "weight_version": "v5.11.1",
+    "score_scale": "relative-within-version",
+    "score_schema": 1,
+    "dims_counted": [
+      "age",
+      "sex",
+      "income",
+      "clothing_spend",
+      "family_income",
+      "occupation",
+      "family_size"
+    ],
+    "relaxed_dims_scored_at": null
+  }
+}
+
+
+=== 4. 房貸優惠 — 房仲業者 ===
+
+real	2m1.898s
+user	0m0.007s
+sys	0m0.029s
+{"status":"ok","total_matched":27,"persona_ids":[978,275,248,370,253],"summary":[{"id":"TW-P-0978","name":"小傑","age":"19-24","occupation":"製造","income":">8萬","family_income":">8萬","residence":"嘉義市","family_size":"3","city_price_tier":"中高","commute_mode":"汽車","housing_cost":"5千~1.5萬","housing_burden":"低","clothing_spend":">5000","aesthetic_procedure":"無","debt_status":"無","employment_status":"受僱者","sex":"男","region":"南部","education":"高中","marriage":"未婚","hobby":["園藝","球類"],"politics":"無政治傾向","media_diet":"混合","score":4.9101},{"id":"TW-P-0275","name":"米亞","age":"25-34","occupation":"金融","income":">8萬","family_income":">8萬","residence":"台南市","family_size":"3","city_price_tier":"低","commute_mode":"步行/腳踏車","housing_cost":"5千~1.5萬","housing_burden":"低","clothing_spend":">5000","aesthetic_procedure":"無","debt_status":"無","employment_status":"受僱者","sex":"女","region":"都會區(六都)","education":"高中","marriage":"已婚","hobby":["游泳","登山","逛街購物"],"politics":"泛藍","media_diet":"國際來源","score":4.9085},{"id":"TW-P-0248","name":"小奈","age":"25-34","occupation":"科技","income":">8萬","family_income":">8萬","residence":"台南市","family_size":"3","city_price_tier":"低","commute_mode":"捷運/公車","housing_cost":"<5千","housing_burden":"低","clothing_spend":">5000","aesthetic_procedure":"無","debt_status":"無","employment_status":"受僱者","sex":"女","region":"都會區(六都)","education":"大學","marriage":"已婚","hobby":["打電動","追劇"],"politics":"泛藍","media_diet":"國際來源","score":4.7854},{"id":"TW-P-0370","name":"惠如","age":"35-44","occupation":"公務","income":">8萬","family_income":">8萬","residence":"桃園市","family_size":"3","city_price_tier":"中","commute_mode":"捷運/公車","housing_cost":"<5千","housing_burden":"低","clothing_spend":"1500~3000","aesthetic_procedure":"無","debt_status":"無","employment_status":"受僱者","sex":"女","region":"都會區(六都)","education":"研究所以上","marriage":"已婚","hobby":["登山","追劇"],"politics":"白/第三勢力","media_diet":"社群為主","score":4.65},{"id":"TW-P-0253","name":"小艾","age":"25-34","occupation":"醫療","income":">8萬","family_income":">8萬","residence":"桃園市","family_size":"3","city_price_tier":"中","commute_mode":"機車","housing_cost":"5千~1.5萬","housing_burden":"低","clothing_spend":">5000","aesthetic_procedure":"無","debt_status":"無","employment_status":"受僱者","sex":"女","region":"都會區(六都)","education":"大學","marriage":"未婚","hobby":["追劇","閱讀"],"politics":"泛藍","media_diet":"混合","score":4.6329}],"returned":5,"pool_exhausted":false,"important_dimensions":[{"dim":"age","values":["25-34","19-24","35-44"]},{"dim":"sex","values":["女","男"]},{"dim":"region","values":["都會區(六都)","南部"]},{"dim":"occupation","values":["製造","金融","科技","公務","醫療"]},{"dim":"commute_mode","values":["捷運/公車","汽車","步行/腳踏車","機車"]},{"dim":"clothing_spend","values":[">5000","1500~3000"]}],"llm_analysis":{"domain":"房產/金融","reasoning":"「房貸優惠方案」涉及購屋貸款，屬於房產消費行為，目標是找出有購屋/換屋需求的潛在客戶。根據房仲業者需求，需以 housing_burden、family_size 等消費維度過濾，對象為年齡 30-45、家庭成員較多、現有房貸負擔低（已還清或有換房能力）的族群。","question_analysis":[{"question":"房貸優惠方案","topic":"購屋/換屋貸款","target_user":"年齡 30-45、家庭成員 3-4 人、目前居住負擔低（房貸已還清或負擔輕）且有換屋能力的已婚人士"}],"usage_suggestion":{"mode":"問卷答題者","reason":"房仲業者需要取得潛在購屋/換屋客戶名單，以進行房貸優惠方案的推廣或後續調查，適合篩選出具備換屋條件與需求的對象。","recommended_opMode":"僅篩選"}},"relaxed_dims":["age","marriage"],"broadening_attempts":[{"loop":1,"change":"放寬年齡（age）維度，移除原本 25-34、35-44 的限制。年齡非本問題核心條件，且移除後樣本釋放倍率最高，故優先放寬。","match_count_before":6,"match_count_after":16,"filters_changed":true,"protected_veto":false,"vetoed_dims":[],"widened_dims":[],"no_op":false,"overshoot":false},{"loop":2,"change":"放寬非核心維度婚姻狀態，將「已婚」的限制移除，改為不限制婚姻狀態。婚姻狀態並非本問題的語意主體，放寬後仍保留家庭收入、家庭規模與住房負擔等核心條件。","match_count_before":16,"match_count_after":27,"filters_changed":true,"protected_veto":false,"vetoed_dims":[],"widened_dims":[],"no_op":false,"overshoot":false}],"broadening_stop_reason":"target_reached","protected_dims":["family_income","family_size","housing_burden"],"applied_filters":{"income":["3-8萬",">8萬"],"family_size":["3","4"],"family_income":["5-7萬",">8萬"],"housing_burden":["低"],"debt_status":["無"]},"scoring_basis":{"method":"log-frequency × cross-dim normalized [0.5, 2.0]","weight_source":"DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024","weight_version":"v5.11.1","score_scale":"relative-within-version","score_schema":1,"dims_counted":["age","income","marriage","family_size","family_income","housing_burden","debt_status","occupation"],"relaxed_dims_scored_at":null}}
+
+=== 5. 房貸優惠 — 銀行業者 ===
+
+real	4m12.714s
+user	0m0.032s
+sys	0m0.045s
+{"status":"ok","total_matched":25,"persona_ids":[234,473,331,811,929],"summary":[{"id":"TW-P-0234","name":"艾力克","age":"25-34","occupation":"金融","income":">8萬","family_income":">8萬","residence":"台南市","family_size":"4","city_price_tier":"低","commute_mode":"汽車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"3000~5000","aesthetic_procedure":"無","debt_status":"有房貸","employment_status":"受僱者","sex":"男","region":"都會區(六都)","education":"大學","marriage":"已婚","hobby":["打電動","球類","追劇"],"politics":"無政治傾向","media_diet":"混合","score":4.7677},{"id":"TW-P-0473","name":"淑娟","age":"45-54","occupation":"其他","income":">8萬","family_income":">8萬","residence":"高雄市","family_size":"5+","city_price_tier":"中","commute_mode":"機車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":">5000","aesthetic_procedure":"有","debt_status":"有房貸","employment_status":"受僱者","sex":"女","region":"都會區(六都)","education":"研究所以上","marriage":"已婚","hobby":["游泳","球類"],"politics":"泛藍","media_diet":"混合","score":4.761},{"id":"TW-P-0331","name":"正雄","age":"35-44","occupation":"科技","income":">8萬","family_income":">8萬","residence":"新北市","family_size":"5+","city_price_tier":"中高","commute_mode":"汽車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"3000~5000","aesthetic_procedure":"無","debt_status":"有房貸","employment_status":"雇主","sex":"男","region":"都會區(六都)","education":"研究所以上","marriage":"未婚","hobby":["打電動","球類"],"politics":"泛藍","media_diet":"傳統媒體為主","score":4.7412},{"id":"TW-P-0811","name":"志強","age":"45-54","occupation":"科技","income":">8萬","family_income":">8萬","residence":"基隆市","family_size":"5+","city_price_tier":"中","commute_mode":"捷運/公車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"3000~5000","aesthetic_procedure":"無","debt_status":"有房貸","employment_status":"受僱者","sex":"男","region":"北部","education":"大學","marriage":"已婚","hobby":["打電動","登山"],"politics":"無政治傾向","media_diet":"傳統媒體為主","score":4.7338},{"id":"TW-P-0929","name":"麗華","age":"45-54","occupation":"科技","income":">8萬","family_income":">8萬","residence":"彰化縣","family_size":"5+","city_price_tier":"極低","commute_mode":"捷運/公車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"3000~5000","aesthetic_procedure":"無","debt_status":"有房貸","employment_status":"受僱者","sex":"女","region":"中部","education":"大學","marriage":"鰥寡","hobby":["打電動","登山"],"politics":"無政治傾向","media_diet":"社群為主","score":4.7338}],"returned":5,"pool_exhausted":false,"important_dimensions":[{"dim":"age","values":["45-54","25-34","35-44"]},{"dim":"sex","values":["男","女"]},{"dim":"region","values":["都會區(六都)","北部","中部"]},{"dim":"occupation","values":["科技","金融","其他"]},{"dim":"commute_mode","values":["汽車","捷運/公車","機車"]},{"dim":"clothing_spend","values":["3000~5000",">5000"]},{"dim":"aesthetic_procedure","values":["無","有"]},{"dim":"employment_status","values":["受僱者","雇主"]}],"llm_analysis":{"domain":"銀行／房屋貸款","reasoning":"問題為房貸優惠方案，發問者是銀行業者，目的是找出已有房貸、具轉貸或穩定還款需求的既有房貸戶。","question_analysis":[{"question":"房貸優惠方案","topic":"銀行房貸／轉貸","target_user":"40-55歲已有房貸、居住負擔中高且收入穩定的既有房貸戶"}],"usage_suggestion":{"mode":"問卷答題者","reason":"銀行需要先精準篩選出有既有房貸且具轉貸／穩定還款能力的族群，再對其發送問卷或進行推廣。","recommended_opMode":"僅篩選"}},"relaxed_dims":["age","family_income"],"broadening_attempts":[{"loop":1,"change":"移除 age 篩選維度。年齡非本問題的核心語意，核心條件為債務狀態「有房貸」，因此移除年齡限制以放寬條件。","match_count_before":5,"match_count_after":7,"filters_changed":true,"protected_veto":false,"vetoed_dims":[],"widened_dims":[],"no_op":false,"overshoot":false},{"loop":2,"change":"放寬 income 維度，從僅「>8萬」擴大為「>8萬」與「3-8萬」。","match_count_before":7,"match_count_after":8,"filters_changed":true,"protected_veto":false,"vetoed_dims":[],"widened_dims":["income"],"no_op":false,"overshoot":false},{"loop":3,"change":"放寬 family_income 維度：移除家庭收入限制。家庭收入非本問題語意主體，且移除後對樣本數增幅最大。","match_count_before":8,"match_count_after":25,"filters_changed":true,"protected_veto":false,"vetoed_dims":[],"widened_dims":[],"no_op":false,"overshoot":false}],"broadening_stop_reason":"target_reached","protected_dims":["debt_status"],"applied_filters":{"income":[">8萬","3-8萬"],"housing_burden":["中","高"],"housing_cost":["5千~1.5萬","1.5萬~3萬"],"debt_status":["有房貸"]},"scoring_basis":{"method":"log-frequency × cross-dim normalized [0.5, 2.0]","weight_source":"DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024","weight_version":"v5.11.1","score_scale":"relative-within-version","score_schema":1,"dims_counted":["age","income","family_income","housing_burden","housing_cost","debt_status","occupation","family_size"],"relaxed_dims_scored_at":null}}
+
+=== 6. 醫美診所的目標客戶（dimension 20: aesthetic_procedure）===
+
+real	4m8.666s
+user	0m0.053s
+sys	0m0.041s
+{"status":"ok","total_matched":16,"persona_ids":[473,513,361,891,465,627,247,238,280,1051],"summary":[{"id":"TW-P-0473","name":"淑娟","age":"45-54","occupation":"其他","income":">8萬","family_income":">8萬","residence":"高雄市","family_size":"5+","city_price_tier":"中","commute_mode":"機車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":">5000","aesthetic_procedure":"有","debt_status":"有房貸","employment_status":"受僱者","sex":"女","region":"都會區(六都)","education":"研究所以上","marriage":"已婚","hobby":["游泳","球類"],"politics":"泛藍","media_diet":"混合","score":3.454},{"id":"TW-P-0513","name":"婉玲","age":"45-54","occupation":"製造","income":">8萬","family_income":">8萬","residence":"台中市","family_size":"5+","city_price_tier":"中高","commute_mode":"機車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"1500~3000","aesthetic_procedure":"有","debt_status":"有信貸或卡債","employment_status":"受僱者","sex":"女","region":"都會區(六都)","education":"大學","marriage":"未婚","hobby":["打電動","烹飪"],"politics":"白/第三勢力","media_diet":"傳統媒體為主","score":3.237},{"id":"TW-P-0361","name":"麗華","age":"35-44","occupation":"醫療","income":"3-8萬","family_income":"7萬","residence":"台南市","family_size":"4","city_price_tier":"低","commute_mode":"汽車","housing_cost":"5千~1.5萬","housing_burden":"低","clothing_spend":"500~1500","aesthetic_procedure":"有","debt_status":"無","employment_status":"受僱者","sex":"女","region":"都會區(六都)","education":"大學","marriage":"未婚","hobby":["球類","登山","追劇"],"politics":"泛綠","media_diet":"國際來源","score":2.3944},{"id":"TW-P-0891","name":"菲菲","age":"25-34","occupation":"公務","income":"3-8萬","family_income":"5-7萬","residence":"南投縣","family_size":"2","city_price_tier":"極低","commute_mode":"步行/腳踏車","housing_cost":"<5千","housing_burden":"低","clothing_spend":"3000~5000","aesthetic_procedure":"有","debt_status":"無","employment_status":"受僱者","sex":"女","region":"中部","education":"大學","marriage":"已婚","hobby":["游泳","烹飪","音樂"],"politics":"白/第三勢力","media_diet":"混合","score":2.3486},{"id":"TW-P-0465","name":"志豪","age":"45-54","occupation":"其他","income":"<3萬","family_income":"3-5萬","residence":"台中市","family_size":"3","city_price_tier":"中高","commute_mode":"機車","housing_cost":"5千~1.5萬","housing_burden":"中","clothing_spend":"1500~3000","aesthetic_procedure":"有","debt_status":"無","employment_status":"受僱者","sex":"男","region":"都會區(六都)","education":"大學","marriage":"已婚","hobby":["園藝","游泳","登山"],"politics":"泛藍","media_diet":"混合","score":2.2603},{"id":"TW-P-0627","name":"含笑","age":"55-64","occupation":"失業","income":"<3萬","family_income":"3-5萬","residence":"台中市","family_size":"4","city_price_tier":"中高","commute_mode":"機車","housing_cost":"5千~1.5萬","housing_burden":"中","clothing_spend":"3000~5000","aesthetic_procedure":"有","debt_status":"無","employment_status":"不適用","sex":"女","region":"都會區(六都)","education":"高中","marriage":"已婚","hobby":["廣場舞","烹飪","逛街購物"],"politics":"泛綠","media_diet":"傳統媒體為主","score":2.2565},{"id":"TW-P-0247","name":"小薇","age":"25-34","occupation":"服務","income":"3-8萬","family_income":"3-5萬","residence":"高雄市","family_size":"3","city_price_tier":"中","commute_mode":"機車","housing_cost":"5千~1.5萬","housing_burden":"中","clothing_spend":">5000","aesthetic_procedure":"有","debt_status":"無","employment_status":"受僱者","sex":"女","region":"都會區(六都)","education":"大學","marriage":"未婚","hobby":["打電動","烹飪","球類"],"politics":"白/第三勢力","media_diet":"社群為主","score":2.1357},{"id":"TW-P-0238","name":"米亞","age":"25-34","occupation":"服務","income":"3-8萬","family_income":"3-5萬","residence":"桃園市","family_size":"2","city_price_tier":"中","commute_mode":"機車","housing_cost":"5千~1.5萬","housing_burden":"中","clothing_spend":">5000","aesthetic_procedure":"有","debt_status":"無","employment_status":"受僱者","sex":"女","region":"都會區(六都)","education":"研究所以上","marriage":"已婚","hobby":["追劇","閱讀"],"politics":"無政治傾向","media_diet":"社群為主","score":2.0878},{"id":"TW-P-0280","name":"莉亞","age":"25-34","occupation":"製造","income":"3-8萬","family_income":"3-5萬","residence":"桃園市","family_size":"4","city_price_tier":"中","commute_mode":"捷運/公車","housing_cost":"5千~1.5萬","housing_burden":"中","clothing_spend":"3000~5000","aesthetic_procedure":"有","debt_status":"無","employment_status":"受僱者","sex":"女","region":"都會區(六都)","education":"研究所以上","marriage":"已婚","hobby":["烹飪","追劇"],"politics":"泛綠","media_diet":"社群為主","score":2.0791},{"id":"TW-P-1051","name":"美雲","age":"55-64","occupation":"家管","income":"<3萬","family_income":"3-5萬","residence":"台東縣","family_size":"2","city_price_tier":"極低","commute_mode":"汽車","housing_cost":"5千~1.5萬","housing_burden":"中","clothing_spend":"<500","aesthetic_procedure":"有","debt_status":"無","employment_status":"不適用","sex":"女","region":"花東","education":"大學","marriage":"已婚","hobby":["打電動","烹飪"],"politics":"泛綠","media_diet":"傳統媒體為主","score":2.0243}],"returned":10,"pool_exhausted":false,"important_dimensions":[{"dim":"age","values":["25-34","45-54","55-64","35-44"]},{"dim":"sex","values":["女","男"]},{"dim":"region","values":["都會區(六都)","中部","花東"]},{"dim":"occupation","values":["其他","製造","服務","醫療","公務"]},{"dim":"income","values":["3-8萬","<3萬",">8萬"]},{"dim":"family_income","values":["3-5萬",">8萬","7萬","5-7萬"]},{"dim":"commute_mode","values":["機車","汽車","步行/腳踏車","捷運/公車"]},{"dim":"clothing_spend","values":[">5000","3000~5000","1500~3000","500~1500","<500"]},{"dim":"housing_burden","values":["中","低"]},{"dim":"debt_status","values":["無","有房貸","有信貸或卡債"]},{"dim":"employment_status","values":["受僱者","不適用"]}],"llm_analysis":{"domain":"醫療美容（醫美診所）","reasoning":"題目為醫美診所的目標客戶，屬於醫美服務消費；主體是診所業者想找潛在客戶，不是業主本人，因此不使用 employment_status。醫美療程屬高消費且與年齡、收入高度相關，女性佔比高，都會區需求較多。","question_analysis":[{"question":"醫美診所的目標客戶","topic":"醫美診所目標客群","target_user":"醫美診所行銷主管／診所經營者，想找出有醫美需求的潛在客戶"}],"usage_suggestion":{"mode":"問卷答題者","reason":"題目主體是找出醫美診所的潛在客戶族群，需要一份可發放問卷或行銷的名單，而非由 persona 直接回答診所經營問題。","recommended_opMode":"僅篩選"}},"relaxed_dims":["income"],"broadening_attempts":[{"loop":1,"change":"放寬 income 維度，移除收入限制，以增加樣本數。income 非本問題核心條件，移除後仍保留醫美經歷（aesthetic_procedure）此一核心篩選，不影響問題語意主體。","match_count_before":13,"match_count_after":14,"filters_changed":true,"protected_veto":false,"vetoed_dims":[],"widened_dims":[],"no_op":false,"overshoot":false},{"loop":2,"change":"放寬 age 維度，在原本 25-34、35-44、45-54 三個年齡層之外，加入相鄰的 19-24 與 55-64 年齡層，以涵蓋更多可能具有醫美療程經歷的對象；age 並非本問題的核心語意條件。","match_count_before":14,"match_count_after":16,"filters_changed":true,"protected_veto":false,"vetoed_dims":[],"widened_dims":["age"],"no_op":false,"overshoot":false},{"loop":3,"change":"放寬年齡維度，新增 65+ 年齡層，以增加樣本數但維持醫美療程經驗核心條件不變。","match_count_before":16,"match_count_after":16,"filters_changed":true,"protected_veto":false,"vetoed_dims":[],"widened_dims":["age"],"no_op":true,"overshoot":false}],"broadening_stop_reason":"loop_limit","protected_dims":["aesthetic_procedure"],"applied_filters":{"age":["19-24","25-34","35-44","45-54","55-64","65+"],"aesthetic_procedure":["有"]},"scoring_basis":{"method":"log-frequency × cross-dim normalized [0.5, 2.0]","weight_source":"DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024","weight_version":"v5.11.1","score_scale":"relative-within-version","score_schema":1,"dims_counted":["age","income","aesthetic_procedure","occupation","family_income","family_size"],"relaxed_dims_scored_at":null}}
+
+=== 7. 債務整合的目標客戶（dimension 21: debt_status）===
+
+real	5m53.564s
+user	0m0.035s
+sys	0m0.082s
+{"status":"ok","total_matched":19,"persona_ids":[328,234,473,331,388,811,929,774,276,209],"summary":[{"id":"TW-P-0328","name":"俊傑","age":"35-44","occupation":"製造","income":">8萬","family_income":">8萬","residence":"桃園市","family_size":"5+","city_price_tier":"中","commute_mode":"步行/腳踏車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"<500","aesthetic_procedure":"無","debt_status":"房貸+消費債","employment_status":"自營作業者","sex":"男","region":"都會區(六都)","education":"研究所以上","marriage":"已婚","hobby":["追劇","閱讀"],"politics":"泛綠","media_diet":"國際來源","score":4.6016},{"id":"TW-P-0234","name":"艾力克","age":"25-34","occupation":"金融","income":">8萬","family_income":">8萬","residence":"台南市","family_size":"4","city_price_tier":"低","commute_mode":"汽車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"3000~5000","aesthetic_procedure":"無","debt_status":"有房貸","employment_status":"受僱者","sex":"男","region":"都會區(六都)","education":"大學","marriage":"已婚","hobby":["打電動","球類","追劇"],"politics":"無政治傾向","media_diet":"混合","score":4.4164},{"id":"TW-P-0473","name":"淑娟","age":"45-54","occupation":"其他","income":">8萬","family_income":">8萬","residence":"高雄市","family_size":"5+","city_price_tier":"中","commute_mode":"機車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":">5000","aesthetic_procedure":"有","debt_status":"有房貸","employment_status":"受僱者","sex":"女","region":"都會區(六都)","education":"研究所以上","marriage":"已婚","hobby":["游泳","球類"],"politics":"泛藍","media_diet":"混合","score":4.4136},{"id":"TW-P-0331","name":"正雄","age":"35-44","occupation":"科技","income":">8萬","family_income":">8萬","residence":"新北市","family_size":"5+","city_price_tier":"中高","commute_mode":"汽車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"3000~5000","aesthetic_procedure":"無","debt_status":"有房貸","employment_status":"雇主","sex":"男","region":"都會區(六都)","education":"研究所以上","marriage":"未婚","hobby":["打電動","球類"],"politics":"泛藍","media_diet":"傳統媒體為主","score":4.3666},{"id":"TW-P-0388","name":"美珍","age":"35-44","occupation":"教育","income":">8萬","family_income":">8萬","residence":"台中市","family_size":"3","city_price_tier":"中高","commute_mode":"汽車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":">5000","aesthetic_procedure":"無","debt_status":"有房貸","employment_status":"受僱者","sex":"女","region":"都會區(六都)","education":"研究所以上","marriage":"已婚","hobby":["園藝","登山","追劇"],"politics":"泛綠","media_diet":"混合","score":4.3644},{"id":"TW-P-0811","name":"志強","age":"45-54","occupation":"科技","income":">8萬","family_income":">8萬","residence":"基隆市","family_size":"5+","city_price_tier":"中","commute_mode":"捷運/公車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"3000~5000","aesthetic_procedure":"無","debt_status":"有房貸","employment_status":"受僱者","sex":"男","region":"北部","education":"大學","marriage":"已婚","hobby":["打電動","登山"],"politics":"無政治傾向","media_diet":"傳統媒體為主","score":4.3592},{"id":"TW-P-0929","name":"麗華","age":"45-54","occupation":"科技","income":">8萬","family_income":">8萬","residence":"彰化縣","family_size":"5+","city_price_tier":"極低","commute_mode":"捷運/公車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"3000~5000","aesthetic_procedure":"無","debt_status":"有房貸","employment_status":"受僱者","sex":"女","region":"中部","education":"大學","marriage":"鰥寡","hobby":["打電動","登山"],"politics":"無政治傾向","media_diet":"社群為主","score":4.3592},{"id":"TW-P-0774","name":"歐文","age":"25-34","occupation":"科技","income":">8萬","family_income":">8萬","residence":"新竹市","family_size":"2","city_price_tier":"中高","commute_mode":"機車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":">5000","aesthetic_procedure":"無","debt_status":"有房貸","employment_status":"受僱者","sex":"男","region":"北部","education":"研究所以上","marriage":"未婚","hobby":["追劇","音樂"],"politics":"無政治傾向","media_diet":"混合","score":4.2424},{"id":"TW-P-0276","name":"小莉","age":"25-34","occupation":"教育","income":"3-8萬","family_income":">8萬","residence":"台北市","family_size":"3","city_price_tier":"高","commute_mode":"捷運/公車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":">5000","aesthetic_procedure":"無","debt_status":"有房貸","employment_status":"受僱者","sex":"女","region":"都會區(六都)","education":"研究所以上","marriage":"未婚","hobby":["游泳","球類","追劇"],"politics":"泛藍","media_diet":"混合","score":2.9004},{"id":"TW-P-0209","name":"馬克","age":"25-34","occupation":"科技","income":"3-8萬","family_income":"7萬","residence":"高雄市","family_size":"5+","city_price_tier":"中","commute_mode":"機車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"3000~5000","aesthetic_procedure":"無","debt_status":"有房貸","employment_status":"受僱者","sex":"男","region":"都會區(六都)","education":"大學","marriage":"已婚","hobby":["園藝","打電動"],"politics":"泛藍","media_diet":"社群為主","score":2.828}],"returned":10,"pool_exhausted":false,"important_dimensions":[{"dim":"age","values":["25-34","35-44","45-54"]},{"dim":"sex","values":["男","女"]},{"dim":"region","values":["都會區(六都)","北部","中部"]},{"dim":"occupation","values":["科技","教育","製造","金融","其他"]},{"dim":"income","values":[">8萬","3-8萬"]},{"dim":"family_income","values":[">8萬","7萬"]},{"dim":"commute_mode","values":["汽車","機車","捷運/公車","步行/腳踏車"]},{"dim":"clothing_spend","values":["3000~5000",">5000","<500"]},{"dim":"aesthetic_procedure","values":["無","有"]},{"dim":"debt_status","values":["有房貸","房貸+消費債"]},{"dim":"employment_status","values":["受僱者","自營作業者","雇主"]}],"llm_analysis":{"domain":"金融服務／銀行貸款／債務整合","reasoning":"這是銀行端的債務整合貸款方案，主體是銀行想找的目標客戶，不是業主本人，因此不以 employment_status 過濾。目標是有既有房貸、想轉貸降息或整合債務且具穩定還款能力的族群，應聚焦 debt_status、housing_burden、income/family_income，年齡以 35-54 歲最為合理。","question_analysis":[{"question":"債務整合貸款方案的目標客戶","topic":"銀行貸款／債務整合／房貸轉貸","target_user":"有既有房貸、有穩定還款能力、想轉貸降息或整合債務的 35-54 歲族群"}],"usage_suggestion":{"mode":"問卷答題者","reason":"題目是在找出目標客戶名單，而不是請 persona 評價方案本身；適合篩出符合條件的名單後再進行接觸或問卷。","recommended_opMode":"僅篩選"}},"relaxed_dims":["age","income"],"broadening_attempts":[{"loop":1,"change":"放寬 age 維度：移除原本限定的 35-44、45-54 年齡限制。年齡非本題核心語意主體，且為目前唯一可有效增加樣本的非核心維度；保留 debt_status 及其他條件不變。","match_count_before":6,"match_count_after":8,"filters_changed":true,"protected_veto":false,"vetoed_dims":[],"widened_dims":[],"no_op":false,"overshoot":false},{"loop":2,"change":"刪除非核心的 income 維度；收入不是本問題的語意主體，且保留家庭收入、債務與住房負擔等核心條件。","match_count_before":8,"match_count_after":9,"filters_changed":true,"protected_veto":false,"vetoed_dims":[],"widened_dims":[],"no_op":false,"overshoot":false},{"loop":3,"change":"放寬 family_income 維度，由原本僅 >8萬 擴大到包含 5-7萬、7萬、>8萬，以涵蓋更多中高收入家庭。","match_count_before":9,"match_count_after":19,"filters_changed":true,"protected_veto":false,"vetoed_dims":[],"widened_dims":["family_income"],"no_op":false,"overshoot":false}],"broadening_stop_reason":"loop_limit","protected_dims":["debt_status"],"applied_filters":{"family_income":["5-7萬","7萬",">8萬"],"debt_status":["有房貸","房貸+消費債"],"housing_burden":["中","高"]},"scoring_basis":{"method":"log-frequency × cross-dim normalized [0.5, 2.0]","weight_source":"DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024","weight_version":"v5.11.1","score_scale":"relative-within-version","score_schema":1,"dims_counted":["age","income","family_income","debt_status","housing_burden","occupation","family_size"],"relaxed_dims_scored_at":null}}
+
+=== 8. 小吃攤老闆的目標客群 — 【顧客語意】不應套 employment_status ===
+
+real	1m25.547s
+user	0m0.010s
+sys	0m0.041s
+{"status":"ok","total_matched":61,"persona_ids":[593,542,563,567,331,338,344,788,343,993],"summary":[{"id":"TW-P-0593","name":"秀英","age":"55-64","occupation":"金融","income":">8萬","family_income":">8萬","residence":"台中市","family_size":"5+","city_price_tier":"中高","commute_mode":"機車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"3000~5000","aesthetic_procedure":"無","debt_status":"無","employment_status":"雇主","sex":"女","region":"都會區(六都)","education":"大學","marriage":"未婚","hobby":["烹飪","追劇","逛街購物"],"politics":"泛藍","media_diet":"社群為主","score":1.7046},{"id":"TW-P-0542","name":"進福","age":"55-64","occupation":"製造","income":">8萬","family_income":">8萬","residence":"新北市","family_size":"2","city_price_tier":"中高","commute_mode":"機車","housing_cost":"5千~1.5萬","housing_burden":"低","clothing_spend":"<500","aesthetic_procedure":"無","debt_status":"無","employment_status":"雇主","sex":"男","region":"都會區(六都)","education":"大學","marriage":"已婚","hobby":["下棋","球類","逛街購物"],"politics":"泛藍","media_diet":"傳統媒體為主","score":1.5882},{"id":"TW-P-0563","name":"朝陽","age":"55-64","occupation":"製造","income":">8萬","family_income":">8萬","residence":"台北市","family_size":"2","city_price_tier":"高","commute_mode":"捷運/公車","housing_cost":"5千~1.5萬","housing_burden":"低","clothing_spend":"<500","aesthetic_procedure":"無","debt_status":"無","employment_status":"雇主","sex":"男","region":"都會區(六都)","education":"高中","marriage":"已婚","hobby":["打電動","逛街購物"],"politics":"無政治傾向","media_diet":"傳統媒體為主","score":1.5882},{"id":"TW-P-0567","name":"清輝","age":"55-64","occupation":"製造","income":">8萬","family_income":">8萬","residence":"台北市","family_size":"2","city_price_tier":"高","commute_mode":"捷運/公車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"<500","aesthetic_procedure":"無","debt_status":"無","employment_status":"雇主","sex":"男","region":"都會區(六都)","education":"高中","marriage":"未婚","hobby":["泡茶","球類","追劇"],"politics":"泛綠","media_diet":"傳統媒體為主","score":1.5882},{"id":"TW-P-0331","name":"正雄","age":"35-44","occupation":"科技","income":">8萬","family_income":">8萬","residence":"新北市","family_size":"5+","city_price_tier":"中高","commute_mode":"汽車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"3000~5000","aesthetic_procedure":"無","debt_status":"有房貸","employment_status":"雇主","sex":"男","region":"都會區(六都)","education":"研究所以上","marriage":"未婚","hobby":["打電動","球類"],"politics":"泛藍","media_diet":"傳統媒體為主","score":1.5638},{"id":"TW-P-0338","name":"建宏","age":"35-44","occupation":"製造","income":">8萬","family_income":">8萬","residence":"台中市","family_size":"5+","city_price_tier":"中高","commute_mode":"機車","housing_cost":"5千~1.5萬","housing_burden":"低","clothing_spend":"<500","aesthetic_procedure":"無","debt_status":"無","employment_status":"雇主","sex":"男","region":"都會區(六都)","education":"高中","marriage":"已婚","hobby":["泡茶","球類"],"politics":"泛綠","media_diet":"混合","score":1.5367},{"id":"TW-P-0344","name":"強哥","age":"35-44","occupation":"服務","income":">8萬","family_income":">8萬","residence":"高雄市","family_size":"4","city_price_tier":"中","commute_mode":"機車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"500~1500","aesthetic_procedure":"無","debt_status":"有信貸或卡債","employment_status":"雇主","sex":"男","region":"都會區(六都)","education":"大學","marriage":"已婚","hobby":["園藝","打電動","逛街購物"],"politics":"泛藍","media_diet":"混合","score":1.5365},{"id":"TW-P-0788","name":"志強","age":"35-44","occupation":"服務","income":">8萬","family_income":">8萬","residence":"新竹市","family_size":"3","city_price_tier":"中高","commute_mode":"捷運/公車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"3000~5000","aesthetic_procedure":"無","debt_status":"無","employment_status":"雇主","sex":"男","region":"北部","education":"大學","marriage":"已婚","hobby":["登山","追劇"],"politics":"泛藍","media_diet":"混合","score":1.5298},{"id":"TW-P-0343","name":"志強","age":"35-44","occupation":"製造","income":">8萬","family_income":">8萬","residence":"台南市","family_size":"3","city_price_tier":"低","commute_mode":"捷運/公車","housing_cost":"<5千","housing_burden":"低","clothing_spend":"<500","aesthetic_procedure":"無","debt_status":"有信貸或卡債","employment_status":"雇主","sex":"男","region":"都會區(六都)","education":"高中","marriage":"已婚","hobby":["打電動","登山","閱讀"],"politics":"泛藍","media_diet":"混合","score":1.5123},{"id":"TW-P-0993","name":"建宏","age":"35-44","occupation":"製造","income":">8萬","family_income":">8萬","residence":"屏東縣","family_size":"3","city_price_tier":"低","commute_mode":"捷運/公車","housing_cost":"5千~1.5萬","housing_burden":"低","clothing_spend":"<500","aesthetic_procedure":"無","debt_status":"無","employment_status":"雇主","sex":"男","region":"南部","education":"高中","marriage":"已婚","hobby":["打電動","閱讀"],"politics":"泛藍","media_diet":"社群為主","score":1.5123}],"returned":10,"pool_exhausted":false,"important_dimensions":[{"dim":"age","values":["35-44","55-64"]},{"dim":"sex","values":["男","女"]},{"dim":"region","values":["都會區(六都)","北部","南部"]},{"dim":"occupation","values":["製造","服務","金融","科技"]},{"dim":"commute_mode","values":["捷運/公車","機車","汽車"]},{"dim":"clothing_spend","values":["<500","3000~5000","500~1500"]},{"dim":"housing_burden","values":["中","低"]},{"dim":"debt_status","values":["無","有信貸或卡債","有房貸"]}],"llm_analysis":{"domain":"餐飲／夜市攤商經營","reasoning":"發問者為夜市商圈協會，想了解小吃攤老闆如何設定目標客群，因此需鎖定小吃攤老闆本人（業主／自營作業者），而不是他們的顧客。問題主體是業主身分，故必須以 employment_status 過濾出雇主與自營作業者。","question_analysis":[{"question":"小吃攤老闆的目標客群","topic":"小吃攤經營與目標客群定位","target_user":"夜市商圈的攤商／小吃攤老闆，想了解他們通常瞄準哪些顧客群"}],"usage_suggestion":{"mode":"兩者皆可","reason":"需要小吃攤老闆的專業判斷來描述其目標客群，可模擬老闆直接回答，也可篩選出名單進行實際問卷調查，以取得攤商意見。","recommended_opMode":"篩選+模擬"}},"relaxed_dims":[],"broadening_attempts":[],"broadening_stop_reason":"target_reached","protected_dims":["employment_status"],"applied_filters":{"age":["35-44","45-54","55-64"],"employment_status":["自營作業者","雇主"]},"scoring_basis":{"method":"log-frequency × cross-dim normalized [0.5, 2.0]","weight_source":"DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024","weight_version":"v5.11.1","score_scale":"relative-within-version","score_schema":1,"dims_counted":["age","employment_status","income","occupation","family_income","family_size"],"relaxed_dims_scored_at":null}}
+
+=== 9. 業主本人 — dimension 22: employment_status（語意無歧義，issue #34）===
+
+real	0m51.939s
+user	0m0.000s
+sys	0m0.017s
+{"status":"ok","total_matched":61,"persona_ids":[593,542,563,567,331,344,788,484,338,343],"summary":[{"id":"TW-P-0593","name":"秀英","age":"55-64","occupation":"金融","income":">8萬","family_income":">8萬","residence":"台中市","family_size":"5+","city_price_tier":"中高","commute_mode":"機車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"3000~5000","aesthetic_procedure":"無","debt_status":"無","employment_status":"雇主","sex":"女","region":"都會區(六都)","education":"大學","marriage":"未婚","hobby":["烹飪","追劇","逛街購物"],"politics":"泛藍","media_diet":"社群為主","score":1.8497},{"id":"TW-P-0542","name":"進福","age":"55-64","occupation":"製造","income":">8萬","family_income":">8萬","residence":"新北市","family_size":"2","city_price_tier":"中高","commute_mode":"機車","housing_cost":"5千~1.5萬","housing_burden":"低","clothing_spend":"<500","aesthetic_procedure":"無","debt_status":"無","employment_status":"雇主","sex":"男","region":"都會區(六都)","education":"大學","marriage":"已婚","hobby":["下棋","球類","逛街購物"],"politics":"泛藍","media_diet":"傳統媒體為主","score":1.6455},{"id":"TW-P-0563","name":"朝陽","age":"55-64","occupation":"製造","income":">8萬","family_income":">8萬","residence":"台北市","family_size":"2","city_price_tier":"高","commute_mode":"捷運/公車","housing_cost":"5千~1.5萬","housing_burden":"低","clothing_spend":"<500","aesthetic_procedure":"無","debt_status":"無","employment_status":"雇主","sex":"男","region":"都會區(六都)","education":"高中","marriage":"已婚","hobby":["打電動","逛街購物"],"politics":"無政治傾向","media_diet":"傳統媒體為主","score":1.6455},{"id":"TW-P-0567","name":"清輝","age":"55-64","occupation":"製造","income":">8萬","family_income":">8萬","residence":"台北市","family_size":"2","city_price_tier":"高","commute_mode":"捷運/公車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"<500","aesthetic_procedure":"無","debt_status":"無","employment_status":"雇主","sex":"男","region":"都會區(六都)","education":"高中","marriage":"未婚","hobby":["泡茶","球類","追劇"],"politics":"泛綠","media_diet":"傳統媒體為主","score":1.6455},{"id":"TW-P-0331","name":"正雄","age":"35-44","occupation":"科技","income":">8萬","family_income":">8萬","residence":"新北市","family_size":"5+","city_price_tier":"中高","commute_mode":"汽車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"3000~5000","aesthetic_procedure":"無","debt_status":"有房貸","employment_status":"雇主","sex":"男","region":"都會區(六都)","education":"研究所以上","marriage":"未婚","hobby":["打電動","球類"],"politics":"泛藍","media_diet":"傳統媒體為主","score":1.6434},{"id":"TW-P-0344","name":"強哥","age":"35-44","occupation":"服務","income":">8萬","family_income":">8萬","residence":"高雄市","family_size":"4","city_price_tier":"中","commute_mode":"機車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"500~1500","aesthetic_procedure":"無","debt_status":"有信貸或卡債","employment_status":"雇主","sex":"男","region":"都會區(六都)","education":"大學","marriage":"已婚","hobby":["園藝","打電動","逛街購物"],"politics":"泛藍","media_diet":"混合","score":1.6148},{"id":"TW-P-0788","name":"志強","age":"35-44","occupation":"服務","income":">8萬","family_income":">8萬","residence":"新竹市","family_size":"3","city_price_tier":"中高","commute_mode":"捷運/公車","housing_cost":"1.5萬~3萬","housing_burden":"中","clothing_spend":"3000~5000","aesthetic_procedure":"無","debt_status":"無","employment_status":"雇主","sex":"男","region":"北部","education":"大學","marriage":"已婚","hobby":["登山","追劇"],"politics":"泛藍","media_diet":"混合","score":1.6148},{"id":"TW-P-0484","name":"慧君","age":"45-54","occupation":"金融","income":">8萬","family_income":">8萬","residence":"台南市","family_size":"3","city_price_tier":"低","commute_mode":"機車","housing_cost":"5千~1.5萬","housing_burden":"低","clothing_spend":">5000","aesthetic_procedure":"無","debt_status":"無","employment_status":"自營作業者","sex":"女","region":"都會區(六都)","education":"大學","marriage":"已婚","hobby":["打牌","逛街購物","閱讀"],"politics":"泛綠","media_diet":"傳統媒體為主","score":1.5714},{"id":"TW-P-0338","name":"建宏","age":"35-44","occupation":"製造","income":">8萬","family_income":">8萬","residence":"台中市","family_size":"5+","city_price_tier":"中高","commute_mode":"機車","housing_cost":"5千~1.5萬","housing_burden":"低","clothing_spend":"<500","aesthetic_procedure":"無","debt_status":"無","employment_status":"雇主","sex":"男","region":"都會區(六都)","education":"高中","marriage":"已婚","hobby":["泡茶","球類"],"politics":"泛綠","media_diet":"混合","score":1.5623},{"id":"TW-P-0343","name":"志強","age":"35-44","occupation":"製造","income":">8萬","family_income":">8萬","residence":"台南市","family_size":"3","city_price_tier":"低","commute_mode":"捷運/公車","housing_cost":"<5千","housing_burden":"低","clothing_spend":"<500","aesthetic_procedure":"無","debt_status":"有信貸或卡債","employment_status":"雇主","sex":"男","region":"都會區(六都)","education":"高中","marriage":"已婚","hobby":["打電動","登山","閱讀"],"politics":"泛藍","media_diet":"混合","score":1.5623}],"returned":10,"pool_exhausted":false,"important_dimensions":[{"dim":"age","values":["35-44","55-64","45-54"]},{"dim":"sex","values":["男","女"]},{"dim":"region","values":["都會區(六都)","北部"]},{"dim":"occupation","values":["製造","金融","服務","科技"]},{"dim":"commute_mode","values":["機車","捷運/公車","汽車"]},{"dim":"clothing_spend","values":["<500","3000~5000","500~1500",">5000"]},{"dim":"housing_burden","values":["中","低"]},{"dim":"debt_status","values":["無","有信貸或卡債","有房貸"]},{"dim":"employment_status","values":["雇主","自營作業者"]}],"llm_analysis":{"domain":"市場研究／B2B問卷招募","reasoning":"題目明確要求尋找企業主或工廠老闆本人作為 B2B 問卷受訪者，主體是業主身分，因此必須以 employment_status 過濾雇主與自營作業者；此題不涉及消費行為，故不使用消費維度。","question_analysis":[{"question":"想找企業主或工廠老闆本人作為B2B問卷受訪者","topic":"招募企業主／工廠老闆為問卷受訪者","target_user":"企業主或工廠老闆本人"}],"usage_suggestion":{"mode":"問卷答題者","reason":"題目是招募特定身分（企業主／工廠老闆）作為問卷受訪者，目的是取得可發放問卷的名單，而非模擬其觀點。","recommended_opMode":"僅篩選"}},"relaxed_dims":[],"broadening_attempts":[],"broadening_stop_reason":"target_reached","protected_dims":["employment_status"],"applied_filters":{"age":["35-44","45-54","55-64"],"employment_status":["雇主","自營作業者"]},"scoring_basis":{"method":"log-frequency × cross-dim normalized [0.5, 2.0]","weight_source":"DGBAS 113年 家庭收支調查 / 人力資源調查 / 交通部 2024","weight_version":"v5.11.1","score_scale":"relative-within-version","score_schema":1,"dims_counted":["age","employment_status","income","occupation","family_income","family_size"],"relaxed_dims_scored_at":null}}
+
+# contract sha256: c17043b4022fbb328f672277ff0b4dc1bf1741d8f41e87708172db7f012d114b
+# run end 2026-09-15T12:10:45Z
+
+=== Role QA: diff check ===
+  房仲 top=978, 銀行 top=234
+  ✅ DIFFERENT — role is working
+
+=== Issue #34 / #35 / #37 checks ===
+  #34 業主 query employment_status=['雇主', '自營作業者'] → ✅
+  #34 顧客 query employment_status=['自營作業者', '雇主'] → ⚠️ 誤套（顧客語意不該套）
+  #35 owner: applied=2 dims_counted=6 新維度=['employment_status'] ✅
+  #35 aesthetic: applied=2 dims_counted=6 新維度=['aesthetic_procedure'] ✅
+  #35 debt: applied=3 dims_counted=7 新維度=['debt_status'] ✅
+  #35 boss: applied=2 dims_counted=6 新維度=['employment_status'] ✅
+  #36 藥妝零售 query aesthetic_procedure=None → ✅ 未套用
+  #36 醫美 query aesthetic_procedure=['有'] → ✅ 正確套用
+  #37/#42 owner: 0 loops, no_op+overshoot 欄位✅
+  #37/#42 kangshimei: 0 loops, no_op+overshoot 欄位✅
+  #37/#42 tesla: 2 loops, no_op+overshoot 欄位✅
+  #37/#42 aesthetic: 3 loops, no_op+overshoot 欄位✅
+  #37/#42 debt: 3 loops, no_op+overshoot 欄位✅
+
+  --- v5.4 (#42/#43/#44) ---
+  #42 debt_status 保留=True 符合率=10/10 (100%) pool_exhausted=False overshoot=[False, False, False] → ✅
+  #42 醫美硬篩選維持: sex=None aesthetic=['有'] → ✅
+  #43 案例06 returned=10 pool_exhausted=False len(summary)=10 → ✅
+  #44 weight_version=v5.11.1 score_scale=relative-within-version score_schema=1 → ✅
+
+  --- v5.5 (#47/#48/#49) ---
+  #47 400 錯誤形狀 status=400 code=INVALID_OPMODE 無 detail=True → ✅
+  #49 opMode 預設值='僅篩選' 在合法清單內 → ✅
+  #48 OpenAPI 有 BroadeningAttempt/ScoringBasis 且 properties 完整 → ✅
+
+  --- v5.7 (#53 summary 維度完備性 / #54 housing_cost) ---
+  #53 醫美: 7 欄位齊備=True 無空值=True hobby為list=True → ✅
+  #53 債務: 7 欄位齊備=True 無空值=True hobby為list=True → ✅
+  #53 業主: 7 欄位齊備=True 無空值=True hobby為list=True → ✅
+  #53 小吃攤: 7 欄位齊備=True 無空值=True hobby為list=True → ✅
+  #54 housing_cost 進入 applied_filters 的案例: （本輪未觸發，LLM 選用依抽樣）
+
+  --- v5.8 (#56 放寬停止原因 / #55 可診斷性) ---
+  #56 停止原因白名單取自 OpenAPI enum（10 值）
+  #56 醫美: stop_reason='loop_limit' loops=3 連續空轉max=1 → ✅
+  #56 債務: stop_reason='loop_limit' loops=3 連續空轉max=0 → ✅
+  #56 業主: stop_reason='target_reached' loops=0 連續空轉max=0 → ✅
+  #56 小吃攤: stop_reason='target_reached' loops=0 連續空轉max=0 → ✅
+  #56 本輪出現的停止原因: ['loop_limit', 'target_reached']
+  --- v5.9 (#57 核心維度保護 / #58 status / #59 503 兩型態) ---
+  #57 全部案例都有 protected_dims 欄位 → ✅
+  #57 本輪各案保護集: 醫美=['aesthetic_procedure']; 債務=['debt_status']; 業主=['employment_status']; 小吃攤=['employment_status']
+  ★ #57 不變式（受保護維度未被放寬）→ ✅
+  #57 protected_veto 符合其一條路徑（硬性 veto 或模型拒絕）→ ✅
+  #57 本輪未觸發 veto（保護維度皆未被嘗試移除）→ ℹ️
+  #57 veto 不變式 K（vetoed_dims ⊆ protected_dims）→ ✅
+  #57 veto 不變式 L（veto 必有非空 vetoed_dims）→ ✅
+  #57 veto 不變式 M（veto 是 rollback：no_op 且 filters 未變更且計數不變）→ ✅
+  #62 applied_filters 無空值清單（空清單＝排除全部）→ ✅
+  #63 本輪值集放寬留痕: {'醫美': ['age'], '債務': ['family_income']}
+  #63 widened_dims 留痕輪數: 3（放寬為合法行為；此欄位供稽核）
+  #58 status 語意（matched==0 ⇔ status!=ok）→ ✅
+  #59 OpenAPI 含 protected_dims → ✅
+  #59 stop_reason enum 含 protected_veto → ✅
+  #59 回應出的停止原因皆在 enum 內 → ✅
+  --- v5.10 (#61 commute_mode 保護) ---
+  #61 TESLA protected=['commute_mode', 'income'] relaxed=['occupation']
+  #61 TESLA 保護集含 commute_mode → ✅
+  #61 TESLA 未放寬 commute_mode → ✅
+  --- v5.10 (#60 root logger) ---
+  #60 app INFO 行：Protected dims=9 ｜ Broadening loop=24
+  #60 INFO 行已進 log（root logger 設定生效）→ ✅
+  #60 容器 LOG_LEVEL: LOG_LEVEL=INFO
+  #55 映像含例外型別診斷碼（LLM call failed [Type]）→ ✅
+
+  --- v5.6 (#50) / 部署版本一致性 ---
+  部署版本 == RELEASE-VERSION (v5.11.1) → ✅
+  #50 映像含 finish_reason 診斷碼（解析失敗 log 可直接判讀截斷）→ ✅

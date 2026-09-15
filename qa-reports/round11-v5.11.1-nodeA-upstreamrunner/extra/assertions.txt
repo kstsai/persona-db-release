@@ -1,0 +1,69 @@
+=== Issue #34 / #35 / #37 checks ===
+  #34 業主 query employment_status=['雇主', '自營作業者'] → ✅
+  #34 顧客 query employment_status=['自營作業者', '雇主'] → ⚠️ 誤套（顧客語意不該套）
+  #35 owner: applied=2 dims_counted=6 新維度=['employment_status'] ✅
+  #35 aesthetic: applied=2 dims_counted=6 新維度=['aesthetic_procedure'] ✅
+  #35 debt: applied=3 dims_counted=7 新維度=['debt_status'] ✅
+  #35 boss: applied=2 dims_counted=6 新維度=['employment_status'] ✅
+  #36 藥妝零售 query aesthetic_procedure=None → ✅ 未套用
+  #36 醫美 query aesthetic_procedure=['有'] → ✅ 正確套用
+  #37/#42 owner: 0 loops, no_op+overshoot 欄位✅
+  #37/#42 kangshimei: 0 loops, no_op+overshoot 欄位✅
+  #37/#42 tesla: 2 loops, no_op+overshoot 欄位✅
+  #37/#42 aesthetic: 3 loops, no_op+overshoot 欄位✅
+  #37/#42 debt: 3 loops, no_op+overshoot 欄位✅
+
+  --- v5.4 (#42/#43/#44) ---
+  #42 debt_status 保留=True 符合率=10/10 (100%) pool_exhausted=False overshoot=[False, False, False] → ✅
+  #42 醫美硬篩選維持: sex=None aesthetic=['有'] → ✅
+  #43 案例06 returned=10 pool_exhausted=False len(summary)=10 → ✅
+  #44 weight_version=v5.11.1 score_scale=relative-within-version score_schema=1 → ✅
+
+  --- v5.5 (#47/#48/#49) ---
+  #47 400 錯誤形狀 status=400 code=INVALID_OPMODE 無 detail=True → ✅
+  #49 opMode 預設值='僅篩選' 在合法清單內 → ✅
+  #48 OpenAPI 有 BroadeningAttempt/ScoringBasis 且 properties 完整 → ✅
+
+  --- v5.7 (#53 summary 維度完備性 / #54 housing_cost) ---
+  #53 醫美: 7 欄位齊備=True 無空值=True hobby為list=True → ✅
+  #53 債務: 7 欄位齊備=True 無空值=True hobby為list=True → ✅
+  #53 業主: 7 欄位齊備=True 無空值=True hobby為list=True → ✅
+  #53 小吃攤: 7 欄位齊備=True 無空值=True hobby為list=True → ✅
+  #54 housing_cost 進入 applied_filters 的案例: （本輪未觸發，LLM 選用依抽樣）
+
+  --- v5.8 (#56 放寬停止原因 / #55 可診斷性) ---
+  #56 停止原因白名單取自 OpenAPI enum（10 值）
+  #56 醫美: stop_reason='loop_limit' loops=3 連續空轉max=1 → ✅
+  #56 債務: stop_reason='loop_limit' loops=3 連續空轉max=0 → ✅
+  #56 業主: stop_reason='target_reached' loops=0 連續空轉max=0 → ✅
+  #56 小吃攤: stop_reason='target_reached' loops=0 連續空轉max=0 → ✅
+  #56 本輪出現的停止原因: ['loop_limit', 'target_reached']
+  --- v5.9 (#57 核心維度保護 / #58 status / #59 503 兩型態) ---
+  #57 全部案例都有 protected_dims 欄位 → ✅
+  #57 本輪各案保護集: 醫美=['aesthetic_procedure']; 債務=['debt_status']; 業主=['employment_status']; 小吃攤=['employment_status']
+  ★ #57 不變式（受保護維度未被放寬）→ ✅
+  #57 protected_veto 符合其一條路徑（硬性 veto 或模型拒絕）→ ✅
+  #57 本輪未觸發 veto（保護維度皆未被嘗試移除）→ ℹ️
+  #57 veto 不變式 K（vetoed_dims ⊆ protected_dims）→ ✅
+  #57 veto 不變式 L（veto 必有非空 vetoed_dims）→ ✅
+  #57 veto 不變式 M（veto 是 rollback：no_op 且 filters 未變更且計數不變）→ ✅
+  #62 applied_filters 無空值清單（空清單＝排除全部）→ ✅
+  #63 本輪值集放寬留痕: {'醫美': ['age'], '債務': ['family_income']}
+  #63 widened_dims 留痕輪數: 3（放寬為合法行為；此欄位供稽核）
+  #58 status 語意（matched==0 ⇔ status!=ok）→ ✅
+  #59 OpenAPI 含 protected_dims → ✅
+  #59 stop_reason enum 含 protected_veto → ✅
+  #59 回應出的停止原因皆在 enum 內 → ✅
+  --- v5.10 (#61 commute_mode 保護) ---
+  #61 TESLA protected=['commute_mode', 'income'] relaxed=['occupation']
+  #61 TESLA 保護集含 commute_mode → ✅
+  #61 TESLA 未放寬 commute_mode → ✅
+  --- v5.10 (#60 root logger) ---
+  #60 app INFO 行：Protected dims=9 ｜ Broadening loop=24
+  #60 INFO 行已進 log（root logger 設定生效）→ ✅
+  #60 容器 LOG_LEVEL: LOG_LEVEL=INFO
+  #55 映像含例外型別診斷碼（LLM call failed [Type]）→ ✅
+
+  --- v5.6 (#50) / 部署版本一致性 ---
+  部署版本 == RELEASE-VERSION (v5.11.1) → ✅
+  #50 映像含 finish_reason 診斷碼（解析失敗 log 可直接判讀截斷）→ ✅
