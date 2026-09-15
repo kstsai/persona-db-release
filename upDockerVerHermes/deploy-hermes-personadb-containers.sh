@@ -423,6 +423,7 @@ docker run -d \
   --name persona-db-api \
   -p ${API_PORT}:8000 \
   --env-file "${PERSONA_DB_DATA}/.env" \
+  --restart unless-stopped \
   --log-opt max-size=10m \
   --log-opt max-file=3 \
   -v "${PERSONA_DB_DATA}:/app" \

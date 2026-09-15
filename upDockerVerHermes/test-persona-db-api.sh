@@ -328,6 +328,18 @@ _empty = {c: [k2 for k2, v2 in (cd.get("applied_filters") or {}).items() if isin
           for c, cd in _cases.items()}
 _empty = {c: v2 for c, v2 in _empty.items() if v2}
 print("  #62 applied_filters 無空值清單（空清單＝排除全部）→ " + ("✅" if not _empty else f"❌ {_empty}"))
+# #63(a)：受保護維度不得被「值集放寬」（若放寬，veto 應已觸發 → 不一致）
+_wd = {}
+for c, cd in _cases.items():
+    prot = set(cd.get("protected_dims") or [])
+    wide = set()
+    for b in (cd.get("broadening_attempts") or []):
+        wide |= set(b.get("widened_dims") or [])
+    if prot & wide:
+        _wd[c] = sorted(prot & wide)
+print("  #63 受保護維度未被放寬值集（與 veto 一致）→ " + ("✅" if not _wd else f"❌ {_wd}"))
+_n_wide = sum(1 for cd in _cases.values() for b in (cd.get("broadening_attempts") or []) if b.get("widened_dims"))
+print(f"  #63 widened_dims 留痕輪數: {_n_wide}（0 也合法 —— 代表本輪沒有值集放寬）")
 # #58 status 語意：matched==0 ⇔ status != 'ok'
 _bad_status = [c for c, cd in _cases.items()
                if ((cd.get("total_matched") or 0) == 0) != (cd.get("status") != "ok")]
