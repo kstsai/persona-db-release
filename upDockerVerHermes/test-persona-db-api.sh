@@ -454,6 +454,43 @@ for (_a, _sa), (_b, _sb) in itertools.combinations(sorted(_names.items()), 2):
             _hi.append((_a, _b, _ov))
 print(f"  #65 同質化矩陣（{len(_names)}/9 案例兩兩重疊）: " +
       (f"⚠️ 高度重疊配對 {_hi}（語意反轉指紋，需人工確認）" if _hi else "✅ 無 ≥8/10 的配對"))
+
+# ── v5.13 (#66 保護集上限/揭露、#67 主體覆蓋/依據) 斷言 ──
+print("  --- v5.13 (#66 保護集上限與揭露 / #67 主體覆蓋與依據) ---")
+_missing13, _cap_bad, _src_bad, _sat_ok = [], [], [], True
+for _lab, _p in _ALL9:
+    _d = load(_p)
+    if not _d:
+        continue
+    for _k in ("subject_basis", "protected_dims_sources"):
+        if _k not in _d:
+            _missing13.append((_lab, _k))
+    _src = _d.get("protected_dims_sources") or {}
+    if _src and set(_src) != {"domain", "reasoning", "analysis_declared", "model_declared", "protect_only"}:
+        _src_bad.append((_lab, sorted(_src)))
+    # #66 A 上限：來源④ 的數量不得超過 max(1, min(3, 已套用維度數//2))
+    _md = _src.get("model_declared") or []
+    _cap = max(1, min(3, max(1, len(_d.get("applied_filters") or {})) // 2))
+    if len(_md) > _cap:
+        _cap_bad.append((_lab, len(_md), _cap))
+print("  #67 B 所有案例都有 subject_basis/protected_dims_sources → " + ("✅" if not _missing13 else f"❌ {_missing13}"))
+print("  #66 A protected_dims_sources 五鍵齊全 → " + ("✅" if not _src_bad else f"❌ {_src_bad}"))
+print("  #66 A 來源④ 數量未超上限 → " + ("✅" if not _cap_bad else f"❌ {_cap_bad}"))
+_boss13 = _cases.get("boss")
+if _boss13:
+    print(f"  #67 顧客案例 subject_basis: {(_boss13.get('subject_basis') or '')[:52]!r} → "
+          + ("✅" if _boss13.get("subject_basis") else "❌"))
+# #66 C：protection_saturated 在 enum 內（靜態檢查；實際觸發需全維度受保護，套件通常不會出現）
+_enum13 = set()
+try:
+    import urllib.request as _u
+    _spec = json.loads(_u.urlopen("http://localhost:8000/openapi.json", timeout=10).read())
+    _enum13 = set((_spec.get("components", {}).get("schemas", {})
+                   .get("CandidatesResponse", {}).get("properties", {})
+                   .get("broadening_stop_reason", {}).get("enum") or []))
+except Exception:
+    pass
+print("  #66 C enum 含 protection_saturated → " + ("✅" if "protection_saturated" in _enum13 else f"❌ {sorted(_enum13)}"))
 PYEOF
 
 # ── #60：app 的 INFO 行是否真的進 log（root logger 設定生效）──
