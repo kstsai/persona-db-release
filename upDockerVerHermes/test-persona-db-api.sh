@@ -409,29 +409,41 @@ if _owner_cd:
           + ("✅" if (_owner_cd.get("subject") == "owner"
                       and _oaf.get("employment_status")) else "❌"))
 
-# S/T 不變式（來源：round11 §3.2 — dsh1 提出，我方採納）
-_s_bad, _t_bad = [], []
-for c, cd in _cases.items():
-    _af = set(cd.get("applied_filters") or {})
-    _rel = set(cd.get("relaxed_dims") or [])
+# ── S'/T 不變式（**掃描全部 9 案例**）──
+# 形式更正：round11 §3.2 的原始提案是「嚴格形式」（widened ⊆ applied、widened ∩ relaxed = ∅），
+# 但**同一份報告的 §5.10／§6.4 已更正**該形式會對合法跨輪序列誤報；round12 §3.1 以 05_role_banker
+# 提供了新實例（loop2 放寬 income 值集 → loop3 因已無篩選效果而移除 income）。
+# 正確形式：`widened ⊆ applied ∪ relaxed`；「既放寬又被移除」＝合法、僅列資訊性。
+# 教訓（我方）：採納外部不變式時，必須同時讀該報告的「更正」與「限制」章節，不能只讀那張表。
+_ALL9 = [("01 康是美", "/tmp/kangshimei.json"), ("02 TESLA", "/tmp/tesla.json"),
+         ("03 時尚", "/tmp/fashion_closing.json"), ("04 房仲", "/tmp/role_fangzhong.json"),
+         ("05 銀行", "/tmp/role_banker.json"), ("06 醫美", "/tmp/aesthetic_closing.json"),
+         ("07 債務", "/tmp/debt_closing.json"), ("08 小吃攤", "/tmp/boss_closing.json"),
+         ("09 業主", "/tmp/owner_closing.json")]
+_s_bad, _both, _scanned = [], [], 0
+for _lab, _p in _ALL9:
+    _d = load(_p)
+    if not _d:
+        continue
+    _scanned += 1
+    _af = set(_d.get("applied_filters") or {})
+    _rel = set(_d.get("relaxed_dims") or [])
     _wide = set()
-    for b in (cd.get("broadening_attempts") or []):
+    for b in (_d.get("broadening_attempts") or []):
         _wide |= set(b.get("widened_dims") or [])
-    if _wide - _af:
-        _s_bad.append((c, sorted(_wide - _af)))          # S: widened ⊆ applied
+    if _wide - (_af | _rel):
+        _s_bad.append((_lab, sorted(_wide - (_af | _rel))))     # S': widened ⊆ applied ∪ relaxed
     if _wide & _rel:
-        _t_bad.append((c, sorted(_wide & _rel)))         # T: widened ∩ relaxed = ∅
-print("  #63 不變式 S（widened_dims ⊆ applied_filters）→ " + ("✅" if not _s_bad else f"❌ {_s_bad}"))
-print("  #63 不變式 T（widened_dims ∩ relaxed_dims = ∅）→ " + ("✅" if not _t_bad else f"❌ {_t_bad}"))
+        _both.append((_lab, sorted(_wide & _rel)))              # 合法序列 → 資訊性
+print(f"  #63 不變式 S'（widened_dims ⊆ applied_filters ∪ relaxed_dims；掃描 {_scanned}/9 案例）→ "
+      + ("✅" if not _s_bad else f"❌ {_s_bad}"))
+print(f"  #63 既放寬又被移除（合法，資訊性）: {_both if _both else '（本輪無）'}")
 
-# 同質化矩陣（語意反轉的指紋）：回傳名單兩兩重疊
+# 同質化矩陣（語意反轉的指紋）：**全部 9 案例**回傳名單兩兩重疊
 import itertools
 _names = {}
-for _f, _lab in [("kangshimei", "01康是美"), ("tesla", "02TESLA"), ("fashion_closing", "03時尚")]:
-    _d = load(f"/tmp/{_f}.json")
-    if _d:
-        _names[_lab] = set(_d.get("persona_ids") or [])
-for _lab, _d in (("08小吃攤", _boss_cd), ("09業主", _owner_cd)):
+for _lab, _p in _ALL9:
+    _d = load(_p)
     if _d:
         _names[_lab] = set(_d.get("persona_ids") or [])
 _hi = []
@@ -440,7 +452,7 @@ for (_a, _sa), (_b, _sb) in itertools.combinations(sorted(_names.items()), 2):
         _ov = len(_sa & _sb)
         if _ov >= 8:
             _hi.append((_a, _b, _ov))
-print(f"  #65 同質化矩陣（回傳名單兩兩重疊）: " +
+print(f"  #65 同質化矩陣（{len(_names)}/9 案例兩兩重疊）: " +
       (f"⚠️ 高度重疊配對 {_hi}（語意反轉指紋，需人工確認）" if _hi else "✅ 無 ≥8/10 的配對"))
 PYEOF
 
