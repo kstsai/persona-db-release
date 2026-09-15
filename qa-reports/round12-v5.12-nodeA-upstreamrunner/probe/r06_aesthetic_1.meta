@@ -1,0 +1,7 @@
+# probe = r06_aesthetic_1
+# label = §6.8 重現性 — case06 醫美 r1/3（#63 S/T 檢驗）
+# cmd   = curl -s --get http://localhost:8000/personadb/candidates --data-urlencode questions=醫美診所的目標客戶 --data-urlencode role=醫美診所行銷主管 --data-urlencode top_k=10 --data-urlencode opMode=僅篩選
+http_code=200
+time_total=131.448361
+size_download=9133
+url_effective=http://localhost:8000/personadb/candidates?questions=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E8%A1%8C%E9%8A%B7%E4%B8%BB%E7%AE%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8

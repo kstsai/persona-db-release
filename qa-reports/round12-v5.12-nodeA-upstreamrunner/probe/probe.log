@@ -1,0 +1,73 @@
+# probe start 2026-09-15T22:57:08Z  BASE_URL=http://localhost:8000  host=NODE-A  OUT=/home/ubuntu/qa-round12
+
+=== §6.8 重現性 — case08 小吃攤（顧客語意）r1/3（#65 主體護欄） ===
+
+real	0m42.373s
+user	0m0.008s
+sys	0m0.024s
+  → http_code=200 time_total=42.360737 size_download=7846 url_effective=http://localhost:8000/personadb/candidates?questions=%E5%B0%8F%E5%90%83%E6%94%A4%E8%80%81%E9%97%86%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E7%BE%A4&role=%E5%A4%9C%E5%B8%82%E5%95%86%E5%9C%88%E5%8D%94%E6%9C%83&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case08 小吃攤（顧客語意）r2/3（#65 主體護欄） ===
+
+real	0m25.652s
+user	0m0.004s
+sys	0m0.013s
+  → http_code=200 time_total=25.640149 size_download=7632 url_effective=http://localhost:8000/personadb/candidates?questions=%E5%B0%8F%E5%90%83%E6%94%A4%E8%80%81%E9%97%86%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E7%BE%A4&role=%E5%A4%9C%E5%B8%82%E5%95%86%E5%9C%88%E5%8D%94%E6%9C%83&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case08 小吃攤（顧客語意）r3/3（#65 主體護欄） ===
+
+real	0m55.084s
+user	0m0.007s
+sys	0m0.015s
+  → http_code=200 time_total=55.074513 size_download=7939 url_effective=http://localhost:8000/personadb/candidates?questions=%E5%B0%8F%E5%90%83%E6%94%A4%E8%80%81%E9%97%86%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E7%BE%A4&role=%E5%A4%9C%E5%B8%82%E5%95%86%E5%9C%88%E5%8D%94%E6%9C%83&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case06 醫美 r1/3（#63 S/T 檢驗） ===
+
+real	2m11.462s
+user	0m0.011s
+sys	0m0.027s
+  → http_code=200 time_total=131.448361 size_download=9133 url_effective=http://localhost:8000/personadb/candidates?questions=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E8%A1%8C%E9%8A%B7%E4%B8%BB%E7%AE%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case06 醫美 r2/3（#63 S/T 檢驗） ===
+
+real	2m17.823s
+user	0m0.011s
+sys	0m0.028s
+  → http_code=200 time_total=137.809818 size_download=9062 url_effective=http://localhost:8000/personadb/candidates?questions=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E8%A1%8C%E9%8A%B7%E4%B8%BB%E7%AE%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case06 醫美 r3/3（#63 S/T 檢驗） ===
+
+real	2m8.641s
+user	0m0.027s
+sys	0m0.018s
+  → http_code=200 time_total=128.627985 size_download=8797 url_effective=http://localhost:8000/personadb/candidates?questions=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E8%A1%8C%E9%8A%B7%E4%B8%BB%E7%AE%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.9 t1 不可滿足查詢 top_k=10（題目原文見檔頭註解） ===
+
+real	2m2.661s
+user	0m0.008s
+sys	0m0.026s
+  → http_code=200 time_total=122.646638 size_download=2582 url_effective=http://localhost:8000/personadb/candidates?questions=%E6%83%B3%E6%89%BE%E5%90%8C%E6%99%82%E6%93%81%E6%9C%89%E9%81%8A%E8%89%87%E8%88%87%E7%A7%81%E4%BA%BA%E9%A3%9B%E6%A9%9F%E7%9A%8445%E6%AD%B2%E5%96%AE%E8%BA%AB%E5%A5%B3%E6%80%A7%E4%BC%81%E6%A5%AD%E4%B8%BB&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.9 t2 同查詢 top_k=100 → pool_exhausted ===
+
+real	1m22.087s
+user	0m0.000s
+sys	0m0.023s
+  → http_code=200 time_total=82.077240 size_download=2394 url_effective=http://localhost:8000/personadb/candidates?questions=%E6%83%B3%E6%89%BE%E5%90%8C%E6%99%82%E6%93%81%E6%9C%89%E9%81%8A%E8%89%87%E8%88%87%E7%A7%81%E4%BA%BA%E9%A3%9B%E6%A9%9F%E7%9A%8445%E6%AD%B2%E5%96%AE%E8%BA%AB%E5%A5%B3%E6%80%A7%E4%BC%81%E6%A5%AD%E4%B8%BB&top_k=100&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.9 t3 TESLA top_k=20 → #61 commute_mode 保護 ===
+
+real	1m23.919s
+user	0m0.006s
+sys	0m0.030s
+  → http_code=200 time_total=83.902422 size_download=14081 url_effective=http://localhost:8000/personadb/candidates?questions=TESLA%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&top_k=20&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.9 t4 房貸(銀行) top_k=20 → 值集放寬 / veto ===
+
+real	2m5.037s
+user	0m0.011s
+sys	0m0.025s
+  → http_code=200 time_total=125.025360 size_download=7550 url_effective=http://localhost:8000/personadb/candidates?questions=%E6%88%BF%E8%B2%B8%E5%84%AA%E6%83%A0%E6%96%B9%E6%A1%88&role=%E9%8A%80%E8%A1%8C%E6%A5%AD%E8%80%85&top_k=20&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+# probe end 2026-09-15T23:12:43Z
