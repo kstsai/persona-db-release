@@ -468,14 +468,14 @@ for _lab, _p in _ALL9:
     _src = _d.get("protected_dims_sources") or {}
     if _src and set(_src) != {"domain", "reasoning", "analysis_declared", "model_declared", "protect_only"}:
         _src_bad.append((_lab, sorted(_src)))
-    # #66 A 上限：來源④ 的數量不得超過 max(1, min(3, 已套用維度數//2))
+    # #66 A 上限：產品以**請求開始**的已套用維度數算上限（回應不含該基準，且 applied_filters 會變動）
+    # → 出貨斷言只驗**硬上限 DECLARED_PROTECTED_MAX=3**；半數規則由單元測試以已知 filter 數驗證。
     _md = _src.get("model_declared") or []
-    _cap = max(1, min(3, max(1, len(_d.get("applied_filters") or {})) // 2))
-    if len(_md) > _cap:
-        _cap_bad.append((_lab, len(_md), _cap))
+    if len(_md) > 3:
+        _cap_bad.append((_lab, len(_md)))
 print("  #67 B 所有案例都有 subject_basis/protected_dims_sources → " + ("✅" if not _missing13 else f"❌ {_missing13}"))
 print("  #66 A protected_dims_sources 五鍵齊全 → " + ("✅" if not _src_bad else f"❌ {_src_bad}"))
-print("  #66 A 來源④ 數量未超上限 → " + ("✅" if not _cap_bad else f"❌ {_cap_bad}"))
+print("  #66 A 來源④ 數量 ≤ 硬上限 3 → " + ("✅" if not _cap_bad else f"❌ {_cap_bad}"))
 _boss13 = _cases.get("boss")
 if _boss13:
     print(f"  #67 顧客案例 subject_basis: {(_boss13.get('subject_basis') or '')[:52]!r} → "
