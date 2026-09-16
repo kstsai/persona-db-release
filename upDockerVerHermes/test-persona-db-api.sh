@@ -216,7 +216,22 @@ print("  --- v5.7 (#53 summary 維度完備性 / #54 housing_cost) ---")
 NEW_DIMS = ["sex", "region", "education", "marriage", "hobby", "politics", "media_diet"]
 # 只使用本區塊之前已載入的案例變數（owner / boss / debt / aes）
 _cases = {"醫美": aes, "債務": debt, "業主": owner, "小吃攤": boss}
+# ── 案例級不變式的**統一掃描範圍＝全部 9 案例**（2026-09-16 round13 §3.1／§6.3(1)）──
+# 教訓：斷言只掃子集 → ①「本輪未觸發 X」可能與事實相反 ② ✅ 可能是**空轉**（範圍內沒有可檢驗事件）。
+# 凡案例級不變式一律掃全部，並在輸出印出「掃描 N/9」。
+_ALL9 = [("01 康是美", "/tmp/kangshimei.json"), ("02 TESLA", "/tmp/tesla.json"),
+         ("03 時尚", "/tmp/fashion_closing.json"), ("04 房仲", "/tmp/role_fangzhong.json"),
+         ("05 銀行", "/tmp/role_banker.json"), ("06 醫美", "/tmp/aesthetic_closing.json"),
+         ("07 債務", "/tmp/debt_closing.json"), ("08 小吃攤", "/tmp/boss_closing.json"),
+         ("09 業主", "/tmp/owner_closing.json")]
+_ALL9D = {}
+for _lab0, _p0 in _ALL9:
+    _d0 = load(_p0)
+    if _d0:
+        _ALL9D[_lab0] = _d0
+_SCAN = f"{len(_ALL9D)}/9"
 _ok_fields = True
+print(f"  #53 掃描範圍: {len(_cases)}/9（刻意子集：這 4 案例涵蓋 dim20/21/22 新維度）")
 for cname, cd in _cases.items():
     rows = cd.get("summary") or []
     if not rows:
@@ -290,25 +305,25 @@ for cname, cd in _cases.items():
         consistent = (cd.get("total_matched") or 0) >= 20
     print(f"  #56 {cname}: stop_reason={sr!r} loops={len(ba)} 連續空轉max={mx} → "
           + ("✅" if (ok_sr and ok_streak and consistent) else f"❌ (合法={ok_sr} 空轉={ok_streak} 一致={consistent})"))
-_sr_seen = sorted({cd.get("broadening_stop_reason") for cd in _cases.values()})
-print(f"  #56 本輪出現的停止原因: {_sr_seen}")
+_sr_seen = sorted({cd.get("broadening_stop_reason") for cd in _ALL9D.values()})
+print(f"  #56 本輪出現的停止原因（掃描 {_SCAN}）: {_sr_seen}")
 
 # ── v5.9 (#57/#58/#59) 斷言：核心維度保護 + status 語意 + 契約 ──
 print("  --- v5.9 (#57 核心維度保護 / #58 status / #59 503 兩型態) ---")
 _ALLOWED_SR_V59 = {"", "target_reached", "no_op_limit", "loop_limit", "budget_limit",
                    "llm_empty", "llm_parse_error", "llm_no_filters", "no_filters", "protected_veto"}
-_missing_field = [c for c, cd in _cases.items() if "protected_dims" not in cd]
-print(f"  #57 全部案例都有 protected_dims 欄位 → " + ("✅" if not _missing_field else f"❌ 缺 {_missing_field}"))
+_missing_field = [c for c, cd in _ALL9D.items() if "protected_dims" not in cd]
+print(f"  #57 全部案例都有 protected_dims 欄位（掃描 {_SCAN}）→ " + ("✅" if not _missing_field else f"❌ 缺 {_missing_field}"))
 print(f"  #57 本輪各案保護集: " + "; ".join(
-    f"{c}={cd.get('protected_dims')}" for c, cd in _cases.items()))
+    f"{c}={cd.get('protected_dims')}" for c, cd in _ALL9D.items()))
 # ★ 不變式：受保護維度不得出現在 relaxed_dims
 _viol = {c: sorted(set(cd.get("protected_dims") or []) & set(cd.get("relaxed_dims") or []))
-         for c, cd in _cases.items()}
+         for c, cd in _ALL9D.items()}
 _viol = {c: v for c, v in _viol.items() if v}
 print(f"  ★ #57 不變式（受保護維度未被放寬）→ " + ("✅" if not _viol else f"❌ {_viol}"))
 # protected_veto 兩條路徑（見下方迴圈）
 _bad_veto = []
-for c, cd in _cases.items():
+for c, cd in _ALL9D.items():
     if cd.get("broadening_stop_reason") != "protected_veto":
         continue
     _ba = cd.get("broadening_attempts") or []
@@ -319,12 +334,14 @@ for c, cd in _cases.items():
     if not (_p1 or _p2):
         _bad_veto.append(c)
 print(f"  #57 protected_veto 符合其一條路徑（硬性 veto 或模型拒絕）→ " + ("✅" if not _bad_veto else f"❌ {_bad_veto}"))
-_sr_seen_v59 = sorted({cd.get("broadening_stop_reason") for cd in _cases.values()})
+_sr_seen_v59 = sorted({cd.get("broadening_stop_reason") for cd in _ALL9D.values()})
 if "protected_veto" not in _sr_seen_v59:
-    print("  #57 本輪未觸發 veto（保護維度皆未被嘗試移除）→ ℹ️")
+    # ★ round13 §3.1：這句話以前只在 4/9 案例上成立就印出來，會與事實相反（案例 05 有 veto）
+    print(f"  #57 掃描範圍內未觸發 veto（保護維度皆未被嘗試移除；掃描 {_SCAN}）→ ℹ️")
 # veto 的三條延伸不變式（來源：round10 §3.1 的 K/L/M — 由 dsh1 提出，我方採納為出貨斷言）
 _k = _l = _m = []
-for c, cd in _cases.items():
+_n_veto_ev = 0
+for c, cd in _ALL9D.items():
     _prot = set(cd.get("protected_dims") or [])
     for b in (cd.get("broadening_attempts") or []):
         if not b.get("protected_veto"):
@@ -336,29 +353,33 @@ for c, cd in _cases.items():
         if not (b.get("no_op") and not b.get("filters_changed")   # M: veto 必須是 rollback
                 and b.get("match_count_before") == b.get("match_count_after")):
             _m.append(c)
+        _n_veto_ev += 1
+# ★ 空轉防護（round13 §3.1(b)）：掃描範圍內若**沒有任何 veto 事件**，K/L/M 的 ✅ 不具檢定效力 → 標為空轉
+_veto_vacuous = _n_veto_ev == 0
+print(f"  #57 veto 事件數（掃描 {_SCAN}）= {_n_veto_ev}" + (" → 空轉（K/L/M 不具檢定效力）" if _veto_vacuous else ""))
 print("  #57 veto 不變式 K（vetoed_dims ⊆ protected_dims）→ " + ("✅" if not _k else f"❌ {sorted(set(_k))}"))
 print("  #57 veto 不變式 L（veto 必有非空 vetoed_dims）→ " + ("✅" if not _l else f"❌ {sorted(set(_l))}"))
 print("  #57 veto 不變式 M（veto 是 rollback：no_op 且 filters 未變更且計數不變）→ " + ("✅" if not _m else f"❌ {sorted(set(_m))}"))
 # 空值清單守門（#62）：applied_filters 的值清單不得為空（空清單 = 排除全部，語意陷阱）
 _empty = {c: [k2 for k2, v2 in (cd.get("applied_filters") or {}).items() if isinstance(v2, list) and not v2]
-          for c, cd in _cases.items()}
+          for c, cd in _ALL9D.items()}
 _empty = {c: v2 for c, v2 in _empty.items() if v2}
-print("  #62 applied_filters 無空值清單（空清單＝排除全部）→ " + ("✅" if not _empty else f"❌ {_empty}"))
+print(f"  #62 applied_filters 無空值清單（空清單＝排除全部；掃描 {_SCAN}）→ " + ("✅" if not _empty else f"❌ {_empty}"))
 # #63：值集放寬的留痕（v5.11.1 起：放寬＝合法、只留痕；故僅資訊性呈現，不判定 ❌）
 _wd = {}
-for c, cd in _cases.items():
+for c, cd in _ALL9D.items():
     wide = set()
     for b in (cd.get("broadening_attempts") or []):
         wide |= set(b.get("widened_dims") or [])
     if wide:
         _wd[c] = sorted(wide)
 print(f"  #63 本輪值集放寬留痕: {_wd if _wd else '（無）'}")
-_n_wide = sum(1 for cd in _cases.values() for b in (cd.get("broadening_attempts") or []) if b.get("widened_dims"))
-print(f"  #63 widened_dims 留痕輪數: {_n_wide}（放寬為合法行為；此欄位供稽核）")
+_n_wide = sum(1 for cd in _ALL9D.values() for b in (cd.get("broadening_attempts") or []) if b.get("widened_dims"))
+print(f"  #63 widened_dims 留痕輪數: {_n_wide}（掃描 {_SCAN}；放寬為合法行為，此欄位供稽核）")
 # #58 status 語意：matched==0 ⇔ status != 'ok'
-_bad_status = [c for c, cd in _cases.items()
+_bad_status = [c for c, cd in _ALL9D.items()
                if ((cd.get("total_matched") or 0) == 0) != (cd.get("status") != "ok")]
-print(f"  #58 status 語意（matched==0 ⇔ status!=ok）→ " + ("✅" if not _bad_status else f"❌ {_bad_status}"))
+print(f"  #58 status 語意（matched==0 ⇔ status!=ok；掃描 {_SCAN}）→ " + ("✅" if not _bad_status else f"❌ {_bad_status}"))
 # #59 列舉：protected_veto 存在（OpenAPI 零成本檢查）
 try:
     import urllib.request as _u
@@ -386,8 +407,10 @@ else:
 
 # ── v5.12 (#65 主體判準 / forbidden / 揭露) 斷言 ──
 print("  --- v5.12 (#65 顧客 vs 業主語意護欄) ---")
-_nosubj = [c for c, cd in _cases.items() if "subject" not in cd]
-print("  #65 所有案例都有 subject/warnings 欄位 → " + ("✅" if not _nosubj else f"❌ 缺 {_nosubj}"))
+_nosubj = [c for c, cd in _ALL9D.items() if "subject" not in cd or "warnings" not in cd]
+print(f"  #65 所有案例都有 subject/warnings 欄位（掃描 {_SCAN}）→ " + ("✅" if not _nosubj else f"❌ 缺 {_nosubj}"))
+_nsub = sum(1 for cd in _ALL9D.values() if cd.get("subject"))
+print(f"  #65 subject 非空案例數: {_nsub}/{len(_ALL9D)}（空＝無法判定、不設限；round13 觀察為 7/9）")
 _boss_cd = load('/tmp/boss_closing.json') or _cases.get("小吃攤") or {}
 _owner_cd = load('/tmp/owner_closing.json') or _cases.get("業主") or {}
 if _boss_cd:
@@ -415,11 +438,6 @@ if _owner_cd:
 # 提供了新實例（loop2 放寬 income 值集 → loop3 因已無篩選效果而移除 income）。
 # 正確形式：`widened ⊆ applied ∪ relaxed`；「既放寬又被移除」＝合法、僅列資訊性。
 # 教訓（我方）：採納外部不變式時，必須同時讀該報告的「更正」與「限制」章節，不能只讀那張表。
-_ALL9 = [("01 康是美", "/tmp/kangshimei.json"), ("02 TESLA", "/tmp/tesla.json"),
-         ("03 時尚", "/tmp/fashion_closing.json"), ("04 房仲", "/tmp/role_fangzhong.json"),
-         ("05 銀行", "/tmp/role_banker.json"), ("06 醫美", "/tmp/aesthetic_closing.json"),
-         ("07 債務", "/tmp/debt_closing.json"), ("08 小吃攤", "/tmp/boss_closing.json"),
-         ("09 業主", "/tmp/owner_closing.json")]
 _s_bad, _both, _scanned = [], [], 0
 for _lab, _p in _ALL9:
     _d = load(_p)
