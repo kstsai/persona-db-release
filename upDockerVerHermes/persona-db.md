@@ -20,11 +20,12 @@
 | 性別比 | 男 49.7% / 女 50.3% |
 | Repos | `kstsai/persona-db`（source）+ `kstsai/persona-db-release`（delivery） |
 | API | FastAPI `/personadb/candidates`（LLM 分析→篩選人設） |
-| 版本 | **v5.13**（`VERSION` / `RELEASE-VERSION` / `dim_weights._meta.version` 三者一致，由 `check_dim_weights.py` 守門） |
-| 部署 | **nodeB**（原 lzc-dh1）= **v5.13**（`--restart unless-stopped` 已生效）；**nodeA**（原 lzcdh5）= **v5.12**（Docker containers；nodeA 另含 hermes 容器） |
+| 版本 | **v5.14**（`VERSION` / `RELEASE-VERSION` / `dim_weights._meta.version` 三者一致，由 `check_dim_weights.py` 守門） |
+| 部署 | **nodeB**（原 lzc-dh1）= **v5.14**（SOP 已驗；`--restart unless-stopped` 已生效）；**nodeA**（原 lzcdh5）= **v5.13**（升版由 kstsai 執行）（Docker containers；nodeA 另含 hermes 容器） |
 | 主體判準（v5.12 #65 / v5.13 #67） | **機械化＋優先序**（只看題目原文）：① 明確業主標記 → `owner`；② 消費端名詞 → `customer`；③ 否則 `""`（不設限）；結果進**禁用集**並對外揭露 `subject`／`subject_basis`；**覆蓋率 2/9 → 7/9** |
 | 禁用集 | `FORBIDDEN_BY_SUBJECT = {"customer": {"employment_status"}}` —— **套用前剝除**、抑制兜底表該條目、**不得進保護集**（優先序 **`forbidden > protected`**） |
-| 核心維度保護集 | **五來源聯集**（凍結於請求開始）：domain 關鍵字／分析 `reasoning` 必要性宣告（詞界比對）／分析 `core_dims` 結構化宣告／模型每輪 `protected_dims`（單調累積）／protect-only 語意表；**來源④有上限**（v5.13 #66：`max(1, min(3, 已套用維度數//2))`）；**全部已套用維度受保護 → `protection_saturated`**（停手不稀釋） |
+| 核心維度保護集 | **六來源聯集**（凍結於請求開始，v5.14 起）：domain 關鍵字／分析 `reasoning` 必要性宣告（詞界比對）／分析 `core_dims` 結構化宣告／模型每輪 `protected_dims`（單調累積）／protect-only 語意表；**來源④有上限**（`max(1, min(3, 已套用維度數//2))`，實測值由 `declared_protected_cap` 揭露）；**全部已套用維度受保護 → `protection_saturated`**（停手不稀釋）；**來源⑥ `overshoot_restore`**（v5.14：移除維度致 ≥3× 過衝 → 還原該維度並納入保護集） |
+| 放寬語意 | 移除維度＝可被 veto；**移除致 ≥3× 過衝 → 還原**；值集放寬＝合法並留**幅度**痕跡（`widened_deltas`） |
 | veto 條件 | **移除維度，或值集不再是原值集超集（縮小／替換）** → 還原該輪；**值集放寬（嚴格超集）＝合法**，僅記入 `widened_dims` 留痕（v5.11.1 回退了「雙向凍結」） |
 | 運維 | `LOG_LEVEL`（預設 `INFO`，非法值回退）；容器 `--log-opt max-size=10m --max-file=3`（log rotation）＋ `--restart unless-stopped`（v5.11） |
 | per-request token 預算 | analysis 12000（重試 18000）+ 放寬 ≤3×8000 → `TOKEN_BUDGET` **40000** |
@@ -98,6 +99,7 @@
 | **v5.11** | #62 **空值清單正規化**（`[]` ＝「未指定」⇒ 丟棄，修「排除全部」的靜默語意反轉）；#63(a) `broadening_attempts[].widened_dims` **值集放寬留痕**；#56 停止原因白名單改由 OpenAPI **動態取得**（出貨腳本曾因硬編白名單誤報）；infra：`persona-db-api` 加 `--restart unless-stopped` | 09/15 |
 | **v5.11.1** | **回退**：受保護維度「雙向凍結」→ 回到「移除／縮小才 veto」（值集放寬＝合法但留痕，醫美 `matched` 14→3 的代價）；**回退** #64 的 prompt 改動 → 轉 known-limitation（must-not-use 回歸）。兩項皆由**我方自己的驗收條件**抓回 | 09/15 |
 | **v5.12** | **#65 主體判準機械化**（顧客 vs 業主）：`_subject_from_questions()` 只看題目原文判「題目的標的」＋ `FORBIDDEN_BY_SUBJECT` ＋ 優先序 **`forbidden > protected`**；回應新增 **`subject`／`warnings`**；`Subject gate`／`Normalize filters` 留痕；出貨斷言新增 **S/T 不變式**與**同質化矩陣** | 09/15 |
+| **v5.14** | **#69** `broadening_attempts[].widened_deltas`（放寬**幅度**：`{dim,before,after,added}`）；**#70 A** **過衝回饋**（移除維度致 **≥3× 過衝** → 還原該輪 + 保護集**來源⑥** `overshoot_restore` + warning）+ **#70 B** 自選維度優先序提示（餵回提示、不進保護集）；**#71 A** `_normalize_filters()` 留痕移入**函式本體**、**#71 B** 回應揭露 `declared_protected_cap` | 09/16 |
 | **v5.13** | **#66** 保護集來源④**上限**（`max(1, min(3, 已套用維度數//2))`）＋回應揭露 **`protected_dims_sources`**＋**覆蓋警示**＋新停止原因 **`protection_saturated`**（全部維度受保護 → 不呼叫 LLM、不稀釋）；**#67** 主體判準**優先序擴充**（9 案例可判定率 **2/9 → 7/9**）＋揭露 **`subject_basis`** | 09/16 |
 | — | （安全）出貨 tarball 排除清單補 `.env`／`.env.*`／`*.env`；repo `.env` 停止追蹤並刪除；外洩 key 已撤銷（見 出貨產物必掃密鑰） | 09/16 |
 
@@ -254,13 +256,14 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 
 - 權重表由 v4.3.2 分布更新為現行分布（12/15 既有維度值改變，例 `family_size=1` 0.7259→2.0）＋ 新維度正式計分 → **同一 query 的 top-k 與 score 與 v5.2 不同**；longitudinal 比較以 v5.3 為新基準。
 - `scoring_basis.dims_counted` 現在列出**所有實際計分維度**（含 `dim_importance`-only）；`broadening_attempts[]` 多 `no_op`/`filters_changed` 欄位。
+- **v5.14 起**：移除維度造成 **≥3× 過衝**的輪次會被**還原**（該維度進保護集來源⑥）→ 這類請求 `returned` 可能變少但語意更貼題；未達門檻的正常放寬不受影響（有反向測試）。
 
 ### 部署 / 交付現況（2026-09-16）
 
 | 項目 | 狀態 |
 |:----|:----|
-| lzcdh5（nodeA） | **v5.12**（第九～十二輪驗證在此執行） |
-| lzc-dh1（nodeB，lzc-dh1-1） | **v5.13**（`--restart unless-stopped` 已生效） |
+| lzcdh5（nodeA） | **v5.13**（第九～十三輪驗證在此執行；v5.14 升版由 kstsai 執行） |
+| lzc-dh1（nodeB，lzc-dh1-1） | **v5.14**（SOP 已驗；`--restart unless-stopped` 已生效） |
 | 交付包 | v5.3.1 起含 `concepts/`（設計知識）；`references/` 仍為內部；**v5.13 起打包排除 `.env` 變體並機械掃描密鑰**（出貨產物必掃密鑰） |
 | QA host 慣例 | 由 kstsai 指定進版的那台跑 SOP，**另一台保留 baseline** |
 
@@ -307,6 +310,16 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 - **判讀紀律（累積）**：⚠️ 的**數量**不是品質指標；斷言輸出必須附**掃描涵蓋數**（否則「通過」可能只是「沒掃到」）；`subject` 這類語意欄位要看**分布**（雙峰 2:2）而非單次；**「未行使」要明說**（第十二輪把「`warnings` 除路徑本輪未觸發」列為限制，而不是當作「已驗證有效」）
 - 評語：**「自述與實作一致 ≠ 語意正確」** —— 一致性檢查對「一致地錯」無效，只有案例級 must-not-use 斷言能抓
 
+## v5.14 — 放寬幅度、過衝回饋、可稽核性（2026-09-16）
+
+第十三輪（dsh，v5.13，nodeA）**57 ✅ / 0 ⚠️ / 0  / 1 ℹ️**：v5.13 的兩個新機制被**逼到真實運作**驗證通過 —— `#66 A` 上限在案例 05 **真的裁掉**模型宣告的保護維度（3 → 2）、`#66 C` `protection_saturated` 由定向探針逼出 2 次、`warnings` 首次有內容（6 筆）、`subject` 覆蓋 8/9。**唯一的 ℹ️ 是斷言自己的問題**，不是產品。
+
+- **自製斷言瑕疵第 10 例（斷言範圍與空轉）**：veto 區塊**只掃 4/9 案例** → ① 斷言輸出「本輪未觸發 veto」**與事實相反**（案例 05 確有 veto 與 rollback）② K/L/M 三條 ✅ 是**空轉**（掃描範圍內沒有事件，不具檢定效力）。我方**系統性盤點**（子集範圍還用在 `#53`／`#56`／`#57`／`#58`／`#62`／`#63`／`#65` **共 7 處**）→ 全改掃 9/9 ＋ 輸出印「掃描 N/M」＋ **空轉防護** → 見 斷言的掃描範圍與空轉
+- **#70 A 過衝回饋**：移除維度造成 **≥3× 過衝**（時尚題 `matched` 5.8×）→ **還原該輪**＋該維度進保護集（來源⑥）＋warning＋attempt 標記；單元雙向驗證（正向 89×／反向 2.5× 不還原）→ 見 過衝回饋（與 護欄的上限與飽和 互補：一個治「放寬過頭」、一個治「護欄過嚴」）
+- **#69 揭露的層次**：放寬的可稽核性從「有沒有放寬」（`widened_dims`）進到「**鬆了多少**」（`widened_deltas` `{dim,before,after,added}`）→ 見 揭露的層次
+- **#71 留痕的位置**：外部驗證者**第三次**重複提出同一誤判（`_normalize_filters` 無 log）—— 事實是留痕寫在**呼叫點**。修法＝把留痕**移進函式本體**、呼叫點移除重複訊息、單元測試改為直接呼叫該函式 → 見 留痕的位置決定它會不會被看見
+- **誠實界線**：過衝還原在**部署層尚未自然行使**（SOP 0 筆）；以原素材再跑 2 次（`matched` 22／95）**5.8× 未再現** → 不宣稱「已消失」，只說機制就位且欄位可觀測
+
 ## LLM 模型決策
 
 - **analysis model = deepseek-v4-pro**（reasoning，85-90s/題，需 8000 tokens，5/5 合法 JSON，主動補消費維度）
@@ -333,6 +346,10 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 - **`protected_dims_sources`（v5.13）**：`protected_dims` 的**來源拆解**（五來源各貢獻了哪些維度）
 - **`protection_saturated`（v5.13）**：`broadening_stop_reason` 新 enum 值 —— 保護集已覆蓋全部已套用維度，系統**停手不稀釋**（不呼叫 LLM）
 - **`warnings`（v5.13 追加兩類）**：模型宣告超上限、保護集覆蓋過半已套用維度
+- **`broadening_attempts[].widened_deltas`（v5.14）**：值集放寬的**幅度**（`{dim,before,after,added}`；口徑＝嚴格超集，與 `widened_dims` 一致）→ 見 揭露的層次
+- **`broadening_attempts[].overshoot_restore`／`restored_dims`（v5.14）**：該輪是否因移除維度造成過衝而被**還原**，以及被還原並納入保護集（來源⑥）的維度 → 見 過衝回饋
+- **`declared_protected_cap`（v5.14）**：本請求實際套用的來源④累積上限（讓「半數規則」可在部署層稽核）
+- **`protected_dims_sources`（v5.14 擴充）**：來源拆解由五鍵 → **六鍵**（新增 `overshoot_restore`）
 
 ## 未解項（追蹤用）
 
@@ -346,16 +363,17 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 | （殘留） | 未開票 | **未被五來源選中的語意核心仍可能被放寬** → 需下一輪證據再開票補表（見 核心維度保護機制） |
 | **#64** | **known-limitation**（enhancement） | 部分**顧客語意題**（案例 08 小吃攤）`protected_dims` 為空 → 該類題若需放寬則無維度受保護。**修法已嘗試並回退**（兩版 prompt 各有一邊不達標：一版保護集暴增、一版 must-not-use 回歸），目前**無實際受害案例**（v5.12 後該題已由 `subject` 禁用集守住語意方向） |
 | （已結案） | enhancement | **#66** 保護集來源④單調累積無上限 → **v5.13 修畢**（上限＋`protected_dims_sources` 揭露＋覆蓋警示＋`protection_saturated`） |
+| （觀察中） | — | **`overshoot_restore` 的自然發生率**：機制在單元層雙向驗證（正向 89×／反向 2.5×），但部署層尚未自然行使（SOP 0 筆）→ 後續輪次統計 |
 | （已結案） | security | **#68** 出貨 tarball 含 `.env`（public repo 46 個 tarball 中 45 個含）→ 排除清單修正＋停止追蹤＋刪檔＋重打包驗證；**孤兒憑證已撤銷**（HTTP 401 驗證） |
 | （觀察） | 未開票 | **保護集來源④（模型每輪宣告）單調累積無上限／無檢核** → 過度保護時樣本數崩落（醫美 `matched` 14→3）；需跨輪證據（見 保護集失控） |
 | （已結案） | infra | `persona-db-api` 容器缺 `--restart`（僅 hermes 容器有）→ v5.11 已加 `--restart unless-stopped`；nodeA 下一輪部署帶上 |
 
-> 已關閉：#1–#37、#41–#44、#46–#68（含 v5.4–v5.13 全部修復）；**open：`#38 #39 #40 #64`**（全為 known-limitation）。
+> 已關閉：#1–#37、#41–#44、#46–#71（含 v5.4–v5.14 全部修復）；**open：`#38 #39 #40 #64`**（全為 known-limitation）。
 
 ## 部署環境
 
-- **lzc-dh1**（100.100.112.108）：deploy host，跑 Pre-release SOP — **nodeB，目前 v5.13**（2026-09-16 實查；`--restart unless-stopped` 已生效）
-- **lzcdh5**（100.96.79.33）：tailscale 測試 VM — **nodeA，目前 v5.12**（2026-09-16 實查；Docker 部署，另含 hermes 容器；第九～十二輪驗證在此執行）
+- **lzc-dh1**（100.100.112.108）：deploy host，跑 Pre-release SOP — **nodeB，目前 v5.14**（2026-09-16 實查，SOP 已驗）
+- **lzcdh5**（100.96.79.33）：tailscale 測試 VM — **nodeA，目前 v5.13**（2026-09-16 實查；Docker 部署，另含 hermes 容器；第九～十三輪驗證在此執行）
 - QA host 慣例：由 kstsai 指定進版的那台跑完整 SOP，另一台保留 baseline
 
 ## QA 系統
@@ -432,3 +450,8 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 - 自製斷言瑕疵 — 九個實例五種形態；斷言要附掃描涵蓋數
 - 出貨產物必掃密鑰 — 自動打包不會判斷什麼不該出去；撤銷優先於輪替
 - 第十二輪 + v5.13 摘要 — 53✅/0⚠️；主體護欄 4/4、護欄上限、產物掃密鑰
+- 斷言的掃描範圍與空轉 — 「通過」與「沒看」必須可區分；無事件時要明示不具檢定效力
+- 過衝回饋 — 「多而失焦」不如「少而正確」：移除維度致 ≥3× 過衝即還原
+- 揭露的層次 — 可稽核性不是「有沒有一個欄位」，而是它能回答到第幾層問題
+- 留痕的位置決定它會不會被看見 — 函式本體 > 呼叫點；重複出現的誤判是設計訊號
+- 第十三輪 + v5.14 摘要 — 57✅/1ℹ️；機制被逼到真實運作、斷言範圍系統性修正
