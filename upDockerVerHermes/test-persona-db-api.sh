@@ -337,7 +337,7 @@ print(f"  #57 protected_veto 符合其一條路徑（硬性 veto 或模型拒絕
 _sr_seen_v59 = sorted({cd.get("broadening_stop_reason") for cd in _ALL9D.values()})
 if "protected_veto" not in _sr_seen_v59:
     # ★ round13 §3.1：這句話以前只在 4/9 案例上成立就印出來，會與事實相反（案例 05 有 veto）
-    print(f"  #57 掃描範圍內未觸發 veto（保護維度皆未被嘗試移除；掃描 {_SCAN}）→ ℹ️")
+    print(f"  #57 掃描範圍內未觸發**硬 veto**（保護維度皆未被嘗試移除；掃描 {_SCAN}）→ ℹ️")
 # veto 的三條延伸不變式（來源：round10 §3.1 的 K/L/M — 由 dsh1 提出，我方採納為出貨斷言）
 _k = _l = _m = []
 _n_veto_ev = 0
@@ -356,7 +356,15 @@ for c, cd in _ALL9D.items():
         _n_veto_ev += 1
 # ★ 空轉防護（round13 §3.1(b)）：掃描範圍內若**沒有任何 veto 事件**，K/L/M 的 ✅ 不具檢定效力 → 標為空轉
 _veto_vacuous = _n_veto_ev == 0
-print(f"  #57 veto 事件數（掃描 {_SCAN}）= {_n_veto_ev}" + (" → 空轉（K/L/M 不具檢定效力）" if _veto_vacuous else ""))
+# round14 §3.1(b)：`stop_reason=protected_veto` 有**兩條路徑**（硬 veto／模型主動拒絕），
+# 並列易被誤讀為矛盾 → 分開列（硬 veto 才有 vetoed_dims）。
+_refuse = sum(1 for cd in _ALL9D.values()
+              if cd.get("broadening_stop_reason") == "protected_veto"
+              and not any(b.get("protected_veto") for b in (cd.get("broadening_attempts") or [])))
+print(f"  #57 **硬 veto 事件數**（vetoed_dims 非空；掃描 {_SCAN}）= {_n_veto_ev}"
+      + (" → 空轉（K/L/M 不具檢定效力）" if _veto_vacuous else ""))
+print(f"  #57 模型主動拒絕次數（stop_reason=protected_veto 但無硬 veto）= {_refuse}"
+      f"（兩者同時為真不矛盾；掃描 {_SCAN}）")
 print("  #57 veto 不變式 K（vetoed_dims ⊆ protected_dims）→ " + ("✅" if not _k else f"❌ {sorted(set(_k))}"))
 print("  #57 veto 不變式 L（veto 必有非空 vetoed_dims）→ " + ("✅" if not _l else f"❌ {sorted(set(_l))}"))
 print("  #57 veto 不變式 M（veto 是 rollback：no_op 且 filters 未變更且計數不變）→ " + ("✅" if not _m else f"❌ {sorted(set(_m))}"))
@@ -495,8 +503,8 @@ for _lab, _p in _ALL9:
         _cap_bad.append((_lab, "缺 declared_protected_cap"))
     elif len(_md) > _cap:
         _cap_bad.append((_lab, len(_md), _cap))
-print("  #67 B 所有案例都有 subject_basis/protected_dims_sources → " + ("✅" if not _missing13 else f"❌ {_missing13}"))
-print("  #66 A protected_dims_sources 五鍵齊全 → " + ("✅" if not _src_bad else f"❌ {_src_bad}"))
+print(f"  #67 B 所有案例都有 subject_basis/protected_dims_sources（掃描 {_SCAN}）→ " + ("✅" if not _missing13 else f"❌ {_missing13}"))
+print("  #66 A protected_dims_sources 六鍵齊全（v5.14 起含 overshoot_restore）→ " + ("✅" if not _src_bad else f"❌ {_src_bad}"))
 print("  #66 A 來源④ 數量 ≤ declared_protected_cap（#71 B）→ " + ("✅" if not _cap_bad else f"❌ {_cap_bad}"))
 _boss13 = _cases.get("boss")
 if _boss13:
@@ -540,7 +548,11 @@ for _lab, _p in _ALL9:
                 _rest_bad.append((_lab, sorted(_rs), _d.get("protected_dims")))
 print(f"  #69 widened_deltas 口徑與 widened_dims 一致（共 {_n_deltas} 筆）→ " + ("✅" if not _wd_bad else f"❌ {_wd_bad}"))
 print(f"  #69 每筆 delta 皆嚴格超集且 added 非空 → " + ("✅" if not _wdr_bad else f"❌ {_wdr_bad}"))
-print(f"  #70 A 過衝還原事件 {_n_restores} 筆；restored_dims ⊆ protected_dims → " + ("✅" if not _rest_bad else f"❌ {_rest_bad}"))
+_rest_vacuous = _n_restores == 0
+print(f"  #70 A 過衝還原事件 {_n_restores} 筆"
+      + ("（**空轉**：本輪無事件 → 機制由單元測試雙向驗證（正向 89×／反向 2.5×），自然發生率觀察中）"
+         if _rest_vacuous else "")
+      + f"；restored_dims ⊆ protected_dims（掃描 {_SCAN}）→ " + ("✅" if not _rest_bad else f"❌ {_rest_bad}"))
 PYEOF
 
 # ── #60：app 的 INFO 行是否真的進 log（root logger 設定生效）──
