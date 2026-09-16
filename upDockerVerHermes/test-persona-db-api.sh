@@ -549,6 +549,24 @@ for _lab, _p in _ALL9:
 print(f"  #69 widened_deltas 口徑與 widened_dims 一致（共 {_n_deltas} 筆）→ " + ("✅" if not _wd_bad else f"❌ {_wd_bad}"))
 print(f"  #69 每筆 delta 皆嚴格超集且 added 非空 → " + ("✅" if not _wdr_bad else f"❌ {_wdr_bad}"))
 _rest_vacuous = _n_restores == 0
+# ── v5.15 (#72 失敗路徑可稽核 / llm_calls) 斷言 ──
+_lc_bad = []
+for _lab, _p in _ALL9:
+    _d = load(_p)
+    if not _d:
+        continue
+    _lc = _d.get("llm_calls")
+    _na = len(_d.get("broadening_attempts") or [])
+    if not isinstance(_lc, int):
+        _lc_bad.append((_lab, "缺 llm_calls"))
+    elif _lc < 1 + _na:                     # 分析 1 次 + 每輪 1 次；失敗輪也算（#72）
+        _lc_bad.append((_lab, _lc, 1 + _na, _na))
+    for _b in (_d.get("broadening_attempts") or []):
+        if "parse_error" not in _b or "error_type" not in _b:
+            _lc_bad.append((_lab, "attempt 缺 parse_error/error_type"))
+            break
+print(f"  #72 llm_calls 揭露且 ≥ 1+attempts（掃描 {_SCAN}）→ " + ("✅" if not _lc_bad else f"❌ {_lc_bad}"))
+
 print(f"  #70 A 過衝還原事件 {_n_restores} 筆"
       + ("（**空轉**：本輪無事件 → 機制由單元測試雙向驗證（正向 89×／反向 2.5×），自然發生率觀察中）"
          if _rest_vacuous else "")
