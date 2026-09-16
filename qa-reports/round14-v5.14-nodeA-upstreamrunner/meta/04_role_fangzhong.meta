@@ -1,0 +1,7 @@
+# case  = 04_role_fangzhong
+# label = === 4. 房貸優惠 — 房仲業者 ===
+# cmd   = curl -s --get http://localhost:8000/personadb/candidates --data-urlencode questions=房貸優惠方案 --data-urlencode role=房仲業者 --data-urlencode top_k=5 --data-urlencode opMode=僅篩選
+http_code=200
+time_total=247.778024
+size_download=6683
+url_effective=http://localhost:8000/personadb/candidates?questions=%E6%88%BF%E8%B2%B8%E5%84%AA%E6%83%A0%E6%96%B9%E6%A1%88&role=%E6%88%BF%E4%BB%B2%E6%A5%AD%E8%80%85&top_k=5&opMode=%E5%83%85%E7%AF%A9%E9%81%B8

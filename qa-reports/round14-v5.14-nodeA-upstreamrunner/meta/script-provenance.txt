@@ -1,0 +1,51 @@
+=== 目標（本輪不做版本比對；此處僅記錄受測環境）===
+  node: NODE-A (NODE-A)   tailscale NODE-A   node ID NODE-A-NODEID
+  部署型態: Docker（upDockerVerHermes：hermes + persona-db-api 兩個容器）
+  RELEASE-VERSION: v5.14（repo == 節點）
+  服務版本: v5.14（/personadb/status）；容器內 /app/VERSION = v5.14
+  執行位置: **節點本機**（BASE_URL=http://localhost:8000，與 upstream 原生環境相同）
+  收集時間(UTC): 2026-09-16T02:42:43Z
+
+=== 部署保真度（「裝的到底是什麼」的機械證明）===
+  release tarball sha256 : 68994d63e1dc9d80b3b12e83…
+  tarball 內含 .env       : **0 個**
+  /srv/persona-db-data/api/*.py == tarball 內 api/*.py → 8/8 檔 sha256 相同
+  容器 mount: /srv/persona-db-data → /app（bind mount）；容器內 /app/api/*.py sha256 亦同
+  容器: started 2026-09-16T02:37:47Z  restarts=0  Up (healthy)
+  → **執行中的服務程式碼 == 發佈的 v5.14 產物（byte 級）**
+
+=== repo 狀態（本輪參照點）===
+  persona-db-release HEAD = a916cb5…（== origin/main）；節點 clone 同一 sha
+  相關 commit: 584dbf5（斷言掃描範圍統一為 9/9 —— round13 §3.1／§6.3(1) 回饋）
+               → bd21e10（CORRECTIONS ⑥ 追記）
+               → 7595c56 release v5.14（#69 widened_deltas／#70 過衝還原／#71 declared_protected_cap＋六鍵來源）
+
+=== 契約（v5.14）===
+  openapi.json sha256: 43f94b66d1d3d433a5779c17290a2ce3d29449dad038b15cf79f7fc1d664f0ac
+  CandidatesResponse **19 欄 —— 新增 declared_protected_cap（#71 B：本請求實際套用的來源④上限）**
+  BroadeningAttempt **13 欄 —— 新增 widened_deltas（#69）、overshoot_restore／restored_dims（#70）**
+  protected_dims_sources 六鍵（新增 overshoot_restore）
+  stop_reason enum 11 值（含 protected_veto / protection_saturated）
+
+=== 儀器 ===
+  upstream sha256: fb2c2fda29a23018bf1d71aa261b8fd787166ef9f2a9cae594359516ddbf04d8
+  upstream 行數  : 579（v5.13 為 529）
+  取得時間(UTC)  : 2026-09-16T02:41Z
+  runner   sha256: 2bbcbb1bf07175e38b9efc33513f2b6a76af327048d24c4979f6002389d6689e
+  runner   行數  : 569
+  ※ **runner sha 於執行前即記錄**
+
+=== 儀器忠實度 ===
+  [1] 請求參數／順序  upstream=32 runner=32  ✅ 相同（含順序）
+  [2] 前段 L1-L14     ✅ 逐字相同
+  [3] 斷言段 L88-L579 ✅ 逐字相同（0 差異）
+  [4] 案例標籤 9/9    ✅ 逐案相同
+  另：meta/test-runner-harness.sh（stub curl、11 項）驗「執行時行為」→ 11/11 通過
+
+=== 本輪的跨輪防護 ===
+  複製過來的工具逐一 grep：只有 make-runner.py 出現 qa-round9（註解裡的反面教材）。
+  runner 與 probe 的 OUT 皆為**自我定位**（dirname $0）。
+
+=== 本輪範圍 ===
+  ✗ 不做跨版本比對（skill v2.6.0）
+  ✓ 純 API response 結果分析（§6.1–6.9）

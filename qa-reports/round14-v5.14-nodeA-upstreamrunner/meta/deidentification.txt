@@ -1,6 +1,6 @@
 # 去識別化說明（發布版）
 
-本包是 `round13-v5.13-nodeA-upstreamrunner` 的**去識別化副本**，供 public repo
+本包是 `round14-v5.14-nodeA-upstreamrunner` 的**去識別化副本**，供 public repo
 `kstsai/persona-db-release` 的 `qa-reports/` 使用。
 
 | 原本 | 發布版代號 |
@@ -12,12 +12,19 @@
 **只替換了這三類字串，其餘逐字未動**（含所有 `raw/*.body`、`headers/`、`meta/*.meta`、
 `probe/` 的證據檔）。
 
-受影響的檔案只有三個（皆為環境標識行，不影響任何量測值）：
-- `meta/script-provenance.txt`：`node:` 那一行
-- `run.log`：檔頭的 `host=` 欄位
-- `probe/probe.log`：檔頭的 `host=` 欄位
+受影響的檔案（清單由本腳本實際掃描產生，非人工列舉）：
+- `meta/script-provenance.txt`
+- `probe/probe.log`
+- `run.log`
 
 > ⚠️ 本包的 `run.log` 是**原始證據**。作者端保留的 master 副本中該欄位仍是原值；
 > 發布時才替換，以免公開節點位址。**除該欄位外，`run.log` 與 master 逐字相同。**
 >
 > 代號↔實際值的對照表**不在本 repo**（否則去識別化即失效）。
+
+## 本包未包含的檔案
+
+| 未包含 | 原因 |
+|:--|:--|
+| `meta/redact-for-publish.sh` | 去識別化腳本本身含原值 |
+| `meta/ops-timing-note.md`、`meta/call-latency-from-log.py` | 操作面診斷（該輪耗時歸因），內含**跨輪比較**；依 skill「只分析當前版本、不做跨版本比對」規範不進發布報告。與該版本的 QA 判定無關。 |
