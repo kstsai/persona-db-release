@@ -484,16 +484,20 @@ for _lab, _p in _ALL9:
         if _k not in _d:
             _missing13.append((_lab, _k))
     _src = _d.get("protected_dims_sources") or {}
-    if _src and set(_src) != {"domain", "reasoning", "analysis_declared", "model_declared", "protect_only"}:
+    if _src and set(_src) != {"domain", "reasoning", "analysis_declared", "model_declared",
+                              "protect_only", "overshoot_restore"}:
         _src_bad.append((_lab, sorted(_src)))
-    # #66 A 上限：產品以**請求開始**的已套用維度數算上限（回應不含該基準，且 applied_filters 會變動）
-    # → 出貨斷言只驗**硬上限 DECLARED_PROTECTED_MAX=3**；半數規則由單元測試以已知 filter 數驗證。
+    # #66 A 上限：v5.14（#71 B）起回應直接揭露本請求實際套用的上限 `declared_protected_cap`
+    # → 不再只能驗硬上限 3，可驗「半數規則」本身（基準＝請求開始的已套用維度數）。
     _md = _src.get("model_declared") or []
-    if len(_md) > 3:
-        _cap_bad.append((_lab, len(_md)))
+    _cap = _d.get("declared_protected_cap")
+    if _cap is None:
+        _cap_bad.append((_lab, "缺 declared_protected_cap"))
+    elif len(_md) > _cap:
+        _cap_bad.append((_lab, len(_md), _cap))
 print("  #67 B 所有案例都有 subject_basis/protected_dims_sources → " + ("✅" if not _missing13 else f"❌ {_missing13}"))
 print("  #66 A protected_dims_sources 五鍵齊全 → " + ("✅" if not _src_bad else f"❌ {_src_bad}"))
-print("  #66 A 來源④ 數量 ≤ 硬上限 3 → " + ("✅" if not _cap_bad else f"❌ {_cap_bad}"))
+print("  #66 A 來源④ 數量 ≤ declared_protected_cap（#71 B）→ " + ("✅" if not _cap_bad else f"❌ {_cap_bad}"))
 _boss13 = _cases.get("boss")
 if _boss13:
     print(f"  #67 顧客案例 subject_basis: {(_boss13.get('subject_basis') or '')[:52]!r} → "
@@ -509,6 +513,34 @@ try:
 except Exception:
     pass
 print("  #66 C enum 含 protection_saturated → " + ("✅" if "protection_saturated" in _enum13 else f"❌ {sorted(_enum13)}"))
+
+# ── v5.14 (#69 放寬幅度 / #70 過衝還原 / #71 上限基準) 斷言 ──
+print("  --- v5.14 (#69 放寬幅度 / #70 過衝回饋) ---")
+_wd_bad, _wdr_bad, _rest_bad, _n_deltas, _n_restores = [], [], [], 0, 0
+for _lab, _p in _ALL9:
+    _d = load(_p)
+    if not _d:
+        continue
+    for _b in (_d.get("broadening_attempts") or []):
+        if "widened_deltas" not in _b:
+            _wd_bad.append((_lab, "缺 widened_deltas"))
+            continue
+        _dims_w = set(_b.get("widened_dims") or [])
+        _dims_d = {x.get("dim") for x in (_b.get("widened_deltas") or [])}
+        _n_deltas += len(_b.get("widened_deltas") or [])
+        if _dims_w != _dims_d:
+            _wd_bad.append((_lab, sorted(_dims_w), sorted(_dims_d)))     # #69 口徑一致
+        for _x in (_b.get("widened_deltas") or []):
+            if not set(_x.get("before") or []) < set(_x.get("after") or []) or not (_x.get("added") or []):
+                _wdr_bad.append((_lab, _x))                              # 嚴格超集 + added 非空
+        if _b.get("overshoot_restore"):
+            _n_restores += 1
+            _rs = set(_b.get("restored_dims") or [])
+            if not _rs or not _rs <= set(_d.get("protected_dims") or []):
+                _rest_bad.append((_lab, sorted(_rs), _d.get("protected_dims")))
+print(f"  #69 widened_deltas 口徑與 widened_dims 一致（共 {_n_deltas} 筆）→ " + ("✅" if not _wd_bad else f"❌ {_wd_bad}"))
+print(f"  #69 每筆 delta 皆嚴格超集且 added 非空 → " + ("✅" if not _wdr_bad else f"❌ {_wdr_bad}"))
+print(f"  #70 A 過衝還原事件 {_n_restores} 筆；restored_dims ⊆ protected_dims → " + ("✅" if not _rest_bad else f"❌ {_rest_bad}"))
 PYEOF
 
 # ── #60：app 的 INFO 行是否真的進 log（root logger 設定生效）──
