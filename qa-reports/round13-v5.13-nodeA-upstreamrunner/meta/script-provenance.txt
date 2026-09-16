@@ -1,0 +1,51 @@
+=== 目標（本輪不做版本比對；此處僅記錄受測環境）===
+  node: NODE-A (NODE-A)   tailscale NODE-A   node ID NODE-A-NODEID
+  部署型態: Docker（upDockerVerHermes：hermes + persona-db-api 兩個容器）
+  RELEASE-VERSION: v5.13（repo == 節點）
+  服務版本: v5.13（/personadb/status）；容器內 /app/VERSION = v5.13
+  執行位置: **節點本機**（BASE_URL=http://localhost:8000，與 upstream 原生環境相同）
+  收集時間(UTC): 2026-09-16T00:45:37Z
+
+=== 部署保真度（「裝的到底是什麼」的機械證明）===
+  release tarball sha256 : cbeb6040377548a40dd4ae2f…（repo == 節點上那一份）
+  tarball 內含 .env       : **0 個**（v5.13 release 明確排除，523c687）
+  /srv/persona-db-data/api/*.py == tarball 內 api/*.py → 8/8 檔 sha256 相同
+  容器 mount: /srv/persona-db-data → /app（bind mount）；容器內 /app/api/*.py sha256 亦同
+  容器: started 2026-09-16T00:37:23Z  restarts=0  Up (healthy)
+  → 結論：**執行中的服務程式碼 == 發佈的 v5.13 產物（byte 級）**
+
+=== repo 狀態（本輪參照點）===
+  persona-db-release HEAD = 5555600…（== origin/main）；節點 clone HEAD = 734677d
+  相關 commit: 8913721（依 round12 回饋修 S/T 斷言的形式與涵蓋 + CORRECTIONS ⑥）
+               → 523c687 release v5.13（#66 保護集上限/揭露、#67 主體覆蓋/依據）
+               → 734677d 修 #66 A 的基準不一致
+
+=== 契約（v5.13）===
+  openapi.json sha256: d1da178b88a1b5213d7c24b49f5c7c1991e77a42c1ab1b1ce97d4dfa2d058cd8
+  CandidatesResponse **18 欄 —— 新增 subject_basis（主體判定依據）與 protected_dims_sources（保護集來源拆解）**
+  stop_reason enum **11 值 —— 新增 protection_saturated（#66 C）**
+  PersonaSummary 24 欄
+
+=== 儀器 ===
+  upstream sha256: 3d7b1de2ed802f7db2d2d9b3e9bfb54c92f01c89fe1b335b1b06a84ac0459774
+  upstream 行數  : 529（v5.12 為 480）
+  取得時間(UTC)  : 2026-09-16T00:44Z
+  runner   sha256: 928bd09cfdb7408be5486d59fd1bee6a6bf46c62db2819566b8c5020892d55ee
+  runner   行數  : 519
+  ※ **runner sha 於執行前即記錄**
+
+=== 儀器忠實度 ===
+  [1] 請求參數／順序  upstream=32 runner=32  ✅ 相同（含順序）
+  [2] 前段 L1-L14     ✅ 逐字相同
+  [3] 斷言段 L88-L529 ✅ 逐字相同（0 差異）
+  [4] 案例標籤 9/9    ✅ 逐案相同
+  另：meta/test-runner-harness.sh（stub curl、11 項）驗「執行時行為」—— 本次它**先抓到
+  probe/run-probe.sh 尚未建立**（3 項失敗），補上後 11/11 通過。
+
+=== 本輪的跨輪防護 ===
+  8 個複製過來的工具逐一 grep：只有 make-runner.py 出現 qa-round9，確認為**註解裡的反面教材**。
+  runner 與 probe 的 OUT 皆為**自我定位**（dirname $0）。
+
+=== 本輪範圍 ===
+  ✗ 不做跨版本比對（skill v2.5.0）
+  ✓ 純 API response 結果分析（§6.1–6.9）

@@ -1,0 +1,73 @@
+# probe start 2026-09-16T00:59:39Z  BASE_URL=http://localhost:8000  host=NODE-A  OUT=/home/ubuntu/qa-round13
+
+=== §6.8 重現性 — case08 小吃攤（顧客語意）r1/3（#65/#67） ===
+
+real	0m43.120s
+user	0m0.010s
+sys	0m0.005s
+  → http_code=200 time_total=43.112130 size_download=7913 url_effective=http://localhost:8000/personadb/candidates?questions=%E5%B0%8F%E5%90%83%E6%94%A4%E8%80%81%E9%97%86%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E7%BE%A4&role=%E5%A4%9C%E5%B8%82%E5%95%86%E5%9C%88%E5%8D%94%E6%9C%83&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case08 小吃攤（顧客語意）r2/3（#65/#67） ===
+
+real	0m47.486s
+user	0m0.005s
+sys	0m0.023s
+  → http_code=200 time_total=47.472538 size_download=8092 url_effective=http://localhost:8000/personadb/candidates?questions=%E5%B0%8F%E5%90%83%E6%94%A4%E8%80%81%E9%97%86%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E7%BE%A4&role=%E5%A4%9C%E5%B8%82%E5%95%86%E5%9C%88%E5%8D%94%E6%9C%83&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case08 小吃攤（顧客語意）r3/3（#65/#67） ===
+
+real	0m58.112s
+user	0m0.013s
+sys	0m0.013s
+  → http_code=200 time_total=58.097314 size_download=7713 url_effective=http://localhost:8000/personadb/candidates?questions=%E5%B0%8F%E5%90%83%E6%94%A4%E8%80%81%E9%97%86%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E7%BE%A4&role=%E5%A4%9C%E5%B8%82%E5%95%86%E5%9C%88%E5%8D%94%E6%9C%83&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case06 醫美 r1/3 ===
+
+real	2m58.880s
+user	0m0.014s
+sys	0m0.035s
+  → http_code=200 time_total=178.863359 size_download=9147 url_effective=http://localhost:8000/personadb/candidates?questions=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E8%A1%8C%E9%8A%B7%E4%B8%BB%E7%AE%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case06 醫美 r2/3 ===
+
+real	2m7.785s
+user	0m0.017s
+sys	0m0.027s
+  → http_code=200 time_total=127.763689 size_download=8857 url_effective=http://localhost:8000/personadb/candidates?questions=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E8%A1%8C%E9%8A%B7%E4%B8%BB%E7%AE%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case06 醫美 r3/3 ===
+
+real	4m0.949s
+user	0m0.025s
+sys	0m0.058s
+  → http_code=200 time_total=240.910215 size_download=9580 url_effective=http://localhost:8000/personadb/candidates?questions=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E8%A1%8C%E9%8A%B7%E4%B8%BB%E7%AE%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.9 t1 不可滿足查詢 top_k=10（題目原文見檔頭註解） ===
+
+real	2m24.869s
+user	0m0.025s
+sys	0m0.060s
+  → http_code=200 time_total=144.817939 size_download=3070 url_effective=http://localhost:8000/personadb/candidates?questions=%E6%83%B3%E6%89%BE%E5%90%8C%E6%99%82%E6%93%81%E6%9C%89%E9%81%8A%E8%89%87%E8%88%87%E7%A7%81%E4%BA%BA%E9%A3%9B%E6%A9%9F%E7%9A%8445%E6%AD%B2%E5%96%AE%E8%BA%AB%E5%A5%B3%E6%80%A7%E4%BC%81%E6%A5%AD%E4%B8%BB&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.9 t2 收窄醫美查詢 → 逼 protection_saturated（#66 C） ===
+
+real	1m0.496s
+user	0m0.026s
+sys	0m0.064s
+  → http_code=200 time_total=60.420971 size_download=2258 url_effective=http://localhost:8000/personadb/candidates?questions=%E6%83%B3%E6%89%BE%E5%81%9A%E9%81%8E%E9%86%AB%E7%BE%8E%E7%99%82%E7%A8%8B%E7%9A%8445%E6%AD%B2%E5%96%AE%E8%BA%AB%E5%A5%B3%E6%80%A7&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.9 t3 TESLA top_k=20 → #61 commute_mode 保護 ===
+
+real	2m6.598s
+user	0m0.017s
+sys	0m0.035s
+  → http_code=200 time_total=126.570319 size_download=14764 url_effective=http://localhost:8000/personadb/candidates?questions=TESLA%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&top_k=20&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.9 t4 房貸(銀行) top_k=20 → 值集放寬 / veto ===
+
+real	2m43.418s
+user	0m0.019s
+sys	0m0.029s
+  → http_code=200 time_total=163.399664 size_download=10396 url_effective=http://localhost:8000/personadb/candidates?questions=%E6%88%BF%E8%B2%B8%E5%84%AA%E6%83%A0%E6%96%B9%E6%A1%88&role=%E9%8A%80%E8%A1%8C%E6%A5%AD%E8%80%85&top_k=20&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+# probe end 2026-09-16T01:19:31Z
