@@ -586,6 +586,17 @@ fi
 printf "  #60 容器 LOG_LEVEL: "
 sudo docker exec persona-db-api sh -c 'grep LOG_LEVEL /app/.env' 2>/dev/null || echo "(未設定 → 預設 INFO)"
 
+# ── #74：出貨 tarball 內 VERSION 與 RELEASE-VERSION 必須一致（打包順序缺陷的守門）──
+_EXPECT_VER=$(cat "$(dirname "$0")/RELEASE-VERSION" 2>/dev/null | tr -d '[:space:]')
+_TGZ="persona-db-rel-${_EXPECT_VER}.tar.gz"
+_TV=$(tar xzOf "${_TGZ}" "persona-db-rel-${_EXPECT_VER}/VERSION" 2>/dev/null | tr -d '[:space:]')
+_TRV=$(tar xzOf "${_TGZ}" "persona-db-rel-${_EXPECT_VER}/RELEASE-VERSION" 2>/dev/null | tr -d '[:space:]')
+if [ -n "${_TV}" ] && [ "${_TV}" = "${_TRV}" ] && [ "${_TV}" = "${_EXPECT_VER}" ]; then
+  echo "  #74 tarball 內 VERSION==RELEASE-VERSION==${_EXPECT_VER} → ✅"
+else
+  echo "  #74 tarball 內版本不一致（VERSION=${_TV} / tarball RELEASE-VERSION=${_TRV} / 預期=${_EXPECT_VER}）→ ❌"
+fi
+
 # #55：失敗 log 需帶例外型別（主機層：確認映像內 code 有該診斷）
 if sudo docker exec persona-db-api grep -q "LLM call failed \[" /app/api/llm.py 2>/dev/null; then
   echo "  #55 映像含例外型別診斷碼（LLM call failed [Type]）→ ✅"
