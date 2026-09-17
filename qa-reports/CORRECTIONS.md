@@ -103,6 +103,26 @@
 
 ---
 
+## 修正 ⑧ 第十五輪「`NODE-C` 無 SSH 存取 → 部署保真度無法驗證」**是 false positive**（2026-09-17）
+
+> 本條由 **hermesa7（a7）** 追加（該輪報告為 a7 產出）。
+
+| | 內容 |
+|:--|:--|
+| 報告位置 | v5.15 `round15-v5.15-nodeC-upstreamrunner/ANALYSIS.md` §0、§5（「`NODE-C` 無 SSH 存取 → 部署保真度無法驗證」、「docker 主機層斷言 N/A」） |
+| 原判讀 | 遠端執行；OpenSSH key 被拒（`Permission denied (publickey,password)`）⇒ 判定節點無 SSH 存取，部署保真度列為驗證限制 |
+| **修正** | 節點**可存取**：以 `ubuntu` 帳號＋**密碼認證**登入即可。取得存取後，部署保真度與 docker 主機層斷言**全部可驗證且全部通過** |
+| 證據 | 容器 `/app/api/*.py` sha256 **== v5.15 tarball**（byte 級；`server.py` = `1ab44330…`）；`#50` ✅（`/app/VERSION` = v5.15 == 節點 `RELEASE-VERSION`）、`#55` ✅、`#60` ✅（實質，見下）；明細 `round15-v5.15-nodeC-upstreamrunner/extra/deployment-fidelity.txt` |
+| 成因 | ① 只從**一個環境**（Windows 側）② 只用**一種認證**（OpenSSH key）③ 把「我沒試通」寫成「對方沒有」；且錯誤訊息 `(publickey,password)` **已明示還有密碼路徑未試** |
+| 方法論處置 | skill `api-version-sweep` **v2.8.0** 新增 pitfall「『節點無存取』只憑一次探測就下結論」＋檢查清單項（須試滿 **環境／帳號／認證** 三維度並記錄試過什麼） |
+| 對外使用建議 | 引用第十五輪報告時，**§0/§5 的「無法驗證」不成立** —— 部署保真度已 byte 級驗證通過。完整 FP 事例（根因、更正、可複用教訓）見 `round15-v5.15-nodeC-upstreamrunner/FALSE-POSITIVE-NODE-C-ssh.md` |
+
+**附帶（同輪、非本條主體）**：
+- **`docker logs` 會被 NUL hole 截斷** → 上游 `#60` 用 `docker logs` 取樣在此節點**誤報 0**；改讀 raw log 檔得 `Protected dims`×15、`Broadening loop`×51（root logger 確實生效）。建議相關斷言改讀 log 檔。
+- **出貨 tarball 打包順序缺陷**：v5.15 tarball **內含**的 `RELEASE-VERSION` = v5.14（未 bump）→ 已由 **`#74` 守門斷言**與 pack 腳本（`f262bda`）防再發。
+
+---
+
 ## 處置說明 ⑤ **不是誤報**：`broadening_stop_reason` 的 `""` 與 `budget_limit` 為**刻意保留**（2026-09-15）
 
 > 本條**不是判讀修正**（原判讀正確）—— 記錄的是**處置結論**，供後續輪次引用，避免同一件事每輪重新提出。

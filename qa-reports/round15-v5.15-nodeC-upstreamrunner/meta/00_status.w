@@ -1,0 +1,4 @@
+http_code=200
+time_total=1.541764
+size_download=792
+url_effective=http://[ts-peer-ip]:8000/personadb/status

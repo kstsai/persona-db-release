@@ -1,0 +1,58 @@
+=== 目標（本輪不做版本比對；此處僅記錄受測環境）===
+  node: NODE-C ([account]@linux)   tailscale [ts-peer-ip]
+  連線: relay hkg（非直連）；BANGOO → NODE-C 走 tailscale，延遲 ~0.8–3.3s
+  部署型態: 未知（無 SSH 存取 → 無法從節點內驗證 docker/容器）
+  服務版本: v5.15（/personadb/status 自報；1069 personas；LLM deepseek-v4-flash responsive）
+  執行位置: **BANGOO 的 WSL2 Ubuntu**（BASE_URL=http://[ts-peer-ip]:8000，遠端）
+  收集時間(UTC): 2026-09-17T03:2x:xxZ
+
+=== 部署保真度（「裝的到底是什麼」的機械證明）===
+  ✅ 已驗證（收集時 2026-09-17T05:18Z，以 ssh ubuntu@[ts-peer-ip] 密碼登入後）：
+     容器 persona-db-api（Up healthy, RestartCount=0, StartedAt 2026-09-17T02:15:42Z ← 早於主套件）
+       mount: /srv/persona-db-data → /app（bind）
+     容器 /app/api/*.py sha256 == v5.15 tarball 內 api/*.py（server.py = 1ab44330…，逐檔相同）
+     → **執行中的服務程式碼 == 發佈的 v5.15 產物（byte 級）**
+  ⚠️ 初稿誤稱「NODE-C 無 SSH → 無法驗證」：實為 a7 起初只用 Windows 側 OpenSSH key 試過一次（Permission denied），
+     未測 WSL、也未用正確帳號（ubuntu/ubuntu）。改用後即可存取。
+  明細：extra/deployment-fidelity.txt
+
+=== repo 狀態（本輪參照點）===
+  persona-db-release HEAD = 7444123（release: v5.15 — #72 llm_calls／失敗輪欄位、#73 留痕單一化）
+  RELEASE-VERSION（repo）= v5.15
+  ⚠️ **tarball 內 RELEASE-VERSION = v5.14**（未 bump），但 VERSION = v5.15（server.py 讀 VERSION → status 報 v5.15 正確）。
+     #50 斷言比對 RELEASE-VERSION 會誤報 stale —— 這是打包缺陷，非節點問題。
+
+=== 契約（v5.15，取自節點 openapi.json）===
+  openapi.json sha256: 7546f1e459010ce5952620ca368e58ce65a9af23c777b8dc47382e023c696bd4
+  CandidatesResponse 20 欄（v5.14 19 欄 + llm_calls #72）
+  BroadeningAttempt 15 欄（v5.14 13 欄 + parse_error/error_type #72）
+  stop_reason enum 11 值（含 protected_veto / protection_saturated）
+  info.version = 3.2.0（OpenAPI spec 版本，非 release 版本）
+
+=== 儀器 ===
+  upstream sha256: e3d83cd2fe394135a099e30620bb2a8f9f7eea49e3f1b19c4760fe0dd43242df
+  upstream 行數  : 609
+  取得時間(UTC)  : 2026-09-17T03:1xZ（repo HEAD 7444123）
+  runner   sha256: 9cf5e88bfd8cd5401c88d096991b02b4c279c1a6365b2bc152addb3e3112439f  ← **執行時**版本（561 行）
+                    29bc1bfe347dd1a7b1d9e27b9c48f8cee50cb85c12e92b8ecb181e400d302d9b  ← **發布版**（563 行；差 2 處，見下）
+  runner   行數  : 561
+  ※ 執行時 runner sha 於執行前即記錄（9cf5e88b…）。執行後對 runner 動了 **2 處**（皆非請求參數／斷言邏輯）：
+     ① 去識別化：BASE_URL 的真實節點 IP → `[ts-peer-ip]`；
+     ② docker 斷言處的註解更正（遠端 runner 標 N/A，另以節點存取補跑）。
+     ⇒ 發布版 sha = 29bc1bfe…（563 行）。**忠實度證明（data-urlencode diff）在兩版皆成立。**
+
+=== 對上游的改動（全部為「可改」類別；請求參數/順序/斷言邏輯未動）===
+  1. BASE_URL 預設 → http://[ts-peer-ip]:8000（env 可覆寫）
+  2. OUT 自我定位（證據落盤）
+  3. 證據落盤：raw/headers/meta/json 逐案例（case_run helper）
+  4. python 斷言塊的 4 處硬編 localhost → os.environ.get("BASE_URL", ...)（遠端執行需要）
+  5. 移除 jq 自動安裝塊（runner 用 python3 解析，不需 jq；且 sudo apt 會卡住）
+  6. 新增 v5.15 #72 斷言塊（上游 v5.15 新增，round14 runner 沒有）
+  7. #70 A print 更新為 v5.15 形式（含 _rest_vacuous 空轉標示）
+  8. docker 主機層斷言（#50/#55/#60）→ N/A（遠端執行無 docker 存取）
+  忠實度證明：data-urlencode 參數與上游 diff 一致（見 run-test.sh 旁驗證）
+
+=== 執行時行為驗證（harness 單元測試，stub 網路）===
+  meta/harness-stub-server.py + meta/harness-out/（Windows 側跑過，exit=0，證據落盤正確）
+  meta/harness-wsl/（WSL 側跑過，exit=0；raw 因 WSL→Windows localhost 轉發不穩而缺，非 runner 問題）
+  case_run 參數傳遞正確（meta/01_kangshimei.meta 顯示 label/cmd/url_effective 正確）
