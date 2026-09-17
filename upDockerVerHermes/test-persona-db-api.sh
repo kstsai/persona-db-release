@@ -571,6 +571,24 @@ for _lab, _p in _ALL9:
             break
 print(f"  #72 llm_calls 揭露且 ≥ 1+attempts（掃描 {_SCAN}）→ " + ("✅" if not _lc_bad else f"❌ {_lc_bad}"))
 
+# v5.18 (#70 B)：過衝還原的倍率必須是**觸發倍率**（≥ 3×），不得誤報還原後的 ~1.0×
+_ovr_bad = []
+_n_ovr_ratio = 0
+for _lab, _p in _ALL9:
+    _d = load(_p)
+    for _b in (_d.get("broadening_attempts") or []):
+        if _b.get("overshoot_restore"):
+            _n_ovr_ratio += 1
+            _r = _b.get("overshoot_ratio")
+            if not isinstance(_r, (int, float)) or _r < 3:
+                _ovr_bad.append((_lab, _r))
+            for _w in (_d.get("warnings") or []):
+                if "已還原" in _w and "1.0×" in _w:
+                    _ovr_bad.append((_lab, "訊息誤報 1.0×", _w[:60]))
+print(f"  #70 B 過衝還原倍率（{_n_ovr_ratio} 筆）"
+      + ("（**空轉**：本輪無還原事件 → 由上列單元測試驗證）" if _n_ovr_ratio == 0 else "")
+      + " → " + ("✅" if not _ovr_bad else f"❌ {_ovr_bad}"))
+
 print(f"  #70 A 過衝還原事件 {_n_restores} 筆"
       + ("（**空轉**：本輪無事件 → 機制由單元測試雙向驗證（正向 89×／反向 2.5×），自然發生率觀察中）"
          if _rest_vacuous else "")
