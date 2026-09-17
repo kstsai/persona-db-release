@@ -2,7 +2,7 @@
 
 存取方式：ssh ubuntu@[ts-peer-ip]（密碼登入；已裝 WSL 公鑰 → 之後免密）
   ※ 本報告初稿誤稱「NODE-C 無 SSH」——錯。實為：a7 起初只用 Windows 側的 OpenSSH key 試過一次
-    （Permission denied）。改用 ubuntu/ubuntu 後即可存取，部署保真度與 docker 斷言皆可驗證。
+    （Permission denied）。改用節點帳號＋密碼認證後即可存取，部署保真度與 docker 斷言皆可驗證。
 
 節點：NODE-C  Linux 5.15.0-191-generic  up(收集時) 3:02  ubuntu ∈ docker 群組
 容器：

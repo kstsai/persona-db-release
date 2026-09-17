@@ -13,7 +13,7 @@
      容器 /app/api/*.py sha256 == v5.15 tarball 內 api/*.py（server.py = 1ab44330…，逐檔相同）
      → **執行中的服務程式碼 == 發佈的 v5.15 產物（byte 級）**
   ⚠️ 初稿誤稱「NODE-C 無 SSH → 無法驗證」：實為 a7 起初只用 Windows 側 OpenSSH key 試過一次（Permission denied），
-     未測 WSL、也未用正確帳號（ubuntu/ubuntu）。改用後即可存取。
+     未測 WSL、也未用正確帳號（節點帳號＋密碼認證；細節留存內部）。改用後即可存取。
   明細：extra/deployment-fidelity.txt
 
 === repo 狀態（本輪參照點）===

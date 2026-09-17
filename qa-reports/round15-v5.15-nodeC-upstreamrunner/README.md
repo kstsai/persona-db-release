@@ -38,7 +38,7 @@
 | `run-test.sh` | 本輪 runner（**執行時** sha256 `9cf5e88b…`／561 行；**發布版** sha256 `29bc1bfe…`／563 行 — 差異見下註） |
 | `meta/script-provenance.txt` | 環境、部署保真度、儀器 sha、忠實度證明、改動清單 |
 | `meta/harness-stub-server.py` / `meta/harness-out/` | 執行時行為單元測試（stub 網路） |
-| `meta/launch-*.sh` / `meta/run-*-foreground.sh` / `meta/install-key.sh` | 啟動腳本（WSL 背景執行；install-key 裝公鑰免密） |
+| `meta/launch-*.sh` / `meta/run-*-foreground.sh` | 啟動腳本（WSL 背景執行）
 | `extra/assertions.txt` | 斷言輸出（runner 的 57 ✅ / 5 N/A） |
 | `extra/verify-extended.txt` | 延伸自證輸出（210 ✅） |
 | `extra/deployment-fidelity.txt` | **部署保真度 + 補跑的 docker 主機層斷言**（#50/#55/#60） |

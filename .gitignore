@@ -1,1 +1,3 @@
 upDeepSeekHarness/20-secret.yaml
+# QA 報告的 instrument 殘留不得進公開 repo（含公鑰／操作者識別）
+qa-reports/**/meta/install-key.sh

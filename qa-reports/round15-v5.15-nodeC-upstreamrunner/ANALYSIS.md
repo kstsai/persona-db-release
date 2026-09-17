@@ -23,7 +23,8 @@
 > **⚠️ 初稿更正**：本報告初稿寫「NODE-C 無 SSH → 部署保真度無法驗證」——**該敘述有誤**。
 > 完整 FP 事例（根因、更正、可複用教訓）見 **[FALSE-POSITIVE-NODE-C-ssh.md](FALSE-POSITIVE-NODE-C-ssh.md)**。
 > 實情是：a7 起初僅用 Windows 側的 OpenSSH key 試過一次（`Permission denied`），未測 WSL、也未用正確帳號。
-> 改用 `ubuntu/ubuntu` 密碼登入後即可存取，部署保真度與 docker 主機層斷言**皆可驗證**。
+> 改用正確的節點帳號＋**密碼認證**後即可存取（帳號／認證細節留存內部，不進公開報告），
+> 部署保真度與 docker 主機層斷言**皆可驗證**。
 
 **⚠️ 打包缺陷（repo 側，非節點）**：v5.15 tarball **內含**的 `RELEASE-VERSION` = **v5.14**（未 bump），
 但 tarball 內 `VERSION` = v5.15（server.py 讀 `VERSION` → status 報 v5.15 正確）。
