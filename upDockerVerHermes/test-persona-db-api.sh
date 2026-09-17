@@ -607,6 +607,15 @@ else
   echo "  #74 tarball 內版本不一致（VERSION=${_TV} / tarball RELEASE-VERSION=${_TRV} / 預期=${_EXPECT_VER}）→ ❌"
 fi
 
+# ── #77：API 文件版本必須等於部署版本（Swagger 頁首會顯示 info.version）──
+_OA_VER=$(curl -s -m 10 "http://127.0.0.1:8000/openapi.json" 2>/dev/null | python3 -c "import json,sys;print(json.load(sys.stdin)['info']['version'])" 2>/dev/null)
+_DEP_VER=$(sudo docker exec persona-db-api cat /app/VERSION 2>/dev/null | tr -d '[:space:]')
+if [ -n "${_OA_VER}" ] && [ "${_OA_VER}" = "${_DEP_VER}" ]; then
+  echo "  #77 openapi info.version == 部署版本 (${_OA_VER}) → ✅"
+else
+  echo "  #77 openapi info.version (${_OA_VER}) != 部署版本 (${_DEP_VER}) → ❌"
+fi
+
 # #55：失敗 log 需帶例外型別（主機層：確認映像內 code 有該診斷）
 if sudo docker exec persona-db-api grep -q "LLM call failed \[" /app/api/llm.py 2>/dev/null; then
   echo "  #55 映像含例外型別診斷碼（LLM call failed [Type]）→ ✅"
