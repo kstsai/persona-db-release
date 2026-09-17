@@ -590,7 +590,7 @@ print(f"  #70 B 過衝還原倍率（{_n_ovr_ratio} 筆）"
       + " → " + ("✅" if not _ovr_bad else f"❌ {_ovr_bad}"))
 
 print(f"  #70 A 過衝還原事件 {_n_restores} 筆"
-      + ("（**空轉**：本輪無事件 → 機制由單元測試雙向驗證（正向 89×／反向 2.5×），自然發生率觀察中）"
+      + ("（**空轉**：本輪無事件 → 機制由單元測試雙向驗證；自然行使已於 2026-09-17 觀測 1 次，倍率揭露曾誤報 → 已由 v5.18 修正）"
          if _rest_vacuous else "")
       + f"；restored_dims ⊆ protected_dims（掃描 {_SCAN}）→ " + ("✅" if not _rest_bad else f"❌ {_rest_bad}"))
 PYEOF
@@ -640,7 +640,7 @@ print('|'.join([
   str('prompt_prefix' in (d['paths']['/personadb/detail']['get'].get('description') or '')),
 ]))" 2>/dev/null)
 case "${_OA_DESC}" in
-  "True|True|True|True") echo "  v5.17 /docs 內建操作重點（⏱警告／不要重複按／執行時間／detail 說明）→ ✅" ;;
+  "True|True|True|True") echo "  v5.17+ /docs 內建操作重點（⏱警告／不要重複按／執行時間／detail 說明）→ ✅" ;;
   "")                   echo "  v5.17 無法讀取 openapi.json → ⚠️" ;;
   *)                    echo "  v5.17 /docs 內容不完整（${_OA_DESC}）→ ❌" ;;
 esac
