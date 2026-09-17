@@ -1,6 +1,5 @@
-> 產品文件（來源：kstsai/linkEazyCenter wiki `entities/persona-db.md`，更新 2026-09-16）
+> 產品文件（來源：kstsai/linkEazyCenter wiki `entities/persona-db.md`，更新 2026-09-17）
 > 進度看板：GitHub issues（kstsai/persona-db）為 ground truth。
-
 
 # Persona DB — 台灣人口加權合成人設資料庫
 
@@ -20,8 +19,8 @@
 | 性別比 | 男 49.7% / 女 50.3% |
 | Repos | `kstsai/persona-db`（source）+ `kstsai/persona-db-release`（delivery） |
 | API | FastAPI `/personadb/candidates`（LLM 分析→篩選人設） |
-| 版本 | **v5.14**（`VERSION` / `RELEASE-VERSION` / `dim_weights._meta.version` 三者一致，由 `check_dim_weights.py` 守門） |
-| 部署 | **nodeB**（原 lzc-dh1）= **v5.14**（SOP 已驗；`--restart unless-stopped` 已生效）；**nodeA**（原 lzcdh5）= **v5.13**（升版由 kstsai 執行）（Docker containers；nodeA 另含 hermes 容器） |
+| 版本 | **v5.15**（`VERSION` / `RELEASE-VERSION` / `dim_weights._meta.version` 三者一致，由 `check_dim_weights.py` 守門；**出貨 tarball 的一致性另需守門** —— v5.15 tarball 曾因打包順序缺陷內含舊 `RELEASE-VERSION`（見 部署與交付）） |
+| 部署 | **nodeB**（原 lzc-dh1）= **v5.15**、**nodeA**（原 lzcdh5）= **v5.15**（Docker containers；nodeA 另含 hermes 容器）；部署保真度 byte 級驗證通過（容器 `api/*.py` sha256 == 出貨 tarball，2026-09-17） |
 | 主體判準（v5.12 #65 / v5.13 #67） | **機械化＋優先序**（只看題目原文）：① 明確業主標記 → `owner`；② 消費端名詞 → `customer`；③ 否則 `""`（不設限）；結果進**禁用集**並對外揭露 `subject`／`subject_basis`；**覆蓋率 2/9 → 7/9** |
 | 禁用集 | `FORBIDDEN_BY_SUBJECT = {"customer": {"employment_status"}}` —— **套用前剝除**、抑制兜底表該條目、**不得進保護集**（優先序 **`forbidden > protected`**） |
 | 核心維度保護集 | **六來源聯集**（凍結於請求開始，v5.14 起）：domain 關鍵字／分析 `reasoning` 必要性宣告（詞界比對）／分析 `core_dims` 結構化宣告／模型每輪 `protected_dims`（單調累積）／protect-only 語意表；**來源④有上限**（`max(1, min(3, 已套用維度數//2))`，實測值由 `declared_protected_cap` 揭露）；**全部已套用維度受保護 → `protection_saturated`**（停手不稀釋）；**來源⑥ `overshoot_restore`**（v5.14：移除維度致 ≥3× 過衝 → 還原該維度並納入保護集） |
@@ -102,6 +101,7 @@
 | **v5.14** | **#69** `broadening_attempts[].widened_deltas`（放寬**幅度**：`{dim,before,after,added}`）；**#70 A** **過衝回饋**（移除維度致 **≥3× 過衝** → 還原該輪 + 保護集**來源⑥** `overshoot_restore` + warning）+ **#70 B** 自選維度優先序提示（餵回提示、不進保護集）；**#71 A** `_normalize_filters()` 留痕移入**函式本體**、**#71 B** 回應揭露 `declared_protected_cap` | 09/16 |
 | **v5.13** | **#66** 保護集來源④**上限**（`max(1, min(3, 已套用維度數//2))`）＋回應揭露 **`protected_dims_sources`**＋**覆蓋警示**＋新停止原因 **`protection_saturated`**（全部維度受保護 → 不呼叫 LLM、不稀釋）；**#67** 主體判準**優先序擴充**（9 案例可判定率 **2/9 → 7/9**）＋揭露 **`subject_basis`** | 09/16 |
 | — | （安全）出貨 tarball 排除清單補 `.env`／`.env.*`／`*.env`；repo `.env` 停止追蹤並刪除；外洩 key 已撤銷（見 出貨產物必掃密鑰） | 09/16 |
+| **v5.15** | **#72** 失敗路徑**可稽核**（`llm_parse_error`／`llm_empty` 原本完全不留 log、失敗輪未記入 `broadening_attempts` → 修：WARNING ＋ 失敗輪記入 ＋ 回應新增 `llm_calls`）；**#73** `_normalize_filters()` 留痕**單一化**（移入函式本體、呼叫點去重）；出貨：`RELEASE-VERSION` 改在 **tar 之前**寫入 ＋ 版本一致性守門斷言（**#74**）；新增 QA 報告產物掃描 `scan-report-artifacts.sh`（6 類、雙向驗證）；**#60** log 取樣改讀 **raw log 檔**（避 `docker logs` 的 NUL hole 截斷偽陰性） | 09/17 |
 
 ## API 品質演進（v4.3.2→v4.4.3）
 
@@ -320,6 +320,18 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 - **#71 留痕的位置**：外部驗證者**第三次**重複提出同一誤判（`_normalize_filters` 無 log）—— 事實是留痕寫在**呼叫點**。修法＝把留痕**移進函式本體**、呼叫點移除重複訊息、單元測試改為直接呼叫該函式 → 見 留痕的位置決定它會不會被看見
 - **誠實界線**：過衝還原在**部署層尚未自然行使**（SOP 0 筆）；以原素材再跑 2 次（`matched` 22／95）**5.8× 未再現** → 不宣稱「已消失」，只說機制就位且欄位可觀測
 
+## v5.15 — 失敗路徑可稽核、留痕單一化、報告產物掃描（2026-09-17）
+
+第十五輪（**新驗證者 a7**，v5.15，兩台節點）：**59 ✅ / 0 ❌ / 0 ⚠️ / 1 ℹ️**（＋延伸自證 210 ✅）。這是**第一份由 Windows 宿主 agent 產出的報告**，也首次形成**跨 agent 互驗**：a7 追出 `docker logs` 因 log 檔 NUL hole 截斷（90/3103 行）→ `#60` 偽陰性的**機制**（我方只到症狀）；我方補上它存取不到的**部署保真度 byte 級驗證** → 見 跨 agent 互驗迴圈。
+
+- **#72 失敗路徑可稽核**：`llm_parse_error`（LLM 回應無法解析）與 `llm_empty`（空回應）兩條失敗路徑原本**完全不留 log**，且失敗輪未記入 `broadening_attempts`（回應的 `loops` 低估實際呼叫次數）→ 修：兩路徑皆寫 WARNING（含例外型別 ＋ `finish_reason`/`truncated`/`max_tokens` 診斷）＋ 失敗輪記入（`parse_error`／`error_type`）＋ 回應新增 **`llm_calls`**
+- **#73 留痕單一化**：`_normalize_filters()` 的留痕移到**函式本體**、`context`（`final`／`loop N`）併入訊息、刪除呼叫點的重複 log（先前同一次丟棄最多輸出 3 行）→ 見 留痕的位置決定它會不會被看見
+- **行為變更（消費端要改）**：失敗輪**現在會出現在** `broadening_attempts`（先前不存在）→ 以 `len(attempts)` 推估「成功輪數」的消費端需改看 `parse_error=false` 的筆數
+- **出貨準確性**：`RELEASE-VERSION` 改為在 **tar 之前**寫入（原本打包後才寫 → 出貨 tarball 內**落後一版**，v5.15 tarball 內是 v5.14）＋守門斷言（tarball 內 `VERSION == RELEASE-VERSION == tag`，**#74**）
+- **報告產物掃描**：新增 **`scan-report-artifacts.sh`**（機密／弱預設帳密／基礎設施細節／操作者識別／私網 IP／instrument 殘留 6 類、退碼 0/1、可掛 CI），**雙向驗證**（乾淨檔 0 命中 ＋ 修正前外洩檔全命中）→ 見 去識別化的範圍與順序
+- **`#60` 讀法修正**：log 取樣改讀 **raw log 檔**（`docker inspect -f {{.LogPath}}`），避開 `docker logs` 的 NUL hole 截斷偽陰性 → 見 讀法本身也是被驗證的對象
+- **報告的 FP 更正**：a7 自承「節點無 SSH → 部署保真度無法驗證」是誤判（只試了一個環境 ＋ 一種認證；錯誤訊息本身已列出 `password`）→ 進 CORRECTIONS 修正 ⑧ ＋ FP 事例文件 ＋ 修 skill pitfall → 見 已發布報告中的 false positive
+
 ## LLM 模型決策
 
 - **analysis model = deepseek-v4-pro**（reasoning，85-90s/題，需 8000 tokens，5/5 合法 JSON，主動補消費維度）
@@ -367,8 +379,10 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 | （已結案） | security | **#68** 出貨 tarball 含 `.env`（public repo 46 個 tarball 中 45 個含）→ 排除清單修正＋停止追蹤＋刪檔＋重打包驗證；**孤兒憑證已撤銷**（HTTP 401 驗證） |
 | （觀察） | 未開票 | **保護集來源④（模型每輪宣告）單調累積無上限／無檢核** → 過度保護時樣本數崩落（醫美 `matched` 14→3）；需跨輪證據（見 保護集失控） |
 | （已結案） | infra | `persona-db-api` 容器缺 `--restart`（僅 hermes 容器有）→ v5.11 已加 `--restart unless-stopped`；nodeA 下一輪部署帶上 |
+| **#74** | bug（已修待驗） | **打包順序缺陷**：`pack-persona-db-release.sh` 在打包**之後**才寫 `RELEASE-VERSION` → 出貨 tarball 內落後一版（v5.15 tarball 內為 v5.14）。修：改為 tar 之前寫入（`f262bda`）＋守門斷言（tarball 內 `VERSION == RELEASE-VERSION == tag`）→ **下一版驗證生效** |
+| **#76** | security | QA 報告去識別化 commit 在 **public repo** 留下節點**登入憑證**與**公鑰檔**（含操作者識別 `user@host`）→ 已移檔＋新增 `scan-report-artifacts.sh`；**輪替延後**（受影響節點為 disposable QA VM、僅 tailnet 內可達）→ 風險評註已寫進票（公開 git 歷史仍保留該字串） |
 
-> 已關閉：#1–#37、#41–#44、#46–#71（含 v5.4–v5.14 全部修復）；**open：`#38 #39 #40 #64`**（全為 known-limitation）。
+> 已關閉：#1–#37、#41–#44、#46–#71（含 v5.4–v5.15 全部修復）；**open：`#38` `#39` `#40`（known-limitation）、`#64`（known-limitation）、`#74`（已修待下版驗）、`#76`（security，輪替延後）**。
 
 ## 部署環境
 
@@ -421,6 +435,10 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 - 職業 vs 從業身分 — occupation≠employment status（issue #32 根因）
 - v5.2 release 摘要
 - 型別與衍生產物安全 — LLM JSON 純量型別不可信 + derived artifact 新鮮度（#33/#35/#41）
+- 讀法本身也是被驗證的對象 — `docker logs` 的 NUL hole 截斷與偽陰性（#60 讀法修正）
+- 已發布報告中的 false positive — 「我沒試通」不等於「對方沒有」（CORRECTIONS 修正 ⑧）
+- 去識別化的範圍與順序 — 範圍／先修再 commit／雙向掃描（#76）
+- 跨 agent 互驗迴圈 — 新驗證者與舊驗證者的雙向缺口補位
 - 維度語意適用性 — 新維度「可用 ≠ 用對語境」（#34/#36）
 - v5.3 release 摘要
 - persona-db QA 報告系列 — 跨版本實測報告 + 判讀修正制度（v4.9.2→v5.6 七輪）
