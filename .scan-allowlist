@@ -1,0 +1,10 @@
+＃ QA 報告產物掃描白名單（每行一個 regex，比對「整行」）
+＃ 原則：只允許「① 已核准的示範憑證 ② 討論外洩樣式本身的 meta 文件 ③ 掃描工具自身的樣式表」
+＃ 任何新增都必須寫明理由 —— 白名單是審計紀錄，不是消音器。
+upDockerVerHermes/pocDemo\.env:.*          ＃ 受測機示範 key（kstsai 核准、僅用於 demo 容器）
+upDockerVerHermes/scan-report-artifacts\.sh:.*   ＃ 掃描工具自身的樣式定義
+upDockerVerHermes/README\.md:.*            ＃ 掃描類別說明（文件在描述樣式）
+\.gitignore:.*                             ＃ 排除規則本身
+qa-reports/CORRECTIONS\.md:.*              ＃ 更正紀錄：引用外洩樣式以記錄事件
+qa-reports/round15.*FALSE-POSITIVE.*:.*    ＃ FP 事例文件：引用樣式以說明誤判
+qa-reports/round15.*ANALYSIS\.md:.*ubuntu/ubuntu.*  ＃ 該報告的 FP 更正段落（已改寫為描述）

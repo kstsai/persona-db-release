@@ -14,7 +14,19 @@
 # 退出碼：0 = 乾淨、1 = 有命中（CI/pre-commit 可直接用）
 # ============================================================================
 set -u
-TARGET="${1:-qa-reports/}"
+TARGET="${1:-.}"
+EXCL_DIR="--exclude-dir=.git --exclude-dir=node_modules --exclude=.scan-allowlist --exclude=scan-report-artifacts.sh"
+# 允許：文件中的範例位址（含「如」或 placeholder 語法）
+ALLOW_EXAMPLE='如 https://10\.|如 10\.0\.0\.|YOUR_NODE_IP|example'
+# 白名單（審計用；每行「regex＃理由」）
+_ALLOW_FILE="$(dirname "$0")/../.scan-allowlist"
+_ALLOW_PAT=""
+if [ -f "$_ALLOW_FILE" ]; then
+  _ALLOW_PAT=$(grep -v '^＃' "$_ALLOW_FILE" | sed 's/＃.*$//' | sed 's/[[:space:]]*$//' | grep -v '^$' | paste -sd '|' -)
+fi
+_allow() {  # stdin → 過濾白名單
+  if [ -n "${_ALLOW_PAT}" ]; then grep -vE "$_ALLOW_PAT"; else cat; fi
+}   # 預設整個 repo（2026-09-17：洩漏曾在 upDockerVerHermes/ 而非 qa-reports/）
 
 if [ ! -e "$TARGET" ]; then
   echo "目標不存在：$TARGET" >&2
@@ -39,7 +51,7 @@ CRIT_PATTERNS=(
   'passwd[[:space:]]*[=:]'
 )
 for p in "${CRIT_PATTERNS[@]}"; do
-  HITS=$(grep -rInE "$p" "$TARGET" 2>/dev/null | grep -v 'sk-xxx' || true)
+  HITS=$(grep -rInE $EXCL_DIR "$p" "$TARGET" 2>/dev/null | grep -v 'sk-xxx' | grep -vE "$ALLOW_EXAMPLE" | _allow || true)
   if [ -n "$HITS" ]; then
     say "  ❌ [機密] /$p/"
     printf '%s\n' "$HITS" | head -5 | sed 's/^/       /'
@@ -49,7 +61,7 @@ done
 
 # ── 2. 弱預設帳密對（round15 的實際外洩形態：ubuntu/ubuntu）──
 for u in ubuntu root admin pi debian user test; do
-  HITS=$(grep -rInE "\\b${u}/${u}\\b|\\b${u}[[:space:]]*\\|[[:space:]]*密碼|帳號[：:][[:space:]]*${u}" "$TARGET" 2>/dev/null || true)
+  HITS=$(grep -rInE $EXCL_DIR "\\b${u}/${u}\\b|\\b${u}[[:space:]]*\\|[[:space:]]*密碼|帳號[：:][[:space:]]*${u}" "$TARGET" 2>/dev/null | _allow || true)
   if [ -n "$HITS" ]; then
     say "  ❌ [憑證] 疑似弱預設帳密（${u}/${u}）"
     printf '%s\n' "$HITS" | head -3 | sed 's/^/       /'
@@ -59,7 +71,7 @@ done
 
 # ── 3. 登入程序／金鑰安裝痕跡（基礎設施細節）──
 for p in 'ssh-rsa' 'ssh-ed25519' 'authorized_keys' 'install-key' 'ssh-copy-id'; do
-  HITS=$(grep -rIn "$p" "$TARGET" 2>/dev/null || true)
+  HITS=$(grep -rIn $EXCL_DIR "$p" "$TARGET" 2>/dev/null | grep -v "scan-report-artifacts.sh" | _allow || true)
   if [ -n "$HITS" ]; then
     say "  ❌ [基礎設施] /$p/"
     printf '%s\n' "$HITS" | head -3 | sed 's/^/       /'
@@ -68,8 +80,8 @@ for p in 'ssh-rsa' 'ssh-ed25519' 'authorized_keys' 'install-key' 'ssh-copy-id'; 
 done
 
 # ── 4. 操作者本機識別 user@host（排除公開信箱網域）──
-HITS=$(grep -rInE '\b[a-z0-9._-]+@[a-z0-9-]+\b' "$TARGET" 2>/dev/null \
-  | grep -vE 'users\.noreply\.github\.com|example\.(com|org)|@localhost|@users|\.local\b' || true)
+HITS=$(grep -rInE $EXCL_DIR '\b[a-z0-9._-]+@[a-z0-9-]+\b' "$TARGET" 2>/dev/null \
+  | grep -vE 'users\.noreply\.github\.com|example\.(com|org)|@localhost|@users|\.local\b|`user@host`|user@host（' | _allow || true)
 if [ -n "$HITS" ]; then
   say "  ⚠️  [識別] 疑似 user@host（請確認是否為操作者本機識別）"
   printf '%s\n' "$HITS" | head -5 | sed 's/^/       /'
@@ -77,12 +89,31 @@ if [ -n "$HITS" ]; then
 fi
 
 # ── 5. 私網／tailnet IP（節點去識別化）──
-HITS=$(grep -rInE '\b(10|172\.(1[6-9]|2[0-9]|3[01])|192\.168)\.([0-9]{1,3}\.){2}[0-9]{1,3}\b|\b100\.([0-9]{1,3}\.){2}[0-9]{1,3}\b' "$TARGET" 2>/dev/null || true)
+HITS=$(grep -rInE $EXCL_DIR '\b(10|172\.(1[6-9]|2[0-9]|3[01])|192\.168)\.([0-9]{1,3}\.){2}[0-9]{1,3}\b|\b100\.([0-9]{1,3}\.){2}[0-9]{1,3}\b' "$TARGET" 2>/dev/null | grep -vE "$ALLOW_EXAMPLE" || true)
 if [ -n "$HITS" ]; then
   say "  ❌ [識別] 私網／tailnet IP"
   printf '%s\n' "$HITS" | head -5 | sed 's/^/       /'
   FAIL=1
 fi
+
+# ── 5b. 內部節點識別（硬 ❌）──
+for p in 'lzcdh' 'lzc-dh' '"PublicKey": *"nodekey:'; do
+  HITS=$(grep -rIn $EXCL_DIR "$p" "$TARGET" 2>/dev/null | grep -v 'scan-report-artifacts.sh' || true)
+  if [ -n "$HITS" ]; then
+    say "  ❌ [內部識別] /$p/"
+    printf '%s\n' "$HITS" | head -3 | sed 's/^/       /'
+    FAIL=1
+  fi
+done
+
+# ── 5c. 第三方程式名／網路拓樸（⚠️ 需泛化：可保留「私有網路」事實，不保留產品名）──
+for p in 'tailscale' 'tailnet' 'headscale'; do
+  HITS=$(grep -rIn $EXCL_DIR "$p" "$TARGET" 2>/dev/null | grep -v 'scan-report-artifacts.sh' || true)
+  if [ -n "$HITS" ]; then
+    say "  ⚠️  [需泛化] /$p/ —— 建議改寫為「私有網路／內網」，保留方法論事實、去掉產品名"
+    printf '%s\n' "$HITS" | head -3 | sed 's/^/       /'
+  fi
+done
 
 # ── 6. instrument 殘留檔（啟動腳本、裝 key 腳本等）──
 for f in $(find "$TARGET" -type f \( -name 'install-key*' -o -name '*.pem' -o -name 'id_*' -o -name '*password*' \) 2>/dev/null); do

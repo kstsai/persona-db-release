@@ -26,7 +26,7 @@ v5.0 (dimension 20 醫美 + #31 determinism) → v5.1 (dimension 21 債務背貸
 
 ## QA 狀態（2026-09-03 驗證通過 → 定版）
 
-lzcdh1 pre-release SOP 全綠：7 cases LLM verify
+NODE-B pre-release SOP 全綠：7 cases LLM verify
 - **case 7 債務整合（新維度驗收）**：domain=金融/銀行貸款/債務整合，applied_filters 含 `debt_status:[有房貸, 房貸+消費債]`，top 全背債 ✅
 - cases 1-6 無回歸（康是美 52/時尚 88/醫美 11 等；Role QA DIFFERENT）
 - 已知 flakiness：analysis 偶發暫時性失敗（FILTER_FAILED，重跑即過）+ 嚴格 query 需 ~5min（pro analysis + 多輪 broadening）— LLM 非確定性，非 code 問題

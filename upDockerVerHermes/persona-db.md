@@ -1,5 +1,6 @@
 > 產品文件（來源：kstsai/linkEazyCenter wiki `entities/persona-db.md`，更新 2026-09-17）
 > 進度看板：GitHub issues（kstsai/persona-db）為 ground truth。
+> 節點一律以代號表示（`NODE-A`／`NODE-B`／`NODE-C`）；對應關係留存內部。
 
 # Persona DB — 台灣人口加權合成人設資料庫
 
@@ -20,7 +21,7 @@
 | Repos | `kstsai/persona-db`（source）+ `kstsai/persona-db-release`（delivery） |
 | API | FastAPI `/personadb/candidates`（LLM 分析→篩選人設） |
 | 版本 | **v5.15**（`VERSION` / `RELEASE-VERSION` / `dim_weights._meta.version` 三者一致，由 `check_dim_weights.py` 守門；**出貨 tarball 的一致性另需守門** —— v5.15 tarball 曾因打包順序缺陷內含舊 `RELEASE-VERSION`（見 部署與交付）） |
-| 部署 | **nodeB**（原 lzc-dh1）= **v5.15**、**nodeA**（原 lzcdh5）= **v5.15**（Docker containers；nodeA 另含 hermes 容器）；部署保真度 byte 級驗證通過（容器 `api/*.py` sha256 == 出貨 tarball，2026-09-17） |
+| 部署 | **NODE-A** = **v5.17**、**NODE-B** = **v5.17**（Docker containers；NODE-A 另含 hermes 容器）；部署保真度 byte 級驗證通過（容器 `api/*.py` sha256 == 出貨 tarball，2026-09-17） |
 | 主體判準（v5.12 #65 / v5.13 #67） | **機械化＋優先序**（只看題目原文）：① 明確業主標記 → `owner`；② 消費端名詞 → `customer`；③ 否則 `""`（不設限）；結果進**禁用集**並對外揭露 `subject`／`subject_basis`；**覆蓋率 2/9 → 7/9** |
 | 禁用集 | `FORBIDDEN_BY_SUBJECT = {"customer": {"employment_status"}}` —— **套用前剝除**、抑制兜底表該條目、**不得進保護集**（優先序 **`forbidden > protected`**） |
 | 核心維度保護集 | **六來源聯集**（凍結於請求開始，v5.14 起）：domain 關鍵字／分析 `reasoning` 必要性宣告（詞界比對）／分析 `core_dims` 結構化宣告／模型每輪 `protected_dims`（單調累積）／protect-only 語意表；**來源④有上限**（`max(1, min(3, 已套用維度數//2))`，實測值由 `declared_protected_cap` 揭露）；**全部已套用維度受保護 → `protection_saturated`**（停手不稀釋）；**來源⑥ `overshoot_restore`**（v5.14：移除維度致 ≥3× 過衝 → 還原該維度並納入保護集） |
@@ -162,7 +163,7 @@ RFC（issue #24）從審批走到**實作 + release v4.9.0**，4 層全落地（
 
 ## v4.9.1 — pre-release SOP 抓到 2 個 hotfix（2026-08-14）
 
-v4.9.0 落地後跑 pre-release SOP，**LLM verify 在 lzcdh5 抓到 2 個問題**，修掉後 release v4.9.1：
+v4.9.0 落地後跑 pre-release SOP，**LLM verify 在 NODE-A 抓到 2 個問題**，修掉後 release v4.9.1：
 
 1. **#26 deploy env 鏈**（詳見 Deploy Env 鏈）：stale `~/.env` 蓋過 `pocDemo.env` → `LLM_ANALYSIS_MODEL` 空白 → analysis fallback 到 flash（漏消費維度，TESLA 只數 3 維度 vs pro 8-10）。根治：undeploy 清 `~/.env` + deploy script LLM config 只從 pocDemo.env 讀。
 2. **#25 broadening overshoot**：broadening 一次移除多維度 → total 暴增（房仲 4→97）。修：每 loop 只動 1 維度（server.py cap + BROADEN_PROMPT 指令），房仲 total 97→39。
@@ -177,7 +178,7 @@ v4.9.0 落地後跑 pre-release SOP，**LLM verify 在 lzcdh5 抓到 2 個問題
 2. **#28 R-01 未考慮 family_income**：housing_burden 高是**比值**不是「窮」——高所得「高房貸+高消費」是合理組合。修：R-01 只對低所得（<1萬/1-3萬）開火 + 移到 burden 重算後。驗證低所得殘留 0。
 3. **#29 未成年高服飾**（22 筆）：19/22 是高所得（佔比合理，kstsai 確認後不修），但 fs=3 漏洞（R-06/R-07 合併補） + 5 筆 >5000 語意瑕疵要修。0-18 歲 clothing cap 1500~3000（>5000 是成人語意）。驗證低所得高服飾 0、0-18 高服飾 0。
 
-**QA**：lzcdh5 fresh deploy — 5 domains 全綠 + Role QA DIFFERENT（1062 vs 382）+ #27/#29 spot-check 0 殘留。release v4.9.2 後不需再進版。
+**QA**：NODE-A fresh deploy — 5 domains 全綠 + Role QA DIFFERENT（1062 vs 382）+ #27/#29 spot-check 0 殘留。release v4.9.2 後不需再進版。
 
 ## v4.9.3 — R-03/R-08 ordering bug（issue #30，2026-08-27）
 
@@ -185,7 +186,7 @@ v4.9.2 contradiction-hunt 首跑抓到的 10 筆殘留（R-03×3 + R-08×7）確
 
 - `fam1_fi_cap`（L1109）把 fs=1 的 family_income cap 到「1-3萬」，但排在 R-03（L1060）/R-08（L1073）**之後** → 這些 persona 檢查時 fi 還是 3-5萬（不觸發）、cap 完才落 1-3萬 → 重新落入低所得矛盾
 - **修法**：R-03/R-08 純搬移到 `fam1_fi_cap` 之後（與 R-06/R-07 並列），condition 不變、不改機率分布
-- **驗證**：R-03 3→0、R-08 7→0；#27/#28/#29 無回歸；QA 23 規則 ALL PASS；lzcdh1 pre-release SOP + LLM verify 全綠 → 定版
+- **驗證**：R-03 3→0、R-08 7→0；#27/#28/#29 無回歸；QA 23 規則 ALL PASS；NODE-B pre-release SOP + LLM verify 全綠 → 定版
 
 **通用教訓（第三次踩同坑）**：任何會改 `family_income` 的步驟（adjust/floor/cap）都必須在依賴其最終值的 coherence rule **之前**。設計坑詳見 Coherence Rule 設計。
 
@@ -227,13 +228,13 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 - **資料源**：DGBAS 113 年報 表48（就業者教育程度與年齡—按從業身分分，性別×5年帶，驗證誤差 <2 千人）→ rates 存 persona-db repo `references/employment-status-dgbas-2024.md`（wiki 不另存）
 - **實作**：OCC_PROB 7 cells 移除自營（mass 分製造/服務/其他）+ EMP_STATUS_PROB 原生指派 + 收入連動（無酬家屬=無薪、雇主 >8萬 55%、自營兩極化）
 - **結果**：受僱 467 / 自營 53 / 雇主 20 / 無酬 11 / 不適用 518 → 雇主+自營 = **13.2% 就業者**（vs 舊 0.37%，DGBAS ~15%）；occupation=自營 0；QA 23 rules + dim22 專屬規則 ALL PASS
-- **API**：L2 filterable — 攤商/老闆 query → `employment_status:[自營作業者, 雇主]`（lzcdh1 case 8，LLM 自發使用）
+- **API**：L2 filterable — 攤商/老闆 query → `employment_status:[自營作業者, 雇主]`（NODE-B case 8，LLM 自發使用）
 - **表52 鐵證**：主管/經理人員 83% 是**受僱的專業經理人** — 職業「主管」≠ 老闆（同時錯兩邊的映射陷阱）
 - **已知限制**：無酬家屬 2.0% < DGBAS 4%（55-64 女多為家管非就業 — 職業模型限制）
 
 ## v5.3 — 六項修復與三個可靠性教訓（2026-09-12）
 
-**背景**：從檢查 lzcdh5 API 狀況（v4.9.2）出發 → 讀 dsh agent 的 lzc-dh1-1（v5.2）跨版本驗證報告 → 開 8 張 issue（5 bug + 3 known-limitation #38-40）→ 修 6 張 → lzcdh5 fresh-install QA 通過。
+**背景**：從檢查 NODE-A API 狀況（v4.9.2）出發 → 讀 dsh agent 的 NODE-B（v5.2）跨版本驗證報告 → 開 8 張 issue（5 bug + 3 known-limitation #38-40）→ 修 6 張 → NODE-A fresh-install QA 通過。
 
 | # | 症狀 | 修法 |
 |:--|:----|:----|
@@ -244,7 +245,7 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 | #37 | broadening 空轉率 17%→41% | no-op 偵測提前中止 + `no_op`/`filters_changed` 欄位 + 禁止數量預測 |
 | #41 | `dim_weights.json` 自 **v4.3.2** 未重建 → v4.4~v5.2 排序用舊分布 | 重跑 + `scripts/check_dim_weights.py` + **`do-release.sh` Step 0e gate** |
 
-**驗證**：程式級 30/30（決定性）· 本機 e2e 6/6 HTTP 200（0 次 500）· **lzcdh5 fresh-install QA 9/9 案例 200、0 traceback、Role QA DIFFERENT、資料 QA 23 rules ✅**
+**驗證**：程式級 30/30（決定性）· 本機 e2e 6/6 HTTP 200（0 次 500）· **NODE-A fresh-install QA 9/9 案例 200、0 traceback、Role QA DIFFERENT、資料 QA 23 rules ✅**
 
 ### 三個可複用教訓
 
@@ -262,8 +263,8 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 
 | 項目 | 狀態 |
 |:----|:----|
-| lzcdh5（nodeA） | **v5.13**（第九～十三輪驗證在此執行；v5.14 升版由 kstsai 執行） |
-| lzc-dh1（nodeB，lzc-dh1-1） | **v5.14**（SOP 已驗；`--restart unless-stopped` 已生效） |
+| NODE-A | **v5.17**（第九～十五輪驗證執行處） |
+| NODE-B | **v5.17**（SOP 已驗；`--restart unless-stopped` 已生效） |
 | 交付包 | v5.3.1 起含 `concepts/`（設計知識）；`references/` 仍為內部；**v5.13 起打包排除 `.env` 變體並機械掃描密鑰**（出貨產物必掃密鑰） |
 | QA host 慣例 | 由 kstsai 指定進版的那台跑 SOP，**另一台保留 baseline** |
 
@@ -280,7 +281,7 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 
 ### 第十輪 → v5.11 / v5.11.1：驗證方指出的三個缺口，與我方驗收抓回的兩項迴歸
 
-第十輪（dsh，v5.10，nodeA）是**系列首次零瑕疵**：**42 ✅ / 0 ⚠️ / 0 ❌ / 0 N/A**，「自述必要卻被放寬」**9/9 為 0**（第九輪 5/9）→ 保護機制在另一台節點被獨立驗證有效（硬 veto 路徑由**定向探針**逼出）。報告同時指出三個新缺口，我方**逐條獨立複驗**（源碼 + 實測 + 自有資料頻率）後開 #62/#63/#64：
+第十輪（dsh，v5.10，NODE-A）是**系列首次零瑕疵**：**42 ✅ / 0 ⚠️ / 0 ❌ / 0 N/A**，「自述必要卻被放寬」**9/9 為 0**（第九輪 5/9）→ 保護機制在另一台節點被獨立驗證有效（硬 veto 路徑由**定向探針**逼出）。報告同時指出三個新缺口，我方**逐條獨立複驗**（源碼 + 實測 + 自有資料頻率）後開 #62/#63/#64：
 
 - **#62 空值清單**：`applied_filters` 的 `[]` 語意是**排除全部**（實測 `age=[]` → 0 人 vs 未指定 → 129 人），由放寬路徑帶進來（分析路徑會丟棄空清單、放寬路徑不會）→ v5.11 在所有 LLM 產出的 filters 被套用**前**統一正規化（空值清單陷阱）
 - **#63(a) 值集放寬不留痕**：`['女'] → ['女','男']` 這類稀釋長期不收錄、不受 veto 管，我方資料中**至少 15 輪**屬此型 → v5.11 記入 `widened_dims`（值集放寬）
@@ -295,14 +296,14 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 **根因鏈（我方複驗）**：題目 → 分析吐出 `domain = 餐飲／夜市攤商經營` → 命中兜底表 `"攤商" → employment_status`（**比對的是 LLM 自由產生的字串**，程式註解中「案例 08 不會觸發」的假設已失效）→ 同一來源讓該維度進保護集 → **錯誤被鎖死**。重現率 **2/10**，由 domain 措辭控的**雙峰**。
 
 - **v5.12（#65）**：主體判準**機械化** —— 只看題目原文判「題目的標的」（`customer`/`owner`/`""`），結果成為**禁用集**（顧客語意 → 剝除 `employment_status`、抑制兜底表該條目），優先序 **`forbidden > protected`**；回應揭露 `subject`／`warnings`，並留 `Subject gate`／`Normalize filters` 兩行 log
-- **驗證**：單元 10 套件全綠（主體判定 11 案例含 3 反例）；真 LLM e2e 同題 **k=6 → 反轉 0/6**（其中一次實際觸發剝除，≈17% 與 2/10 基準一致）、業主題 must-use 不回歸；nodeB SOP 9 案例 0  / 0 traceback、同質化矩陣無 ≥8/10 配對
+- **驗證**：單元 10 套件全綠（主體判定 11 案例含 3 反例）；真 LLM e2e 同題 **k=6 → 反轉 0/6**（其中一次實際觸發剝除，≈17% 與 2/10 基準一致）、業主題 must-use 不回歸；NODE-B SOP 9 案例 0  / 0 traceback、同質化矩陣無 ≥8/10 配對
 - **方法論產出**：關鍵字兜底陷阱（護欄不能比對 LLM 自由產生的字串）、主體判準機械化（判「題目的標的」不判「題目提到誰」）、名單同質化（語意反轉的指紋指標：語意不同的兩題回傳幾乎同一批人 ⇒ 有一題被理解錯了，已納入出貨斷言）
 - **判讀紀律**：⚠️ 的**數量**不是品質指標 —— 1 個語意反轉 ⚠️ 比 13 個數值 ⚠️ 更重要，要按「錯了會造成什麼後果」排序
 - **另開 #66**：保護集來源④（模型每輪宣告）單調累積無上限 → 樣本數崩落且無警示（v5.13 修）
 
 ## v5.13 — 護欄的上限與飽和、機械判準優先序（2026-09-16）
 
-第十二輪（dsh，v5.12，nodeA）**53 ✅ / 0 ⚠️ / 0 ❌ / 1 ℹ️**：v5.12 的主體護欄在**不同節點、不同操作者**手上 **4/4 成立**（案例 08 `subject='customer'`、未套 `employment_status`、名單為中低消費力消費者），第十一輪的語意反轉未再現。這一輪的收穫多在**流程面**：報告抓出我方兩條出貨斷言的瑕疵（形式過嚴＋**涵蓋不足**，見 自製斷言瑕疵），而 v5.13 把 #66／#67 補上。
+第十二輪（dsh，v5.12，NODE-A）**53 ✅ / 0 ⚠️ / 0 ❌ / 1 ℹ️**：v5.12 的主體護欄在**不同節點、不同操作者**手上 **4/4 成立**（案例 08 `subject='customer'`、未套 `employment_status`、名單為中低消費力消費者），第十一輪的語意反轉未再現。這一輪的收穫多在**流程面**：報告抓出我方兩條出貨斷言的瑕疵（形式過嚴＋**涵蓋不足**，見 自製斷言瑕疵），而 v5.13 把 #66／#67 補上。
 
 - **#66 護欄上限與揭露（A + C 都做）**：保護集來源④（模型每輪宣告）加上上限 `max(1, min(3, 已套用維度數//2))`；回應揭露 `protected_dims_sources`（**來源拆解**，回答「是哪個來源讓保護集變大」）＋覆蓋警示；全部已套用維度都被保護時發新停止原因 **`protection_saturated`**，**不呼叫 LLM、不稀釋** → 見 護欄的上限與飽和
 - **#67 主體判準優先序**：明確業主標記 > 消費端名詞 > 不設限（覆蓋 **2/9 → 7/9**）＋揭露 `subject_basis`；教訓＝機械化時**「優先序」比樣式廣度更關鍵**，同一組樣式換個判斷順序就從救火變制造火警 → 見 機械判準的優先序
@@ -312,7 +313,7 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 
 ## v5.14 — 放寬幅度、過衝回饋、可稽核性（2026-09-16）
 
-第十三輪（dsh，v5.13，nodeA）**57 ✅ / 0 ⚠️ / 0  / 1 ℹ️**：v5.13 的兩個新機制被**逼到真實運作**驗證通過 —— `#66 A` 上限在案例 05 **真的裁掉**模型宣告的保護維度（3 → 2）、`#66 C` `protection_saturated` 由定向探針逼出 2 次、`warnings` 首次有內容（6 筆）、`subject` 覆蓋 8/9。**唯一的 ℹ️ 是斷言自己的問題**，不是產品。
+第十三輪（dsh，v5.13，NODE-A）**57 ✅ / 0 ⚠️ / 0  / 1 ℹ️**：v5.13 的兩個新機制被**逼到真實運作**驗證通過 —— `#66 A` 上限在案例 05 **真的裁掉**模型宣告的保護維度（3 → 2）、`#66 C` `protection_saturated` 由定向探針逼出 2 次、`warnings` 首次有內容（6 筆）、`subject` 覆蓋 8/9。**唯一的 ℹ️ 是斷言自己的問題**，不是產品。
 
 - **自製斷言瑕疵第 10 例（斷言範圍與空轉）**：veto 區塊**只掃 4/9 案例** → ① 斷言輸出「本輪未觸發 veto」**與事實相反**（案例 05 確有 veto 與 rollback）② K/L/M 三條 ✅ 是**空轉**（掃描範圍內沒有事件，不具檢定效力）。我方**系統性盤點**（子集範圍還用在 `#53`／`#56`／`#57`／`#58`／`#62`／`#63`／`#65` **共 7 處**）→ 全改掃 9/9 ＋ 輸出印「掃描 N/M」＋ **空轉防護** → 見 斷言的掃描範圍與空轉
 - **#70 A 過衝回饋**：移除維度造成 **≥3× 過衝**（時尚題 `matched` 5.8×）→ **還原該輪**＋該維度進保護集（來源⑥）＋warning＋attempt 標記；單元雙向驗證（正向 89×／反向 2.5× 不還原）→ 見 過衝回饋（與 護欄的上限與飽和 互補：一個治「放寬過頭」、一個治「護欄過嚴」）
@@ -378,7 +379,7 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 | （觀察中） | — | **`overshoot_restore` 的自然發生率**：機制在單元層雙向驗證（正向 89×／反向 2.5×），但部署層尚未自然行使（SOP 0 筆）→ 後續輪次統計 |
 | （已結案） | security | **#68** 出貨 tarball 含 `.env`（public repo 46 個 tarball 中 45 個含）→ 排除清單修正＋停止追蹤＋刪檔＋重打包驗證；**孤兒憑證已撤銷**（HTTP 401 驗證） |
 | （觀察） | 未開票 | **保護集來源④（模型每輪宣告）單調累積無上限／無檢核** → 過度保護時樣本數崩落（醫美 `matched` 14→3）；需跨輪證據（見 保護集失控） |
-| （已結案） | infra | `persona-db-api` 容器缺 `--restart`（僅 hermes 容器有）→ v5.11 已加 `--restart unless-stopped`；nodeA 下一輪部署帶上 |
+| （已結案） | infra | `persona-db-api` 容器缺 `--restart`（僅 hermes 容器有）→ v5.11 已加 `--restart unless-stopped`；NODE-A 下一輪部署帶上 |
 | **#74** | bug（已修待驗） | **打包順序缺陷**：`pack-persona-db-release.sh` 在打包**之後**才寫 `RELEASE-VERSION` → 出貨 tarball 內落後一版（v5.15 tarball 內為 v5.14）。修：改為 tar 之前寫入（`f262bda`）＋守門斷言（tarball 內 `VERSION == RELEASE-VERSION == tag`）→ **下一版驗證生效** |
 | **#76** | security | QA 報告去識別化 commit 在 **public repo** 留下節點**登入憑證**與**公鑰檔**（含操作者識別 `user@host`）→ 已移檔＋新增 `scan-report-artifacts.sh`；**輪替延後**（受影響節點為 disposable QA VM、僅 tailnet 內可達）→ 風險評註已寫進票（公開 git 歷史仍保留該字串） |
 
@@ -386,8 +387,8 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 
 ## 部署環境
 
-- **lzc-dh1**（100.100.112.108）：deploy host，跑 Pre-release SOP — **nodeB，目前 v5.14**（2026-09-16 實查，SOP 已驗）
-- **lzcdh5**（100.96.79.33）：tailscale 測試 VM — **nodeA，目前 v5.13**（2026-09-16 實查；Docker 部署，另含 hermes 容器；第九～十三輪驗證在此執行）
+- **NODE-B**：deploy host，跑 Pre-release SOP — 目前 **v5.17**（2026-09-17 實查，SOP 已驗）
+- **NODE-A**：測試 VM（私有網路遠端存取）— 目前 **v5.17**（Docker 部署，另含 hermes 容器；第九～十五輪驗證執行處）
 - QA host 慣例：由 kstsai 指定進版的那台跑完整 SOP，另一台保留 baseline
 
 ## QA 系統

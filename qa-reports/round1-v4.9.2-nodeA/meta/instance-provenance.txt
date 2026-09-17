@@ -12,7 +12,7 @@ NODE-A     NODE-A          [account]@  linux    active; direct [public-ip]:52036
 === tailscale status --json (NODE-A node) ===
 {
   "ID": "NODE-A-NODEID",
-  "PublicKey": "nodekey:0b42d4246c249c8f1560be364085ee89e226d54f3c2dc92cf60cb14129204f21",
+  "PublicKey": "[node-public-key]",
   "HostName": "NODE-A",
   "DNSName": "NODE-A.[tailnet].",
   "OS": "linux",
