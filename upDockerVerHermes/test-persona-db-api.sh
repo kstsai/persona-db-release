@@ -611,6 +611,22 @@ else
   echo "  #74 tarball 內版本不一致（VERSION=${_TV} / tarball RELEASE-VERSION=${_TRV} / 預期=${_EXPECT_VER}）→ ❌"
 fi
 
+# ── v5.17：API 文件必須內建操作重點（甲方在 /docs 第一眼看到的內容）──
+_OA_DESC=$(curl -s -m 10 "http://127.0.0.1:8000/openapi.json" 2>/dev/null | python3 -c "
+import json,sys
+d=json.load(sys.stdin)
+print('|'.join([
+  str('1–5 分鐘' in d['info']['description']),
+  str('不要重複按' in d['info']['description']),
+  str('⏱' in (d['paths']['/personadb/candidates']['get'].get('summary') or '')),
+  str('prompt_prefix' in (d['paths']['/personadb/detail']['get'].get('description') or '')),
+]))" 2>/dev/null)
+case "${_OA_DESC}" in
+  "True|True|True|True") echo "  v5.17 /docs 內建操作重點（⏱警告／不要重複按／執行時間／detail 說明）→ ✅" ;;
+  "")                   echo "  v5.17 無法讀取 openapi.json → ⚠️" ;;
+  *)                    echo "  v5.17 /docs 內容不完整（${_OA_DESC}）→ ❌" ;;
+esac
+
 # ── #77：API 文件版本必須等於部署版本（Swagger 頁首會顯示 info.version）──
 _OA_VER=$(curl -s -m 10 "http://127.0.0.1:8000/openapi.json" 2>/dev/null | python3 -c "import json,sys;print(json.load(sys.stdin)['info']['version'])" 2>/dev/null)
 _DEP_VER=$(sudo docker exec persona-db-api cat /app/VERSION 2>/dev/null | tr -d '[:space:]')
