@@ -51,7 +51,7 @@ CRIT_PATTERNS=(
   'passwd[[:space:]]*[=:]'
 )
 for p in "${CRIT_PATTERNS[@]}"; do
-  HITS=$(grep -rInE $EXCL_DIR "$p" "$TARGET" 2>/dev/null | grep -v 'sk-xxx' | grep -vE "$ALLOW_EXAMPLE" | _allow || true)
+  HITS=$(grep -rInE $EXCL_DIR "$p" "$TARGET" 2>/dev/null | grep -v 'sk-xxx' | grep -vE "$ALLOW_EXAMPLE" | _allow || true)   # -i：代號/產品名不分大小寫
   if [ -n "$HITS" ]; then
     say "  ❌ [機密] /$p/"
     printf '%s\n' "$HITS" | head -5 | sed 's/^/       /'
@@ -71,7 +71,7 @@ done
 
 # ── 3. 登入程序／金鑰安裝痕跡（基礎設施細節）──
 for p in 'ssh-rsa' 'ssh-ed25519' 'authorized_keys' 'install-key' 'ssh-copy-id'; do
-  HITS=$(grep -rIn $EXCL_DIR "$p" "$TARGET" 2>/dev/null | grep -v "scan-report-artifacts.sh" | _allow || true)
+  HITS=$(grep -rIni $EXCL_DIR "$p" "$TARGET" 2>/dev/null | grep -v "scan-report-artifacts.sh" | _allow || true)   # -i：代號/產品名不分大小寫
   if [ -n "$HITS" ]; then
     say "  ❌ [基礎設施] /$p/"
     printf '%s\n' "$HITS" | head -3 | sed 's/^/       /'
@@ -98,7 +98,7 @@ fi
 
 # ── 5b. 內部節點識別（硬 ❌）──
 for p in 'lzcdh' 'lzc-dh' '"PublicKey": *"nodekey:'; do
-  HITS=$(grep -rIn $EXCL_DIR "$p" "$TARGET" 2>/dev/null | grep -v 'scan-report-artifacts.sh' || true)
+  HITS=$(grep -rIni $EXCL_DIR "$p" "$TARGET" 2>/dev/null | grep -v 'scan-report-artifacts.sh' || true)   # -i：代號/產品名不分大小寫
   if [ -n "$HITS" ]; then
     say "  ❌ [內部識別] /$p/"
     printf '%s\n' "$HITS" | head -3 | sed 's/^/       /'
@@ -107,8 +107,8 @@ for p in 'lzcdh' 'lzc-dh' '"PublicKey": *"nodekey:'; do
 done
 
 # ── 5c. 第三方程式名／網路拓樸（⚠️ 需泛化：可保留「私有網路」事實，不保留產品名）──
-for p in '私有 mesh VPN' '私有網路' 'headscale'; do
-  HITS=$(grep -rIn $EXCL_DIR "$p" "$TARGET" 2>/dev/null | grep -v 'scan-report-artifacts.sh' || true)
+for p in 'tailscale' 'tailnet' 'headscale'; do
+  HITS=$(grep -rIni $EXCL_DIR "$p" "$TARGET" 2>/dev/null | grep -v 'scan-report-artifacts.sh' || true)   # -i：代號/產品名不分大小寫
   if [ -n "$HITS" ]; then
     say "  ⚠️  [需泛化] /$p/ —— 建議改寫為「私有網路／內網」，保留方法論事實、去掉產品名"
     printf '%s\n' "$HITS" | head -3 | sed 's/^/       /'
