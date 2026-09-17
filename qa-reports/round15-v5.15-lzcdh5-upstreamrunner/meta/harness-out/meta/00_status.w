@@ -1,0 +1,4 @@
+http_code=200
+time_total=0.001948
+size_download=55
+url_effective=http://127.0.0.1:18099/personadb/status

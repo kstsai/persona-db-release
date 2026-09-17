@@ -1,0 +1,1 @@
+{"total_matched": 0, "status": "ok", "returned": 0, "pool_exhausted": false, "applied_filters": {}, "summary": [], "scoring_basis": {}, "broadening_attempts": [], "protected_dims": [], "relaxed_dims": [], "persona_ids": [], "llm_calls": 1, "subject": "", "warnings": [], "subject_basis": "", "protected_dims_sources": {}, "declared_protected_cap": 0, "broadening_stop_reason": ""}

@@ -1,0 +1,73 @@
+# probe start 2026-09-17T03:53:38Z  BASE_URL=http://100.96.79.33:8000  host=bangoo  OUT=/mnt/c/Users/is830/qa-round15-v5.15-lzcdh5-upstreamrunner
+
+=== §6.8 重現性 — case08 小吃攤（顧客語意）r1/3（#65 主體護欄） ===
+
+real	0m52.460s
+user	0m0.015s
+sys	0m0.008s
+  → http_code=200 time_total=52.415816 size_download=8102 url_effective=http://100.96.79.33:8000/personadb/candidates?questions=%E5%B0%8F%E5%90%83%E6%94%A4%E8%80%81%E9%97%86%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E7%BE%A4&role=%E5%A4%9C%E5%B8%82%E5%95%86%E5%9C%88%E5%8D%94%E6%9C%83&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case08 小吃攤（顧客語意）r2/3（#65 主體護欄） ===
+
+real	1m46.163s
+user	0m0.006s
+sys	0m0.012s
+  → http_code=200 time_total=106.143800 size_download=7986 url_effective=http://100.96.79.33:8000/personadb/candidates?questions=%E5%B0%8F%E5%90%83%E6%94%A4%E8%80%81%E9%97%86%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E7%BE%A4&role=%E5%A4%9C%E5%B8%82%E5%95%86%E5%9C%88%E5%8D%94%E6%9C%83&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case08 小吃攤（顧客語意）r3/3（#65 主體護欄） ===
+
+real	2m14.609s
+user	0m0.000s
+sys	0m0.021s
+  → http_code=200 time_total=134.577560 size_download=7806 url_effective=http://100.96.79.33:8000/personadb/candidates?questions=%E5%B0%8F%E5%90%83%E6%94%A4%E8%80%81%E9%97%86%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E7%BE%A4&role=%E5%A4%9C%E5%B8%82%E5%95%86%E5%9C%88%E5%8D%94%E6%9C%83&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case06 醫美 r1/3（保護集／值集放寬幅度 #69） ===
+
+real	4m33.833s
+user	0m0.015s
+sys	0m0.015s
+  → http_code=200 time_total=273.820463 size_download=9597 url_effective=http://100.96.79.33:8000/personadb/candidates?questions=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E8%A1%8C%E9%8A%B7%E4%B8%BB%E7%AE%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case06 醫美 r2/3（保護集／值集放寬幅度 #69） ===
+
+real	4m16.815s
+user	0m0.006s
+sys	0m0.022s
+  → http_code=200 time_total=256.801983 size_download=10043 url_effective=http://100.96.79.33:8000/personadb/candidates?questions=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E8%A1%8C%E9%8A%B7%E4%B8%BB%E7%AE%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.8 重現性 — case06 醫美 r3/3（保護集／值集放寬幅度 #69） ===
+
+real	3m36.215s
+user	0m0.020s
+sys	0m0.006s
+  → http_code=200 time_total=216.198049 size_download=9683 url_effective=http://100.96.79.33:8000/personadb/candidates?questions=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&role=%E9%86%AB%E7%BE%8E%E8%A8%BA%E6%89%80%E8%A1%8C%E9%8A%B7%E4%B8%BB%E7%AE%A1&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.9 t1 不可滿足查詢 top_k=10（題目原文見檔頭） ===
+
+real	3m19.002s
+user	0m0.005s
+sys	0m0.021s
+  → http_code=200 time_total=198.985863 size_download=6748 url_effective=http://100.96.79.33:8000/personadb/candidates?questions=%E6%83%B3%E6%89%BE%E5%90%8C%E6%99%82%E6%93%81%E6%9C%89%E9%81%8A%E8%89%87%E8%88%87%E7%A7%81%E4%BA%BA%E9%A3%9B%E6%A9%9F%E7%9A%8445%E6%AD%B2%E5%96%AE%E8%BA%AB%E5%A5%B3%E6%80%A7%E4%BC%81%E6%A5%AD%E4%B8%BB&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.9 t2 時尚（case03 原參數）→ 逼出 overshoot_restore（#70 A） ===
+
+real	1m41.134s
+user	0m0.015s
+sys	0m0.001s
+  → http_code=200 time_total=101.120900 size_download=7960 url_effective=http://100.96.79.33:8000/personadb/candidates?questions=%E6%99%82%E5%B0%9A%E6%9C%8D%E8%A3%9D%E8%A8%AD%E8%A8%88%E5%B8%AB%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.9 t3 收窄醫美 → protection_saturated（#66 C 回歸） ===
+
+real	0m56.125s
+user	0m0.000s
+sys	0m0.013s
+  → http_code=200 time_total=56.108753 size_download=2420 url_effective=http://100.96.79.33:8000/personadb/candidates?questions=%E6%83%B3%E6%89%BE%E5%81%9A%E9%81%8E%E9%86%AB%E7%BE%8E%E7%99%82%E7%A8%8B%E7%9A%8445%E6%AD%B2%E5%96%AE%E8%BA%AB%E5%A5%B3%E6%80%A7&top_k=10&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+=== §6.9 t4 TESLA top_k=20 → #61 commute_mode 保護 ===
+
+real	1m48.193s
+user	0m0.000s
+sys	0m0.016s
+  → http_code=200 time_total=108.180585 size_download=14554 url_effective=http://100.96.79.33:8000/personadb/candidates?questions=TESLA%E7%9A%84%E7%9B%AE%E6%A8%99%E5%AE%A2%E6%88%B6&top_k=20&opMode=%E5%83%85%E7%AF%A9%E9%81%B8 
+
+# probe end 2026-09-17T04:18:42Z

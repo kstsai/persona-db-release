@@ -1,0 +1,50 @@
+=== 目標（本輪不做版本比對；此處僅記錄受測環境）===
+  node: lzcdh5 (tkhand@linux)   tailscale 100.96.79.33
+  連線: relay hkg（非直連）；BANGOO → lzcdh5 走 tailscale，延遲 ~0.8–3.3s
+  部署型態: 未知（無 SSH 存取 → 無法從節點內驗證 docker/容器）
+  服務版本: v5.15（/personadb/status 自報；1069 personas；LLM deepseek-v4-flash responsive）
+  執行位置: **BANGOO 的 WSL2 Ubuntu**（BASE_URL=http://100.96.79.33:8000，遠端）
+  收集時間(UTC): 2026-09-17T03:2x:xxZ
+
+=== 部署保真度（「裝的到底是什麼」的機械證明）===
+  ⚠️ 本輪**無法**從節點內驗證（lzcdh5 無 SSH：publickey/password 皆拒）。
+     無法確認執行中 code == v5.15 tarball（無 docker exec / 無 /app/VERSION 讀取）。
+     僅能確認：status 自報 v5.15、openapi.json 含 #72 欄位（llm_calls、parse_error/error_type）。
+  → 部署保真度列為**本輪限制**（§5）。
+
+=== repo 狀態（本輪參照點）===
+  persona-db-release HEAD = 7444123（release: v5.15 — #72 llm_calls／失敗輪欄位、#73 留痕單一化）
+  RELEASE-VERSION（repo）= v5.15
+  ⚠️ **tarball 內 RELEASE-VERSION = v5.14**（未 bump），但 VERSION = v5.15（server.py 讀 VERSION → status 報 v5.15 正確）。
+     #50 斷言比對 RELEASE-VERSION 會誤報 stale —— 這是打包缺陷，非節點問題。
+
+=== 契約（v5.15，取自節點 openapi.json）===
+  openapi.json sha256: 7546f1e459010ce5952620ca368e58ce65a9af23c777b8dc47382e023c696bd4
+  CandidatesResponse 20 欄（v5.14 19 欄 + llm_calls #72）
+  BroadeningAttempt 15 欄（v5.14 13 欄 + parse_error/error_type #72）
+  stop_reason enum 11 值（含 protected_veto / protection_saturated）
+  info.version = 3.2.0（OpenAPI spec 版本，非 release 版本）
+
+=== 儀器 ===
+  upstream sha256: e3d83cd2fe394135a099e30620bb2a8f9f7eea49e3f1b19c4760fe0dd43242df
+  upstream 行數  : 609
+  取得時間(UTC)  : 2026-09-17T03:1xZ（repo HEAD 7444123）
+  runner   sha256: 9cf5e88bfd8cd5401c88d096991b02b4c279c1a6365b2bc152addb3e3112439f
+  runner   行數  : 561
+  ※ runner sha 於執行前即記錄（9cf5e88b…）
+
+=== 對上游的改動（全部為「可改」類別；請求參數/順序/斷言邏輯未動）===
+  1. BASE_URL 預設 → http://100.96.79.33:8000（env 可覆寫）
+  2. OUT 自我定位（證據落盤）
+  3. 證據落盤：raw/headers/meta/json 逐案例（case_run helper）
+  4. python 斷言塊的 4 處硬編 localhost → os.environ.get("BASE_URL", ...)（遠端執行需要）
+  5. 移除 jq 自動安裝塊（runner 用 python3 解析，不需 jq；且 sudo apt 會卡住）
+  6. 新增 v5.15 #72 斷言塊（上游 v5.15 新增，round14 runner 沒有）
+  7. #70 A print 更新為 v5.15 形式（含 _rest_vacuous 空轉標示）
+  8. docker 主機層斷言（#50/#55/#60）→ N/A（遠端執行無 docker 存取）
+  忠實度證明：data-urlencode 參數與上游 diff 一致（見 run-test.sh 旁驗證）
+
+=== 執行時行為驗證（harness 單元測試，stub 網路）===
+  meta/harness-stub-server.py + meta/harness-out/（Windows 側跑過，exit=0，證據落盤正確）
+  meta/harness-wsl/（WSL 側跑過，exit=0；raw 因 WSL→Windows localhost 轉發不穩而缺，非 runner 問題）
+  case_run 參數傳遞正確（meta/01_kangshimei.meta 顯示 label/cmd/url_effective 正確）

@@ -1,0 +1,243 @@
+  ℹ️  由契約推導 protected_dims_sources 的來源鍵（6 個）：['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']
+
+── 01_kangshimei (top_k=3) ──  protected=['clothing_spend']
+  ✅ [A] returned=3 len(summary)=3
+  ✅ [B] pool_exhausted=False vs (matched=47 < top_k=3)=False
+  ✅ [C] total_matched=47 >= returned=3
+  ✅ [D] applied_filters ⊆ dims_counted（漏=無）
+  ✅ [E] relaxed ∩ applied = ∅
+  ✅ [F] 0 輪：編號連續且不減 ([])
+  ✅ [I] relaxed=0 維 ≤ loop=0（#25）
+  ✅ [J] protected ∩ relaxed = ∅（#57 核心不變式）
+  ✅ [O] #58 status='ok' matched=47（matched==0 ⇔ status!=ok）
+  ✅ [AF] #71 來源鍵齊全（實際=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']）
+  ✅ [AD] #71 B len(model_declared)=0 ≤ cap=3
+  ✅ [Y1] #66 A 來源鍵齊全（契約要求=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']；實際=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']；多出的鍵不算錯）
+  ✅ [Y2] #66 A 來源聯集 ⊆ protected_dims（超出=無）
+  ✅ [Y3] #66 A protected_dims 無未解釋項（未解釋=無；允許差集=['employment_status']（subject 禁用））
+  ✅ [AA] #67 B subject='customer' ⟺ subject_basis=非空
+  ✅ [AB] #67 B basis 樣式與 subject 一致（basis='命中「康是美的目標客戶」（顧客語意樣式）' 應含 '顧客語意樣式'）
+  ✅ [V0] #65 subject='customer' 為合法值
+  ✅ [V] #65 subject='customer' ⇒ applied_filters 不得含 employment_status（實際=['age', 'sex', 'income', 'family_income', 'clothing_spend', 'commute_mode', 'housing_cost']）
+  ✅ [R] #62 applied_filters 無空值清單（空＝無）
+  ℹ️  [S][T] 本案例無 widened_dims 留痕
+
+── 02_tesla (top_k=3) ──  protected=['commute_mode', 'family_income', 'income']
+  ✅ [A] returned=3 len(summary)=3
+  ✅ [B] pool_exhausted=False vs (matched=27 < top_k=3)=False
+  ✅ [C] total_matched=27 >= returned=3
+  ✅ [D] applied_filters ⊆ dims_counted（漏=無）
+  ✅ [E] relaxed ∩ applied = ∅
+  ✅ [F] 2 輪：編號連續且不減 (['9→19', '19→27'])
+  ✅ [G] loop1 no_op=False 而 9→19
+  ✅ [H] loop1 overshoot=False 而 after=19
+  ✅ [G] loop2 no_op=False 而 19→27
+  ✅ [H] loop2 overshoot=False 而 after=27
+  ✅ [I] relaxed=2 維 ≤ loop=2（#25）
+  ✅ [J] protected ∩ relaxed = ∅（#57 核心不變式）
+  ✅ [O] #58 status='ok' matched=27（matched==0 ⇔ status!=ok）
+  ✅ [AF] #71 來源鍵齊全（實際=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']）
+  ✅ [AD] #71 B len(model_declared)=3 ≤ cap=3
+  ✅ [Y1] #66 A 來源鍵齊全（契約要求=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']；實際=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']；多出的鍵不算錯）
+  ✅ [Y2] #66 A 來源聯集 ⊆ protected_dims（超出=無）
+  ✅ [Y3] #66 A protected_dims 無未解釋項（未解釋=無；允許差集=['employment_status']（subject 禁用））
+  ✅ [AA] #67 B subject='customer' ⟺ subject_basis=非空
+  ✅ [AB] #67 B basis 樣式與 subject 一致（basis='命中「TESLA的目標客戶」（顧客語意樣式）' 應含 '顧客語意樣式'）
+  ✅ [V0] #65 subject='customer' 為合法值
+  ✅ [V] #65 subject='customer' ⇒ applied_filters 不得含 employment_status（實際=['income', 'family_income', 'clothing_spend', 'commute_mode', 'housing_cost']）
+  ℹ️  [W] warnings=["protected_dims 覆蓋 3/5 個已套用維度（['commute_mode', 'family_income', 'income']）→ 放寬空間受限（#66 A）"]
+  ✅ [R] #62 applied_filters 無空值清單（空＝無）
+  ℹ️  [S][T] 本案例無 widened_dims 留痕
+
+── 03_fashion (top_k=10) ──  protected=['clothing_spend']
+  ✅ [A] returned=10 len(summary)=10
+  ✅ [B] pool_exhausted=False vs (matched=25 < top_k=10)=False
+  ✅ [C] total_matched=25 >= returned=10
+  ✅ [D] applied_filters ⊆ dims_counted（漏=無）
+  ✅ [E] relaxed ∩ applied = ∅
+  ✅ [F] 1 輪：編號連續且不減 (['18→25'])
+  ✅ [G] loop1 no_op=False 而 18→25
+  ✅ [H] loop1 overshoot=False 而 after=25
+  ✅ [I] relaxed=1 維 ≤ loop=1（#25）
+  ✅ [J] protected ∩ relaxed = ∅（#57 核心不變式）
+  ✅ [O] #58 status='ok' matched=25（matched==0 ⇔ status!=ok）
+  ✅ [AF] #71 來源鍵齊全（實際=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']）
+  ✅ [AD] #71 B len(model_declared)=1 ≤ cap=2
+  ✅ [Y1] #66 A 來源鍵齊全（契約要求=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']；實際=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']；多出的鍵不算錯）
+  ✅ [Y2] #66 A 來源聯集 ⊆ protected_dims（超出=無）
+  ✅ [Y3] #66 A protected_dims 無未解釋項（未解釋=無；允許差集=['employment_status']（subject 禁用））
+  ✅ [AA] #67 B subject='customer' ⟺ subject_basis=非空
+  ✅ [AB] #67 B basis 樣式與 subject 一致（basis='命中「時尚服裝設計師的目標客戶」（顧客語意樣式）' 應含 '顧客語意樣式'）
+  ✅ [V0] #65 subject='customer' 為合法值
+  ✅ [V] #65 subject='customer' ⇒ applied_filters 不得含 employment_status（實際=['age', 'clothing_spend', 'family_income', 'hobby']）
+  ✅ [R] #62 applied_filters 無空值清單（空＝無）
+  ℹ️  [S][T] 本案例無 widened_dims 留痕
+
+── 04_role_fangzhong (top_k=5) ──  protected=['family_income', 'housing_burden']
+  ✅ [A] returned=5 len(summary)=5
+  ✅ [B] pool_exhausted=False vs (matched=33 < top_k=5)=False
+  ✅ [C] total_matched=33 >= returned=5
+  ✅ [D] applied_filters ⊆ dims_counted（漏=無）
+  ✅ [E] relaxed ∩ applied = ∅
+  ✅ [F] 2 輪：編號連續且不減 (['5→17', '17→33'])
+  ✅ [G] loop1 no_op=False 而 5→17
+  ✅ [H] loop1 overshoot=False 而 after=17
+  ✅ [G] loop2 no_op=False 而 17→33
+  ✅ [H] loop2 overshoot=False 而 after=33
+  ✅ [I] relaxed=2 維 ≤ loop=2（#25）
+  ✅ [J] protected ∩ relaxed = ∅（#57 核心不變式）
+  ✅ [O] #58 status='ok' matched=33（matched==0 ⇔ status!=ok）
+  ✅ [AF] #71 來源鍵齊全（實際=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']）
+  ✅ [AD] #71 B len(model_declared)=2 ≤ cap=3
+  ✅ [Y1] #66 A 來源鍵齊全（契約要求=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']；實際=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']；多出的鍵不算錯）
+  ✅ [Y2] #66 A 來源聯集 ⊆ protected_dims（超出=無）
+  ✅ [Y3] #66 A protected_dims 無未解釋項（未解釋=無；允許差集=∅（subject 禁用））
+  ✅ [AA] #67 B subject='' ⟺ subject_basis=空
+  ✅ [V0] #65 subject='' 為合法值
+  ✅ [R] #62 applied_filters 無空值清單（空＝無）
+  ℹ️  [S][T] 本案例無 widened_dims 留痕
+
+── 05_role_banker (top_k=5) ──  protected=['debt_status', 'family_income', 'housing_burden']
+  ✅ [A] returned=5 len(summary)=5
+  ✅ [B] pool_exhausted=False vs (matched=8 < top_k=5)=False
+  ✅ [C] total_matched=8 >= returned=5
+  ✅ [D] applied_filters ⊆ dims_counted（漏=無）
+  ✅ [E] relaxed ∩ applied = ∅
+  ✅ [F] 3 輪：編號連續且不減 (['5→7', '7→8', '8→8'])
+  ✅ [G] loop1 no_op=False 而 5→7
+  ✅ [H] loop1 overshoot=False 而 after=7
+  ✅ [G] loop2 no_op=False 而 7→8
+  ✅ [H] loop2 overshoot=False 而 after=8
+  ✅ [G] loop3 no_op=True 而 8→8
+  ✅ [H] loop3 overshoot=False 而 after=8
+  ✅ [L] loop3 protected_veto=True ⇒ vetoed_dims=['family_income']（須非空）
+  ✅ [K] loop3 vetoed_dims=['family_income'] ⊆ protected_dims=['debt_status', 'family_income', 'housing_burden']
+  ✅ [M] loop3 veto 是 rollback（no_op=True filters_changed=False 8→8）
+  ✅ [I] relaxed=0 維 ≤ loop=3（#25）
+  ✅ [J] protected ∩ relaxed = ∅（#57 核心不變式）
+  ✅ [N] stop_reason=protected_veto 有憑據（硬veto=True 被動拒絕=True）
+  ✅ [O] #58 status='ok' matched=8（matched==0 ⇔ status!=ok）
+  ✅ [AF] #71 來源鍵齊全（實際=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']）
+  ✅ [AD] #71 B len(model_declared)=3 ≤ cap=3
+  ✅ [AC1] #69 loop1 widened_dims=['age'] == deltas 的 dim 集合
+  ✅ [AC2] #69 loop1 age: before⊂after 且 added=after-before（added=['25-34', '65+']）
+  ✅ [AC1] #69 loop2 widened_dims=['income'] == deltas 的 dim 集合
+  ✅ [AC2] #69 loop2 income: before⊂after 且 added=after-before（added=['3-8萬']）
+  ✅ [Y1] #66 A 來源鍵齊全（契約要求=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']；實際=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']；多出的鍵不算錯）
+  ✅ [Y2] #66 A 來源聯集 ⊆ protected_dims（超出=無）
+  ✅ [Y3] #66 A protected_dims 無未解釋項（未解釋=無；允許差集=∅（subject 禁用））
+  ✅ [AA] #67 B subject='' ⟺ subject_basis=空
+  ✅ [V0] #65 subject='' 為合法值
+  ℹ️  [W] warnings=["模型宣告的保護維度已達上限 3 → 忽略 ['income']（#66 A）", "protected_dims 覆蓋 3/6 個已套用維度（['debt_status', 'family_income', 'housing_burden']）→ 放寬空間受限（#66 A）"]
+  ✅ [R] #62 applied_filters 無空值清單（空＝無）
+  ✅ [S] widened_dims=['age', 'income'] ⊆ applied ∪ relaxed
+  ✅ [T] 無「既放寬又被移除」的維度
+
+── 06_aesthetic (top_k=10) ──  protected=['aesthetic_procedure']
+  ✅ [A] returned=10 len(summary)=10
+  ✅ [B] pool_exhausted=False vs (matched=16 < top_k=10)=False
+  ✅ [C] total_matched=16 >= returned=10
+  ✅ [D] applied_filters ⊆ dims_counted（漏=無）
+  ✅ [E] relaxed ∩ applied = ∅
+  ✅ [F] 0 輪：編號連續且不減 ([])
+  ✅ [I] relaxed=0 維 ≤ loop=0（#25）
+  ✅ [J] protected ∩ relaxed = ∅（#57 核心不變式）
+  ✅ [Z] #66 C protection_saturated ⇒ 已套用維度全受保護（applied=['aesthetic_procedure'] ⊆ protected=['aesthetic_procedure']）
+  ✅ [O] #58 status='ok' matched=16（matched==0 ⇔ status!=ok）
+  ✅ [AF] #71 來源鍵齊全（實際=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']）
+  ✅ [AD] #71 B len(model_declared)=0 ≤ cap=1
+  ✅ [Y1] #66 A 來源鍵齊全（契約要求=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']；實際=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']；多出的鍵不算錯）
+  ✅ [Y2] #66 A 來源聯集 ⊆ protected_dims（超出=無）
+  ✅ [Y3] #66 A protected_dims 無未解釋項（未解釋=無；允許差集=['employment_status']（subject 禁用））
+  ✅ [AA] #67 B subject='customer' ⟺ subject_basis=非空
+  ✅ [AB] #67 B basis 樣式與 subject 一致（basis='命中「醫美診所的目標客戶」（顧客語意樣式）' 應含 '顧客語意樣式'）
+  ✅ [V0] #65 subject='customer' 為合法值
+  ✅ [V] #65 subject='customer' ⇒ applied_filters 不得含 employment_status（實際=['aesthetic_procedure']）
+  ℹ️  [W] warnings=["protected_dims 覆蓋 1/1 個已套用維度（['aesthetic_procedure']）→ 放寬空間受限（#66 A）"]
+  ✅ [R] #62 applied_filters 無空值清單（空＝無）
+  ℹ️  [S][T] 本案例無 widened_dims 留痕
+
+── 07_debt (top_k=10) ──  protected=['debt_status']
+  ✅ [A] returned=10 len(summary)=10
+  ✅ [B] pool_exhausted=False vs (matched=30 < top_k=10)=False
+  ✅ [C] total_matched=30 >= returned=10
+  ✅ [D] applied_filters ⊆ dims_counted（漏=無）
+  ✅ [E] relaxed ∩ applied = ∅
+  ✅ [F] 3 輪：編號連續且不減 (['6→8', '8→9', '9→30'])
+  ✅ [G] loop1 no_op=False 而 6→8
+  ✅ [H] loop1 overshoot=False 而 after=8
+  ✅ [G] loop2 no_op=False 而 8→9
+  ✅ [H] loop2 overshoot=False 而 after=9
+  ✅ [G] loop3 no_op=False 而 9→30
+  ✅ [H] loop3 overshoot=False 而 after=30
+  ✅ [I] relaxed=0 維 ≤ loop=3（#25）
+  ✅ [J] protected ∩ relaxed = ∅（#57 核心不變式）
+  ✅ [O] #58 status='ok' matched=30（matched==0 ⇔ status!=ok）
+  ✅ [AF] #71 來源鍵齊全（實際=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']）
+  ✅ [AD] #71 B len(model_declared)=1 ≤ cap=2
+  ✅ [AC1] #69 loop1 widened_dims=['age'] == deltas 的 dim 集合
+  ✅ [AC2] #69 loop1 age: before⊂after 且 added=after-before（added=['19-24', '25-34', '65+']）
+  ✅ [AC1] #69 loop2 widened_dims=['income'] == deltas 的 dim 集合
+  ✅ [AC2] #69 loop2 income: before⊂after 且 added=after-before（added=['3-8萬']）
+  ✅ [AC1] #69 loop3 widened_dims=['family_income'] == deltas 的 dim 集合
+  ✅ [AC2] #69 loop3 family_income: before⊂after 且 added=after-before（added=['3-5萬', '5-7萬', '7萬']）
+  ✅ [Y1] #66 A 來源鍵齊全（契約要求=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']；實際=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']；多出的鍵不算錯）
+  ✅ [Y2] #66 A 來源聯集 ⊆ protected_dims（超出=無）
+  ✅ [Y3] #66 A protected_dims 無未解釋項（未解釋=無；允許差集=['employment_status']（subject 禁用））
+  ✅ [AA] #67 B subject='customer' ⟺ subject_basis=非空
+  ✅ [AB] #67 B basis 樣式與 subject 一致（basis='命中「債務整合貸款方案的目標客戶」（顧客語意樣式）' 應含 '顧客語意樣式'）
+  ✅ [V0] #65 subject='customer' 為合法值
+  ✅ [V] #65 subject='customer' ⇒ applied_filters 不得含 employment_status（實際=['age', 'income', 'debt_status', 'housing_burden', 'family_income']）
+  ✅ [R] #62 applied_filters 無空值清單（空＝無）
+  ✅ [S] widened_dims=['age', 'family_income', 'income'] ⊆ applied ∪ relaxed
+  ✅ [T] 無「既放寬又被移除」的維度
+
+── 08_boss (top_k=10) ──  protected=[]
+  ✅ [A] returned=10 len(summary)=10
+  ✅ [B] pool_exhausted=False vs (matched=64 < top_k=10)=False
+  ✅ [C] total_matched=64 >= returned=10
+  ✅ [D] applied_filters ⊆ dims_counted（漏=無）
+  ✅ [E] relaxed ∩ applied = ∅
+  ✅ [F] 0 輪：編號連續且不減 ([])
+  ✅ [I] relaxed=0 維 ≤ loop=0（#25）
+  ✅ [J] protected ∩ relaxed = ∅（#57 核心不變式）
+  ✅ [O] #58 status='ok' matched=64（matched==0 ⇔ status!=ok）
+  ✅ [AF] #71 來源鍵齊全（實際=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']）
+  ✅ [AD] #71 B len(model_declared)=0 ≤ cap=3
+  ✅ [Y1] #66 A 來源鍵齊全（契約要求=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']；實際=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']；多出的鍵不算錯）
+  ✅ [Y2] #66 A 來源聯集 ⊆ protected_dims（超出=無）
+  ✅ [Y3] #66 A protected_dims 無未解釋項（未解釋=無；允許差集=['employment_status']（subject 禁用））
+  ✅ [AA] #67 B subject='customer' ⟺ subject_basis=非空
+  ✅ [AB] #67 B basis 樣式與 subject 一致（basis='命中「小吃攤老闆的目標客群」（顧客語意樣式）' 應含 '顧客語意樣式'）
+  ✅ [V0] #65 subject='customer' 為合法值
+  ✅ [V] #65 subject='customer' ⇒ applied_filters 不得含 employment_status（實際=['age', 'occupation', 'income', 'family_income', 'family_size', 'clothing_spend', 'housing_cost']）
+  ✅ [R] #62 applied_filters 無空值清單（空＝無）
+  ℹ️  [S][T] 本案例無 widened_dims 留痕
+
+── 09_owner (top_k=10) ──  protected=['employment_status']
+  ✅ [A] returned=10 len(summary)=10
+  ✅ [B] pool_exhausted=False vs (matched=61 < top_k=10)=False
+  ✅ [C] total_matched=61 >= returned=10
+  ✅ [D] applied_filters ⊆ dims_counted（漏=無）
+  ✅ [E] relaxed ∩ applied = ∅
+  ✅ [F] 0 輪：編號連續且不減 ([])
+  ✅ [I] relaxed=0 維 ≤ loop=0（#25）
+  ✅ [J] protected ∩ relaxed = ∅（#57 核心不變式）
+  ✅ [O] #58 status='ok' matched=61（matched==0 ⇔ status!=ok）
+  ✅ [AF] #71 來源鍵齊全（實際=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']）
+  ✅ [AD] #71 B len(model_declared)=0 ≤ cap=1
+  ✅ [Y1] #66 A 來源鍵齊全（契約要求=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']；實際=['analysis_declared', 'domain', 'model_declared', 'overshoot_restore', 'protect_only', 'reasoning']；多出的鍵不算錯）
+  ✅ [Y2] #66 A 來源聯集 ⊆ protected_dims（超出=無）
+  ✅ [Y3] #66 A protected_dims 無未解釋項（未解釋=無；允許差集=∅（subject 禁用））
+  ✅ [AA] #67 B subject='owner' ⟺ subject_basis=非空
+  ✅ [AB] #67 B basis 樣式與 subject 一致（basis='命中「企業主或工廠老闆本人」（業主語意樣式）' 應含 '業主語意樣式'）
+  ✅ [V0] #65 subject='owner' 為合法值
+  ✅ [X] #65 subject='owner' ⇒ 應套 employment_status（實際=['雇主', '自營作業者']）
+  ℹ️  [W] warnings=["protected_dims 覆蓋 1/2 個已套用維度（['employment_status']）→ 放寬空間受限（#66 A）"]
+  ✅ [R] #62 applied_filters 無空值清單（空＝無）
+  ℹ️  [S][T] 本案例無 widened_dims 留痕
+  ✅ [P] 回應出的 stop_reason 皆在 OpenAPI enum 內（非 enum=無）；本輪出現=['protected_veto', 'protection_saturated', 'target_reached']
+  ℹ️  [Q] enum 仍宣告 ['', 'budget_limit'] —— 依部署碼常數/分類順序，這兩個值不可達（源碼層推論，非回應可觀測）
+
+========================================================================
+✅ 全部延伸自證檢查通過（含 #57 核心維度保護的四項額外不變式 K/L/M/N）
