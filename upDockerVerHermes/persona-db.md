@@ -381,7 +381,7 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 | （觀察） | 未開票 | **保護集來源④（模型每輪宣告）單調累積無上限／無檢核** → 過度保護時樣本數崩落（醫美 `matched` 14→3）；需跨輪證據（見 保護集失控） |
 | （已結案） | infra | `persona-db-api` 容器缺 `--restart`（僅 hermes 容器有）→ v5.11 已加 `--restart unless-stopped`；NODE-A 下一輪部署帶上 |
 | **#74** | bug（已修待驗） | **打包順序缺陷**：`pack-persona-db-release.sh` 在打包**之後**才寫 `RELEASE-VERSION` → 出貨 tarball 內落後一版（v5.15 tarball 內為 v5.14）。修：改為 tar 之前寫入（`f262bda`）＋守門斷言（tarball 內 `VERSION == RELEASE-VERSION == tag`）→ **下一版驗證生效** |
-| **#76** | security | QA 報告去識別化 commit 在 **public repo** 留下節點**登入憑證**與**公鑰檔**（含操作者識別 `user@host`）→ 已移檔＋新增 `scan-report-artifacts.sh`；**輪替延後**（受影響節點為 disposable QA VM、僅 tailnet 內可達）→ 風險評註已寫進票（公開 git 歷史仍保留該字串） |
+| **#76** | security | QA 報告去識別化 commit 在 **public repo** 留下節點**登入憑證**與**公鑰檔**（含操作者識別 `user@host`）→ 已移檔＋新增 `scan-report-artifacts.sh`；**輪替延後**（受影響節點為 disposable QA VM、僅 私有網路 內可達）→ 風險評註已寫進票（公開 git 歷史仍保留該字串） |
 
 > 已關閉：#1–#37、#41–#44、#46–#71（含 v5.4–v5.15 全部修復）；**open：`#38` `#39` `#40`（known-limitation）、`#64`（known-limitation）、`#74`（已修待下版驗）、`#76`（security，輪替延後）**。
 

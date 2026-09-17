@@ -6,8 +6,8 @@
 | 原本 | 發布版代號 |
 |:--|:--|
 | 節點主機名 | `NODE-A` |
-| 節點 tailscale IP | `NODE-A` |
-| tailscale node ID | `NODE-A-NODEID` |
+| 節點 私有 mesh VPN IP | `NODE-A` |
+| 私有 mesh VPN node ID | `NODE-A-NODEID` |
 
 **只替換了這三類字串，其餘逐字未動**（含所有 `raw/*.body`、`headers/`、`meta/*.meta`、
 `probe/` 的證據檔）。

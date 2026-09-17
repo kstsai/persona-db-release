@@ -1,11 +1,11 @@
 === 目標（本輪不做版本比對；此處僅記錄受測環境）===
-  node: NODE-A (NODE-A)   tailscale NODE-A   node ID NODE-A-NODEID
+  node: NODE-A (NODE-A)   私有 mesh VPN NODE-A   node ID NODE-A-NODEID
   部署型態: Docker（upDockerVerHermes：hermes + persona-db-api 兩個容器）
   RELEASE-VERSION: v5.8（repo == 節點）
   服務版本: v5.8（/personadb/status）
   執行位置: **節點本機**（BASE_URL=http://localhost:8000，與 upstream 原生環境相同）
             ← 本輪刻意改在節點上跑：① #50/#55 主機層斷言可原生執行（sudo 免密碼）
-              ② 移除我的 Mac ↔ 節點的 tailnet 網路變數（延遲解讀更乾淨）
+              ② 移除我的 Mac ↔ 節點的 私有網路 網路變數（延遲解讀更乾淨）
   收集時間(UTC): 2026-09-14T12:28:13Z
 
 === 部署保真度（「裝的到底是什麼」的機械證明）===

@@ -28,7 +28,7 @@ round1-v4.9.2-nodeA/
 │   ├── run-partial-foreground.log ←   Run A（逾時中斷的那次）完整 stdout
 │   ├── original-test-persona-db-api.sh  ← 上游原始腳本存檔
 │   ├── script-provenance.txt      ←   上下游腳本 + runner 的 sha256
-│   └── instance-provenance.txt    ←   tailscale 節點資訊
+│   └── instance-provenance.txt    ←   私有 mesh VPN 節點資訊
 │
 ├── runA/                          ← 【關鍵證據】Run A 的 body（被 Run B 覆蓋前的完整保留）
 │   ├── 01_kangshimei.{body,json}  … 03_fashion.{body,json}
@@ -125,8 +125,8 @@ OUT=/tmp/NODE-A-rerun bash run-test.sh
 | 項目 | 值 |
 |------|-----|
 | 執行者 | DSH agent（macOS 14/x） |
-| 目標 | `NODE-A` = tailscale `NODE-A`，`NODE-A.[tailnet]` |
-| 連線 | tailscale 直連 `[public-ip]:52036`（非 relay），`Online: true` |
+| 目標 | `NODE-A` = 私有 mesh VPN `NODE-A`，`NODE-A.[private-net]` |
+| 連線 | 私有 mesh VPN 直連 `[public-ip]:52036`（非 relay），`Online: true` |
 | 服務 | uvicorn / Persona DB **v4.9.2**，1069 personas |
 | LLM 後端 | `deepseek-v4-flash` → `https://api.deepseek.com` |
 | 時間 | 2026-09-12 02:25:5x – 02:45:07 UTC（≈19.4 分鐘） |

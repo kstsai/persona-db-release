@@ -134,7 +134,7 @@ echo
 echo "======================================================"
 echo " OK dsh setup 完成"
 echo "    本機:         http://localhost:$NODE_PORT_HOST/"
-echo "    遠端 (tailnet/內網):  https://${BROWSER_ACCESS_IP}/"
+echo "    遠端 (私有網路/內網):  https://${BROWSER_ACCESS_IP}/"
 echo "                  （自簽憑證首次按「進階 -> 繼續前往」）"
 echo "    UI 填 key:    Settings -> Models -> DeepSeek（或已由 secret 注入）"
 echo "======================================================"

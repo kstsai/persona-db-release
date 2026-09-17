@@ -1,6 +1,6 @@
 # persona-db API 實測分析報告 — `NODE-A`（Docker 部署）**v5.6**
 
-**受測目標**：`NODE-A`（`[tailnet]`，node ID `NODE-A-NODEID`）
+**受測目標**：`NODE-A`（`[private-net]`，node ID `NODE-A-NODEID`）
 **部署型態**：Docker（`upDockerVerHermes` compose：`hermes` + `persona-db-api` 容器）；`RELEASE-VERSION` = **v5.6**
 **服務版本**：**v5.6**（`/personadb/status` 確認，與 user 所述一致）
 **執行時間**：2026-09-14 02:25 – 02:53 UTC

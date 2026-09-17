@@ -140,7 +140,7 @@ systemctl --user daemon-reload && systemctl --user enable --now dsh-portforward
 # 4. 起 nginx pod
 kubectl apply -f 50-nginx-reverse-proxy.yaml
 
-# 5. 瀏覽器開（tailnet/內網）
+# 5. 瀏覽器開（私有網路/內網）
 # https://<YOUR_NODE_IP>/
 # （自簽憑證首次按「進階 → 繼續前往」）
 ```

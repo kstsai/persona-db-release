@@ -1,6 +1,6 @@
 # dsh nginx reverse proxy pod — HTTPS (self-signed) + HTTP redirect
 # =============================================================
-# 架構：Client → tailnet/網路 → <K8S_NODE_IP>:443 (HTTPS, nginx pod hostNetwork)
+# 架構：Client → 私有網路/網路 → <K8S_NODE_IP>:443 (HTTPS, nginx pod hostNetwork)
 #         └──► 127.0.0.1:<PF_PORT> (port-forward svc) → dsh pod
 #   <PF_PORT> 預設 13082（見 README 的 port-forward systemd service 設定）
 #

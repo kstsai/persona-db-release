@@ -41,7 +41,7 @@
 | 12 | **v5.12** | `NODE-A` | **upstream 480 行** | 2026-09-15 | **`38009c9f310177aa`** | **10/10** | 斷言 **53✅/0⚠️/0❌/1ℹ️**；**`#65` 主體護欄把第十一輪的雙峰收斂**（顧客語意 4/4 判為 `customer`，同質化矩陣無 ≥8/10 配對）；**但採納的 S/T 不變式用過嚴形式**（本輪 `05_role_banker` 為新假警報實例，且它只掃 4/9 案例所以沒報錯）；`warnings`／剝除路徑**未被行使**；**不與前版本比對** |
 | 13 | **v5.13** | `NODE-A` | **upstream 529 行** | 2026-09-16 | **`d1da178b88a1b521`** | **10/10** | 斷言 **57✅/0⚠️/0❌/1ℹ️**；**第十二輪兩條建議已落實並驗證**（S' 形式＋涵蓋 9/9、`subject_basis`＋覆蓋擴到 8/9）；**`warnings` 缺口閉合**（6 筆有內容、`#66 A` 上限真的會裁）；**定向探針逼出新增的 `protection_saturated`**；**但 `#57` veto 區塊仍只掃 4/9**（→「未觸發 veto」與事實相反、K/L/M 空轉）；案例 03 出現 5.8× overshoot；**不與前版本比對** |
 | 14 | **v5.14** | `NODE-A` | **upstream 579 行** | 2026-09-16 | **`43f94b66d1d3d433`** | **10/10** | 斷言 **60✅/0⚠️/0❌/0ℹ️**；**第十三輪兩條教訓完全落實**（案例級不變式統一掃 **9/9** 並印出掃描數、**空轉的 ✅ 主動標示**）；新增三欄中 **`widened_deltas`／`declared_protected_cap` 已驗證有效**、S' 正確形式在真實資料上成立（案例 04 正確判為資訊性而非假 ❌）；**但兩個設計的定向探針都沒逼出目標分支 ⇒ `overshoot_restore`(#70 A) 至今從未被行使**；首見 `llm_parse_error` 且**伺服器端完全不留 log**；**不與前版本比對** |
-| 15 | **v5.15** | `NODE-C` | **upstream 609 行** | 2026-09-17 | **`7546f1e459010ce5`** | **10/10** | 斷言 **59✅/0⚠️/0❌/0ℹ️**（含**補跑** docker 主機層 #50/#55/#60）；**首次遠端執行**（非節點本機，BASE_URL 走 tailnet）；案例 05 硬 `protected_veto`、案例 06 `protection_saturated` **皆在主套件內觸發**（無需定向探針補）；**發現出貨 tarball 內 `RELEASE-VERSION` 未 bump**（→ a3 加 **#74 守門斷言**、pack 腳本修 `f262bda`）；**#60 的 `docker logs` 取樣被 log 檔 NUL hole 截斷而誤報 0**（改讀 raw log 檔即證實 root logger 生效）；**部署保真度 byte 級驗證通過**（容器 `api/*.py` == tarball）；**初稿誤稱「NODE-C 無 SSH」→ false positive**（見該包 `FALSE-POSITIVE-NODE-C-ssh.md`）；**不與前版本比對** |
+| 15 | **v5.15** | `NODE-C` | **upstream 609 行** | 2026-09-17 | **`7546f1e459010ce5`** | **10/10** | 斷言 **59✅/0⚠️/0❌/0ℹ️**（含**補跑** docker 主機層 #50/#55/#60）；**首次遠端執行**（非節點本機，BASE_URL 走 私有網路）；案例 05 硬 `protected_veto`、案例 06 `protection_saturated` **皆在主套件內觸發**（無需定向探針補）；**發現出貨 tarball 內 `RELEASE-VERSION` 未 bump**（→ a3 加 **#74 守門斷言**、pack 腳本修 `f262bda`）；**#60 的 `docker logs` 取樣被 log 檔 NUL hole 截斷而誤報 0**（改讀 raw log 檔即證實 root logger 生效）；**部署保真度 byte 級驗證通過**（容器 `api/*.py` == tarball）；**初稿誤稱「NODE-C 無 SSH」→ false positive**（見該包 `FALSE-POSITIVE-NODE-C-ssh.md`）；**不與前版本比對** |
 
 **共 12 種不同契約**（v5.2 與 v5.3.1 同 hash ⇒ 純行為 patch；第 5–7 輪同為 `aafe647f`；v5.7 `cb5b0808`；v5.8 `6d3c1508`；v5.10 `588772d4`；v5.11.1 `c17043b4`；v5.12 `38009c9f`；v5.13 `d1da178b`；v5.14 `43f94b66`；**v5.15 為新契約 `7546f1e4`**）。
 
@@ -93,12 +93,12 @@ qa-reports/
 |:---|:---|
 | `NODE-A` | 第一／三／七／九／十／十一／十二／十三／十四輪的受測節點 |
 | `NODE-B` | 第二／四／五／六／八輪的受測節點（同一節點多次就地升級）|
-| `NODE-B-host` | `NODE-B` 的節點內部 HostName（與 tailnet 名不同）|
+| `NODE-B-host` | `NODE-B` 的節點內部 HostName（與 私有網路 名不同）|
 | `NODE-C` | **第十五輪**的受測節點（`NODE-C` 為唯一**遠端執行**的輪次；以 `ubuntu` 帳號＋**密碼認證**存取，非 OpenSSH key）|
-| `[public-ip]` / `[ts-ipv6]` / `[ts-peer-ip]` | 已遮蔽的位址 |
-| `[tailnet]` | tailnet DNS 後綴 |
-| `[account]` | tailnet 帳號 |
-| `[peer]` | 其他 fleet 成員（僅出現於 `tailscale status` 傾印）|
+| `[public-ip]` / `[ts-ipv6]` / `[peer-ip]` | 已遮蔽的位址 |
+| `[private-net]` | 私有網路 DNS 後綴 |
+| `[account]` | 私有網路 帳號 |
+| `[peer]` | 其他 fleet 成員（僅出現於 `私有 mesh VPN status` 傾印）|
 
 **代號 ↔ 實際節點的對照表不在此 repo**（否則去識別化即失效）；需查對照請見內部私有 repo。
 遮蔽同時施加於**證據檔**（`meta/*.meta` 的 `url_effective`、`meta/instance-provenance.txt`、`run.log`），
@@ -565,7 +565,7 @@ OUT=/tmp/rerun BASE_URL=http://<node>:8000 bash run-test.sh
 - **去識別化只涵蓋現行檔案，不含 git 歷史**：`git log -p` 仍可取得遮蔽前的原始值。
   **✅ 已決策（2026-09-14，kstsai）：接受此狀態，不改寫歷史。**
   理由：歷史改寫（`git filter-repo` + force push）為破壞性操作，且風險大於此處的暴露程度
-  （遮蔽目標主要為 tailscale CGNAT 位址，需 tailnet 成員身分才有意義）。
+  （遮蔽目標主要為 私有 mesh VPN CGNAT 位址，需 私有網路 成員身分才有意義）。
   → **請勿再提議或執行歷史改寫**；若日後確實需要，須由 kstsai 明確指示。
 - 遮蔽後 `meta/*.meta` 的 `url_effective` 以代號呈現，**與當時實際請求字串已不同**；
   重跑請以各包 `README.md` 的 `BASE_URL` 參數帶入實際位址。

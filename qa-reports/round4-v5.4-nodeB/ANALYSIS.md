@@ -1,6 +1,6 @@
 # persona-db API 實測分析報告 — v5.4（第四輪，四版對照）
 
-**受測目標**：tailscale node **`NODE-B`** (`NODE-B`)，Persona DB **v5.4**（本節點先前為 v5.2）
+**受測目標**：私有 mesh VPN node **`NODE-B`** (`NODE-B`)，Persona DB **v5.4**（本節點先前為 v5.2）
 **測試腳本**：`kstsai/persona-db-release` → `upDockerVerHermes/test-persona-db-api.sh`
 **執行時間**：2026-09-12 11:39 – 12:07 UTC（約 28 分鐘）
 **執行結果**：**8 × HTTP 200 + 1 × HTTP 503**（見 §3，本系列首度出現伺服器錯誤）

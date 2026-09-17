@@ -88,10 +88,10 @@ if [ -n "$HITS" ]; then
   FAIL=1
 fi
 
-# ── 5. 私網／tailnet IP（節點去識別化）──
+# ── 5. 私網／私有網路 IP（節點去識別化）──
 HITS=$(grep -rInE $EXCL_DIR '\b(10|172\.(1[6-9]|2[0-9]|3[01])|192\.168)\.([0-9]{1,3}\.){2}[0-9]{1,3}\b|\b100\.([0-9]{1,3}\.){2}[0-9]{1,3}\b' "$TARGET" 2>/dev/null | grep -vE "$ALLOW_EXAMPLE" || true)
 if [ -n "$HITS" ]; then
-  say "  ❌ [識別] 私網／tailnet IP"
+  say "  ❌ [識別] 私網／私有網路 IP"
   printf '%s\n' "$HITS" | head -5 | sed 's/^/       /'
   FAIL=1
 fi
@@ -107,7 +107,7 @@ for p in 'lzcdh' 'lzc-dh' '"PublicKey": *"nodekey:'; do
 done
 
 # ── 5c. 第三方程式名／網路拓樸（⚠️ 需泛化：可保留「私有網路」事實，不保留產品名）──
-for p in 'tailscale' 'tailnet' 'headscale'; do
+for p in '私有 mesh VPN' '私有網路' 'headscale'; do
   HITS=$(grep -rIn $EXCL_DIR "$p" "$TARGET" 2>/dev/null | grep -v 'scan-report-artifacts.sh' || true)
   if [ -n "$HITS" ]; then
     say "  ⚠️  [需泛化] /$p/ —— 建議改寫為「私有網路／內網」，保留方法論事實、去掉產品名"

@@ -26,7 +26,7 @@ round2-v5.2-nodeB/
 │                                       屬**預期行為**（status 回傳 text/plain，非 JSON）
 ├── headers/                       ← 每案例完整 HTTP response headers
 ├── meta/                          ← 每案例 http_code / 耗時 / bytes / curl 參數 + provenance
-│   ├── instance-provenance.txt    ←   tailscale 節點資訊（含 NODE-B vs NODE-A）
+│   ├── instance-provenance.txt    ←   私有 mesh VPN 節點資訊（含 NODE-B vs NODE-A）
 │   ├── original-test-persona-db-api.sh  ← 上游原始腳本存檔
 │   └── script-provenance.txt      ←   （見下方「雜湊」）
 │
@@ -150,9 +150,9 @@ OUT=/tmp/dh1-rerun BASE_URL=http://NODE-B:8000 bash run-test.sh
 
 | 項目 | 值 |
 |------|-----|
-| 目標 | `NODE-B` = tailscale `NODE-B`，`NODE-B.[tailnet]` |
-| **節點內部 HostName** | **`NODE-B-host`**（與 tailnet 名 `NODE-B` 不同 —— 用 `HostName` 查 `tailscale status --json` 會查不到，須用 `DNSName`） |
-| 連線 | tailscale 直連 `[public-ip]:21888`（非 relay），`Online: true` |
+| 目標 | `NODE-B` = 私有 mesh VPN `NODE-B`，`NODE-B.[private-net]` |
+| **節點內部 HostName** | **`NODE-B-host`**（與 私有網路 名 `NODE-B` 不同 —— 用 `HostName` 查 `私有 mesh VPN status --json` 會查不到，須用 `DNSName`） |
+| 連線 | 私有 mesh VPN 直連 `[public-ip]:21888`（非 relay），`Online: true` |
 | 服務 | uvicorn / Persona DB **v5.2**，1069 personas（persona 檔 1.72 MB） |
 | LLM 後端 | `deepseek-v4-flash` → `https://api.deepseek.com` |
 | 其他 | Python 3.11.15；Name diversity 172 unique (16.1%)，max repeat 16×；32 Python files |

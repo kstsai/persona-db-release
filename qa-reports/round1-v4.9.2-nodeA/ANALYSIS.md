@@ -1,6 +1,6 @@
 # persona-db API 實測分析報告 — NODE-A
 
-**受測 instance**：`NODE-A` (tailscale `NODE-A`, `NODE-A.[tailnet]`)
+**受測 instance**：`NODE-A` (私有 mesh VPN `NODE-A`, `NODE-A.[private-net]`)
 **測試腳本**：`kstsai/persona-db-release` → `upDockerVerHermes/test-persona-db-api.sh`
 **執行時間**：2026-09-12 02:25:5x → 02:45:07 UTC（≈ 19.4 分鐘）
 **執行結果**：9 / 9 請求 HTTP 200，0 錯誤
@@ -72,7 +72,7 @@ Supporting Artifices: 30 Python files
 QA Results: [R21] 0 violations / [R22] 0 violations / [R23] 0 violations
 ```
 
-Server header：`uvicorn`。Tailscale：`active; direct [public-ip]:52036`（直連，非 relay），`Online: true`，node key 到期 `2027-01-20`。
+Server header：`uvicorn`。私有 mesh VPN：`active; direct [public-ip]:52036`（直連，非 relay），`Online: true`，node key 到期 `2027-01-20`。
 **注意**：`Name diversity` 顯示 171 unique / 1069 = 16.0%，`max repeat 15×` — 名字重複率高（案例 06/07 中 `雅芳` 出現於 797 與 802 兩個不同 persona）。此為已揭露的既有現象，非本次測試失敗。
 
 ---
@@ -329,7 +329,7 @@ Server header：`uvicorn`。Tailscale：`active; direct [public-ip]:52036`（直
 
 | 項目 | 原腳本 | 本次 | 理由 |
 |------|--------|------|------|
-| Base URL | `http://localhost:8000` | `http://NODE-A:8000`（tailscale） | 從 DSH host 遠端執行 |
+| Base URL | `http://localhost:8000` | `http://NODE-A:8000`（私有 mesh VPN） | 從 DSH host 遠端執行 |
 | 證據保存 | 僅 case 3 存 `fashion_closing.json`，其餘只印出 | 每案例存 `raw/*.body` + `headers/*.headers` + `meta/*.meta` | 完整保存以利人類複驗 |
 | Role QA diff check | `python3` 讀 `/tmp/role_fangzhong.json` | `jq` 讀 `json/04_*.json` | 避免依賴 `/tmp` 路徑；等效 |
 | 請求參數 | — | **完全不變**（同樣的 URL、參數、順序、`opMode=僅篩選`） | 保持忠實 |

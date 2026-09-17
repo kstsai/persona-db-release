@@ -1,6 +1,6 @@
 # persona-db API 實測分析報告 — `NODE-B` **v5.7**
 
-**受測目標**：`NODE-B`（`[tailnet]`，node ID `NODE-B-NODEID`）
+**受測目標**：`NODE-B`（`[private-net]`，node ID `NODE-B-NODEID`）
 **服務版本**：**v5.7**（`/personadb/status` 確認，與 user 所述一致）
 **執行時間**：2026-09-14 06:36 – 07:10 UTC（**34.5 分鐘**）
 **執行結果**：**10 / 10 HTTP 200**（零錯誤）
@@ -18,7 +18,7 @@
 
 | 項目 | 值 |
 |:---|:---|
-| 節點 | `NODE-B`，`[tailnet]`，node ID `NODE-B-NODEID` |
+| 節點 | `NODE-B`，`[private-net]`，node ID `NODE-B-NODEID` |
 | **node ID 與 v5.2 / v5.4 / v5.6 三輪相同** | ⇒ **同一節點第 4 次就地升級** |
 | 服務版本 | **v5.7** |
 | Personas | 1069（1.72 MB）；Name diversity 172（16.1%）、max repeat 16× |

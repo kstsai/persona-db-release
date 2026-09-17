@@ -3,7 +3,7 @@
 **結論摘要**：9/9 請求 HTTP 200。v5.3.1 是**修正版** —— `dims_counted` 計分宣告不一致由 **33 → 11 → 0**、可重現性變異由 **62× 收斂到 1.3×**、broadening 空轉率 **41% → 10%**。但 `employment_status` **連續三版從未被套用**。
 **完整分析**：見 **`ANALYSIS.md`**。
 
-> ⚠️ **目標節點澄清**：任務指定的 `NODE-A-1` **不存在**於 tailnet；既有的 `NODE-A` (`NODE-A`) 已被**就地升級** v4.9.2 → v5.3.1（同 node ID `NODE-A-NODEID`）。因版本精確相符，本次以該節點為目標。詳見 `ANALYSIS.md` §0。
+> ⚠️ **目標節點澄清**：任務指定的 `NODE-A-1` **不存在**於 私有網路；既有的 `NODE-A` (`NODE-A`) 已被**就地升級** v4.9.2 → v5.3.1（同 node ID `NODE-A-NODEID`）。因版本精確相符，本次以該節點為目標。詳見 `ANALYSIS.md` §0。
 
 ---
 
@@ -39,7 +39,7 @@ round3-v5.3.1-nodeA/
 │                                       屬**預期行為**（status 回傳 text/plain）
 ├── headers/                       ← 每案例完整 HTTP response headers
 ├── meta/                          ← 每案例 http_code / 耗時 / bytes / curl 參數
-│   ├── instance-provenance.txt    ←   tailscale 節點 +「NODE-A-1 不存在」證據
+│   ├── instance-provenance.txt    ←   私有 mesh VPN 節點 +「NODE-A-1 不存在」證據
 │   ├── original-test-persona-db-api.sh
 │   └── script-provenance.txt      ←   三輪 runner sha256 對照
 │
@@ -158,7 +158,7 @@ OUT=/tmp/v531-rerun BASE_URL=http://NODE-A:8000 bash run-test.sh
 
 | 項目 | 值 |
 |------|-----|
-| 目標 | `NODE-A` = tailscale `NODE-A`，`NODE-A.[tailnet]`（node ID `NODE-A-NODEID`） |
+| 目標 | `NODE-A` = 私有 mesh VPN `NODE-A`，`NODE-A.[private-net]`（node ID `NODE-A-NODEID`） |
 | 連線 | **DERP relay `hkg`**（`CurAddr` 空；v4.9.2 那輪為直連 —— 可能影響延遲比較） |
 | 服務 | uvicorn / Persona DB **v5.3.1**，1069 personas（1.72 MB） |
 | LLM 後端 | `deepseek-v4-flash` → `https://api.deepseek.com` |

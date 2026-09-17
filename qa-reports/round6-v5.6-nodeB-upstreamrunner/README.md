@@ -147,4 +147,4 @@ OUT=/tmp/r6 BASE_URL=http://<node>:8000 bash run-test.sh   # 上游原版需 hos
 - **#50 未執行**，明確標 N/A；**未執行 ≠ 通過**。
 - 本輪**未做重現性探針**（目的為驗收斷言）。變異幅度可從 ANALYSIS §3 的
   「同版本 E↔F 對照」觀察（案例 03 差異 5×）。
-- 本目錄節點資訊已去識別化（`NODE-B` / `[public-ip]` / `[tailnet]`）；代號對照不在本 repo。
+- 本目錄節點資訊已去識別化（`NODE-B` / `[public-ip]` / `[private-net]`）；代號對照不在本 repo。

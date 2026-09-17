@@ -152,4 +152,4 @@ OUT=/tmp/r7 BASE_URL=http://<node>:8000 bash run-test.sh
   可出現在 `dims_counted` 卻不在 `summary`，故無法從回應驗證（見 `ANALYSIS.md` §4.5）。
 - **一條假設被自己的探針推翻**：案例 4 的 top-3 全在低房價層級，一度像是「居住地影響計分」；
   以 `top_k=30` 取更大池子後**否證**（不同 tier 分數完全相同）。若沒做該探針，就會誤報一條不存在的缺陷。
-- 本目錄節點資訊以代號呈現（`NODE-A` / `[tailnet]`）；代號對照不在本 repo。
+- 本目錄節點資訊以代號呈現（`NODE-A` / `[private-net]`）；代號對照不在本 repo。

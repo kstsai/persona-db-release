@@ -1,21 +1,21 @@
 === collected_at_utc: 2026-09-12T02:50:15Z ===
 
-=== tailscale status (full) ===
-Warning: client version "1.98.8-t05a918293" != tailscaled server version "1.102.1-t8ebe8f7c3-gda6192991"
-[ts-peer-ip]   [peer]            [account]@  macOS    -                                                       
-[ts-peer-ip]     [peer]          [account]@  windows  -                                                       
-[ts-peer-ip]    [peer]  [account]@  linux    -                                                       
+=== 私有 mesh VPN status (full) ===
+Warning: client version "1.98.8-t05a918293" != 私有 mesh VPNd server version "1.102.1-t8ebe8f7c3-gda6192991"
+[peer-ip]   [peer]            [account]@  macOS    -                                                       
+[peer-ip]     [peer]          [account]@  windows  -                                                       
+[peer-ip]    [peer]  [account]@  linux    -                                                       
 NODE-B  NODE-B       [account]@  linux    active; direct [public-ip]:21888, tx 9988 rx 29660     
-[ts-peer-ip]    [peer]             [account]@  linux    active; direct [public-ip]:41641, tx 218696 rx 859840  
+[peer-ip]    [peer]             [account]@  linux    active; direct [public-ip]:41641, tx 218696 rx 859840  
 NODE-A     NODE-A          [account]@  linux    idle, tx 48328 rx 133464                                
 
 === node detail: NODE-B (matched by DNSName) ===
 {
   "ID": "NODE-B-NODEID",
   "HostName": "NODE-B-host",
-  "DNSName": "NODE-B.[tailnet].",
+  "DNSName": "NODE-B.[private-net].",
   "OS": "linux",
-  "TailscaleIPs": [
+  "私有 mesh VPNIPs": [
     "NODE-B",
     "[ts-ipv6]"
   ],
@@ -32,8 +32,8 @@ NODE-A     NODE-A          [account]@  linux    idle, tx 48328 rx 133464
 === compare: NODE-A node detail ===
 {
   "HostName": "NODE-A",
-  "DNSName": "NODE-A.[tailnet].",
-  "TailscaleIPs": [
+  "DNSName": "NODE-A.[private-net].",
+  "私有 mesh VPNIPs": [
     "NODE-A",
     "[ts-ipv6]"
   ],

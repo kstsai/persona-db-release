@@ -1,7 +1,7 @@
 # Persona DB API 實測分析報告 — v5.15（NODE-C）
 
 > 單版本 API 驗證與回應分析（依 `api-version-sweep` skill v2.8.0）。**本輪不做跨版本比對**。
-> 受測節點：**NODE-C**（tailscale `[ts-peer-ip]`，[account]@linux）。執行位置：BANGOO 的 WSL2（遠端）。
+> 受測節點：**NODE-C**（私有 mesh VPN `[peer-ip]`，[account]@linux）。執行位置：BANGOO 的 WSL2（遠端）。
 
 ---
 
@@ -9,13 +9,13 @@
 
 | 項目 | 值 |
 |:--|:--|
-| 節點 | NODE-C（tailscale `[ts-peer-ip]`，linux；`ubuntu` 帳號，密碼登入） |
-| 連線 | tailscale **relay hkg**（非直連）；BANGOO→NODE-C 延遲 ~0.8–3.3s |
+| 節點 | NODE-C（私有 mesh VPN `[peer-ip]`，linux；`ubuntu` 帳號，密碼登入） |
+| 連線 | 私有 mesh VPN **relay hkg**（非直連）；BANGOO→NODE-C 延遲 ~0.8–3.3s |
 | 服務版本 | **v5.15**（`/personadb/status` 自報；1069 personas；LLM deepseek-v4-flash responsive） |
-| 執行位置 | BANGOO WSL2 Ubuntu（`BASE_URL=http://[ts-peer-ip]:8000`，遠端） |
+| 執行位置 | BANGOO WSL2 Ubuntu（`BASE_URL=http://[peer-ip]:8000`，遠端） |
 | 收集時間(UTC) | 主套件 2026-09-17 **03:27:07Z → 03:52Z**（約 24 分）；探針 03:53:38Z → 04:18:42Z |
 
-**部署保真度（byte 級證明 ✅）**：以 `ssh ubuntu@[ts-peer-ip]`（密碼登入）取得節點存取後驗證：
+**部署保真度（byte 級證明 ✅）**：以 `ssh ubuntu@[peer-ip]`（密碼登入）取得節點存取後驗證：
 - 容器 `persona-db-api`（`Up (healthy)`，RestartCount=0，StartedAt 2026-09-17T02:15:42Z ← 早於主套件）mount `/srv/persona-db-data → /app`（bind）。
 - 容器 `/app/api/*.py` sha256 **== v5.15 tarball 內 `api/*.py`**（`server.py` = `1ab44330…` 逐檔相同）。
 - → **執行中的服務程式碼 == 發佈的 v5.15 產物（byte 級）**。明細見 `extra/deployment-fidelity.txt`。

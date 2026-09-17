@@ -13,7 +13,7 @@
 
 | 項目 | 值 |
 |:--|:--|
-| 節點 | `NODE-A`（tailscale `[tailnet]`；內部 hostname 見去識別化約定） |
+| 節點 | `NODE-A`（私有 mesh VPN `[private-net]`；內部 hostname 見去識別化約定） |
 | 部署型態 | Docker：`hermes` + `persona-db-api` 兩個容器 |
 | repo `RELEASE-VERSION` | `v5.12` |
 | 服務自報版本 | `/personadb/status` = `v5.12`；容器內 `/app/VERSION` = `v5.12` |

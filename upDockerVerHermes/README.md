@@ -391,7 +391,7 @@ bash upDockerVerHermes/scan-report-artifacts.sh qa-reports/round15-... # 單一�
 2. **弱預設帳密**：`ubuntu/ubuntu`、`root/root`、`admin/admin`、`pi/pi`…（round15 的實際外洩形態）
 3. **基礎設施細節**：`ssh-rsa`／`ssh-ed25519`／`authorized_keys`／`install-key`／`ssh-copy-id`
 4. **操作者本機識別**：`user@host`（已排除 `users.noreply.github.com` 等公開信箱）
-5. **私網／tailnet IP**：`10.x`／`172.16-31.x`／`192.168.x`／`100.x`
+5. **私網／私有網路 IP**：`10.x`／`172.16-31.x`／`192.168.x`／`100.x`
 6. **instrument 殘留檔**：`install-key*`／`*.pem`／`id_*`／`*password*`
 
 > ⚠️ 「先 commit 再修」= 憑證仍留在 git 歷史 → **先修再 commit**。

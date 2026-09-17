@@ -8,7 +8,7 @@
 - 執行時間：主套件 2026-09-17 **03:27:07Z → 03:52Z**（約 24 分）；探針 **03:53:38Z → 04:18:42Z**
 - 結果總覽：主套件 **10/10 HTTP 200**、斷言 **59 ✅ / 0 ❌ / 0 ⚠️**（含補跑的 docker 主機層 #50/#55/#60）；
   延伸自證（A–AF）**210 ✅ / 0 ❌**；探針 **10/10 HTTP 200**
-- 受測節點：**NODE-C**（tailscale `[ts-peer-ip]`；`ubuntu` 帳號，密碼登入）；執行位置：BANGOO WSL2（遠端）
+- 受測節點：**NODE-C**（私有 mesh VPN `[peer-ip]`；`ubuntu` 帳號，密碼登入）；執行位置：BANGOO WSL2（遠端）
 - **部署保真度已驗證（byte 級）**：容器 `api/*.py` sha256 == v5.15 tarball → 見 `extra/deployment-fidelity.txt`
 
 ---
@@ -108,7 +108,7 @@ PY
 
 ### 7. 部署保真度 + docker 主機層斷言（需 `ubuntu` SSH 存取）
 ```bash
-LZ="ssh ubuntu@[ts-peer-ip]"   # 密碼登入（已裝公鑰後免密）
+LZ="ssh ubuntu@[peer-ip]"   # 密碼登入（已裝公鑰後免密）
 # byte 級保真度：容器 api/*.py == tarball
 $LZ 'docker exec persona-db-api sha256sum /app/api/server.py'
 tar -xzf ~/repos/persona-db-release/upDockerVerHermes/persona-db-rel-v5.15.tar.gz \

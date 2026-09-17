@@ -37,7 +37,7 @@ round5-v5.6-nodeB-frozenrunner/
 │                                    ⚠️ 00_status.json 為 0 bytes（text/plain，預期行為）
 ├── headers/                       ← 每案例完整 HTTP response headers
 ├── meta/                          ← http_code / 耗時 / bytes / curl 參數
-│   ├── instance-provenance.txt    ←   tailscale 節點 + node ID + 歷輪對照
+│   ├── instance-provenance.txt    ←   私有 mesh VPN 節點 + node ID + 歷輪對照
 │   ├── original-test-persona-db-api.sh
 │   └── script-provenance.txt
 │
@@ -185,7 +185,7 @@ OUT=/tmp/v56-rerun BASE_URL=http://NODE-B:8000 bash run-test.sh
 
 | 項目 | 值 |
 |:---|:---|
-| 目標 | `NODE-B` = tailscale `NODE-B`（node ID `NODE-B-NODEID`；節點內部 HostName 為 `NODE-B-host`） |
+| 目標 | `NODE-B` = 私有 mesh VPN `NODE-B`（node ID `NODE-B-NODEID`；節點內部 HostName 為 `NODE-B-host`） |
 | 連線 | 直連 `[public-ip]:23251`（非 relay） |
 | 服務 | uvicorn / Persona DB **v5.6**，1069 personas（1.72 MB） |
 | LLM 後端 | `deepseek-v4-flash` → `https://api.deepseek.com` |

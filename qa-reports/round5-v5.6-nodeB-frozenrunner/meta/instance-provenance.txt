@@ -6,9 +6,9 @@ NODE-B  NODE-B       [account]@  linux    active; direct [public-ip]:23251, tx 1
 {
   "ID": "NODE-B-NODEID",
   "HostName": "NODE-B-host",
-  "DNSName": "NODE-B.[tailnet].",
+  "DNSName": "NODE-B.[private-net].",
   "OS": "linux",
-  "TailscaleIPs": [
+  "私有 mesh VPNIPs": [
     "NODE-B",
     "[ts-ipv6]"
   ],

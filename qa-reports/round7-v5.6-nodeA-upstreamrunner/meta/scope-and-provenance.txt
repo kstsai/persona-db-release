@@ -1,5 +1,5 @@
 === 目標（本輪不使用版本對比；此處僅記錄受測環境）===
-  node: NODE-A (NODE-A)   tailscale NODE-A   node ID NODE-A-NODEID
+  node: NODE-A (NODE-A)   私有 mesh VPN NODE-A   node ID NODE-A-NODEID
   部署型態: Docker（upDockerVerHermes compose：hermes + persona-db-api 容器）
   RELEASE-VERSION: v5.6
   服務版本: v5.6（/personadb/status）

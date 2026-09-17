@@ -1,7 +1,7 @@
 #!/bin/bash
 # Faithful adaptation of kstsai/persona-db-release upDockerVerHermes/test-persona-db-api.sh
 # Original targets http://localhost:8000 (runs ON the instance host).
-# This variant targets the NODE-A tailscale instance remotely, same endpoints/params/order,
+# This variant targets the NODE-A 私有 mesh VPN instance remotely, same endpoints/params/order,
 # and additionally persists full evidence (body / headers / curl meta) for human re-verification.
 #
 # Original script source: https://raw.githubusercontent.com/kstsai/persona-db-release/main/upDockerVerHermes/test-persona-db-api.sh

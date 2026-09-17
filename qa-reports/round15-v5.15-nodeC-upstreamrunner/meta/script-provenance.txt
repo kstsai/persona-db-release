@@ -1,13 +1,13 @@
 === 目標（本輪不做版本比對；此處僅記錄受測環境）===
-  node: NODE-C ([account]@linux)   tailscale [ts-peer-ip]
-  連線: relay hkg（非直連）；BANGOO → NODE-C 走 tailscale，延遲 ~0.8–3.3s
+  node: NODE-C ([account]@linux)   私有 mesh VPN [peer-ip]
+  連線: relay hkg（非直連）；BANGOO → NODE-C 走 私有 mesh VPN，延遲 ~0.8–3.3s
   部署型態: 未知（無 SSH 存取 → 無法從節點內驗證 docker/容器）
   服務版本: v5.15（/personadb/status 自報；1069 personas；LLM deepseek-v4-flash responsive）
-  執行位置: **BANGOO 的 WSL2 Ubuntu**（BASE_URL=http://[ts-peer-ip]:8000，遠端）
+  執行位置: **BANGOO 的 WSL2 Ubuntu**（BASE_URL=http://[peer-ip]:8000，遠端）
   收集時間(UTC): 2026-09-17T03:2x:xxZ
 
 === 部署保真度（「裝的到底是什麼」的機械證明）===
-  ✅ 已驗證（收集時 2026-09-17T05:18Z，以 ssh ubuntu@[ts-peer-ip] 密碼登入後）：
+  ✅ 已驗證（收集時 2026-09-17T05:18Z，以 ssh ubuntu@[peer-ip] 密碼登入後）：
      容器 persona-db-api（Up healthy, RestartCount=0, StartedAt 2026-09-17T02:15:42Z ← 早於主套件）
        mount: /srv/persona-db-data → /app（bind）
      容器 /app/api/*.py sha256 == v5.15 tarball 內 api/*.py（server.py = 1ab44330…，逐檔相同）
@@ -37,12 +37,12 @@
                     29bc1bfe347dd1a7b1d9e27b9c48f8cee50cb85c12e92b8ecb181e400d302d9b  ← **發布版**（563 行；差 2 處，見下）
   runner   行數  : 561
   ※ 執行時 runner sha 於執行前即記錄（9cf5e88b…）。執行後對 runner 動了 **2 處**（皆非請求參數／斷言邏輯）：
-     ① 去識別化：BASE_URL 的真實節點 IP → `[ts-peer-ip]`；
+     ① 去識別化：BASE_URL 的真實節點 IP → `[peer-ip]`；
      ② docker 斷言處的註解更正（遠端 runner 標 N/A，另以節點存取補跑）。
      ⇒ 發布版 sha = 29bc1bfe…（563 行）。**忠實度證明（data-urlencode diff）在兩版皆成立。**
 
 === 對上游的改動（全部為「可改」類別；請求參數/順序/斷言邏輯未動）===
-  1. BASE_URL 預設 → http://[ts-peer-ip]:8000（env 可覆寫）
+  1. BASE_URL 預設 → http://[peer-ip]:8000（env 可覆寫）
   2. OUT 自我定位（證據落盤）
   3. 證據落盤：raw/headers/meta/json 逐案例（case_run helper）
   4. python 斷言塊的 4 處硬編 localhost → os.environ.get("BASE_URL", ...)（遠端執行需要）

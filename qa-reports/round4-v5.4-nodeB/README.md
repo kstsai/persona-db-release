@@ -170,8 +170,8 @@ OUT=/tmp/v54-rerun BASE_URL=http://NODE-B:8000 bash run-test.sh
 
 | 項目 | 值 |
 |------|-----|
-| 目標 | `NODE-B` = tailscale `NODE-B`（node ID `NODE-B-NODEID`；節點內部 HostName 為 `NODE-B-host`） |
-| 連線 | tailscale 直連 `[public-ip]:21845`（非 relay） |
+| 目標 | `NODE-B` = 私有 mesh VPN `NODE-B`（node ID `NODE-B-NODEID`；節點內部 HostName 為 `NODE-B-host`） |
+| 連線 | 私有 mesh VPN 直連 `[public-ip]:21845`（非 relay） |
 | 服務 | uvicorn / Persona DB **v5.4**，1069 personas（1.72 MB） |
 | LLM 後端 | `deepseek-v4-flash` → `https://api.deepseek.com` |
 | 其他 | Python 3.11.15；Name diversity 172 (16.1%) max 16×；32 Python files |

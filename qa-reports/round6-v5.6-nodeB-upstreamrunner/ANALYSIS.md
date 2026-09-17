@@ -1,6 +1,6 @@
 # persona-db API 實測分析報告 — 第六輪（**upstream runner**，v5.6）
 
-**受測目標**：`NODE-B`（`[tailnet]`），Persona DB **v5.6**
+**受測目標**：`NODE-B`（`[private-net]`），Persona DB **v5.6**
 **測試腳本**：**現行 upstream** `upDockerVerHermes/test-persona-db-api.sh`
 　　sha256 `9a29a8ef3bc553a334b1865c792d4f0f17e60ce15f93a46fe9f8ac9b684edbd8`（**223 行**，2026-09-14 取得）
 **本輪 runner**：由上述 upstream 改寫 → sha256 `10e888d9ad575401363e70b61ffbf37d46da1ff90b6b9696853add6ed306e196`

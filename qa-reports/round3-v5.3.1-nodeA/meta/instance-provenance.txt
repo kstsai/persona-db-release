@@ -1,21 +1,21 @@
 === collected_at_utc: 2026-09-12T04:54:30Z ===
 
-=== tailscale status (full) ===
-Warning: client version "1.98.8-t05a918293" != tailscaled server version "1.102.1-t8ebe8f7c3-gda6192991"
-[ts-peer-ip]   [peer]            [account]@  macOS    -                                                        
-[ts-peer-ip]     [peer]          [account]@  windows  -                                                        
-[ts-peer-ip]    [peer]  [account]@  linux    -                                                        
+=== 私有 mesh VPN status (full) ===
+Warning: client version "1.98.8-t05a918293" != 私有 mesh VPNd server version "1.102.1-t8ebe8f7c3-gda6192991"
+[peer-ip]   [peer]            [account]@  macOS    -                                                        
+[peer-ip]     [peer]          [account]@  windows  -                                                        
+[peer-ip]    [peer]  [account]@  linux    -                                                        
 NODE-B  NODE-B       [account]@  linux    -                                                        
-[ts-peer-ip]    [peer]             [account]@  linux    active; direct [public-ip]:41641, tx 488080 rx 1309576  
+[peer-ip]    [peer]             [account]@  linux    active; direct [public-ip]:41641, tx 488080 rx 1309576  
 NODE-A     NODE-A          [account]@  linux    active; relay "hkg", tx 9972 rx 29724                    
 
 === node detail: NODE-A (now v5.3.1) ===
 {
   "ID": "NODE-A-NODEID",
   "HostName": "NODE-A",
-  "DNSName": "NODE-A.[tailnet].",
+  "DNSName": "NODE-A.[private-net].",
   "OS": "linux",
-  "TailscaleIPs": [
+  "私有 mesh VPNIPs": [
     "NODE-A",
     "[ts-ipv6]"
   ],
@@ -27,6 +27,6 @@ NODE-A     NODE-A          [account]@  linux    active; relay "hkg", tx 9972 rx 
   "KeyExpiry": "2027-01-20T07:51:59Z"
 }
 
-=== NOTE: no node named 'NODE-A-1' exists on this tailnet ===
+=== NOTE: no node named 'NODE-A-1' exists on this 私有網路 ===
   matches for NODE-A-1: 0
   (0 = not present; NODE-A NODE-A was upgraded v4.9.2 -> v5.3.1 in place)

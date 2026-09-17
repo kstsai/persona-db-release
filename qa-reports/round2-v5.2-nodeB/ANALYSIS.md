@@ -1,6 +1,6 @@
 # persona-db API 實測分析報告 — NODE-B (v5.2)
 
-**受測 instance**：`NODE-B` (tailscale `NODE-B`, `NODE-B.[tailnet]`)
+**受測 instance**：`NODE-B` (私有 mesh VPN `NODE-B`, `NODE-B.[private-net]`)
 **測試腳本**：`kstsai/persona-db-release` → `upDockerVerHermes/test-persona-db-api.sh`（**與 NODE-A 那次同一份，sha256 相同**）
 **執行時間**：2026-09-12 02:53 – 03:17 UTC（≈ 24 分鐘）
 **執行結果**：9 / 9 請求 HTTP 200，0 錯誤

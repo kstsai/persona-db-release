@@ -1,6 +1,6 @@
 # persona-db API 實測分析報告 — v5.3.1（第三輪，三版對照）
 
-**受測目標**：tailscale node **`NODE-A`** (`NODE-A`)，Persona DB **v5.3.1**
+**受測目標**：私有 mesh VPN node **`NODE-A`** (`NODE-A`)，Persona DB **v5.3.1**
 **測試腳本**：`kstsai/persona-db-release` → `upDockerVerHermes/test-persona-db-api.sh`
 **執行時間**：2026-09-12 04:51 – 05:15 UTC（≈ 24 分鐘）
 **執行結果**：9 / 9 請求 HTTP 200，0 錯誤
@@ -35,8 +35,8 @@
 
 | 檢查 | 結果 |
 |------|------|
-| `tailscale status` 是否有 `NODE-A-1` | **不存在**（0 筆符合） |
-| MagicDNS `NODE-A-1` / `NODE-A-1.[tailnet]` | **無法解析** |
+| `私有 mesh VPN status` 是否有 `NODE-A-1` | **不存在**（0 筆符合） |
+| MagicDNS `NODE-A-1` / `NODE-A-1.[private-net]` | **無法解析** |
 | 既有的 `NODE-A` (`NODE-A`) 版本 | **v5.3.1** ← 與任務所述版本**完全一致** |
 | 節點 ID | `NODE-A-NODEID` ← **與第一輪 v4.9.2 的 NODE-A 相同** |
 

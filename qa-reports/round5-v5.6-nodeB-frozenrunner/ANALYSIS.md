@@ -1,6 +1,6 @@
 # persona-db API 實測分析報告 — v5.6（第五輪，五版對照）
 
-**受測目標**：tailscale node **`NODE-B`** (`NODE-B`)，Persona DB **v5.6**
+**受測目標**：私有 mesh VPN node **`NODE-B`** (`NODE-B`)，Persona DB **v5.6**
 **測試腳本**：`kstsai/persona-db-release` → `upDockerVerHermes/test-persona-db-api.sh`
 **執行時間**：2026-09-13 23:41 – 23:54 UTC（主套件 ≈13 分鐘；含探針約 30 分鐘）
 **執行結果**：**9 / 9 HTTP 200**（本輪無錯誤）
@@ -33,11 +33,11 @@
 
 | 檢查 | 結果 |
 |:---|:---|
-| `NODE-B` 存在？ | ✅ tailscale `NODE-B`，`Online: true` |
+| `NODE-B` 存在？ | ✅ 私有 mesh VPN `NODE-B`，`Online: true` |
 | **版本** | **v5.6** ✅ 與 user 所述一致 |
 | **node ID** | `NODE-B-NODEID` — **與 v5.2、v5.4 兩輪相同** ⇒ 同一節點**第三次就地升級** |
 | 連線 | 直連 `[public-ip]:23251`（非 relay） |
-| 節點內部 HostName | `NODE-B-host`（與 tailnet 名 `NODE-B` 不同，須用 `DNSName` 查） |
+| 節點內部 HostName | `NODE-B-host`（與 私有網路 名 `NODE-B` 不同，須用 `DNSName` 查） |
 
 ---
 
