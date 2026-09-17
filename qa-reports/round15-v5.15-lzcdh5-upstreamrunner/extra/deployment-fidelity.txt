@@ -1,0 +1,54 @@
+=== 部署保真度（「裝的到底是什麼」的機械證明）— 2026-09-17T05:18Z ===
+
+存取方式：ssh ubuntu@100.96.79.33（密碼登入；已裝 WSL 公鑰 → 之後免密）
+  ※ 本報告初稿誤稱「lzcdh5 無 SSH」——錯。實為：a7 起初只用 Windows 側的 OpenSSH key 試過一次
+    （Permission denied）。改用 ubuntu/ubuntu 後即可存取，部署保真度與 docker 斷言皆可驗證。
+
+節點：lzcdh5  Linux 5.15.0-191-generic  up(收集時) 3:02  ubuntu ∈ docker 群組
+容器：
+  persona-db-api   persona-db-api:latest   Up (healthy)
+    Created    = 2026-09-16T05:29:49Z
+    StartedAt  = 2026-09-17T02:15:42Z   ← 早於主套件（03:27–03:52Z）
+    RestartCount = 0
+    Mounts     = /srv/persona-db-data → /app (bind)；/home/ubuntu/.hermes → /hermes-config (bind)
+  hermes           nousresearch/hermes-agent:latest   Up
+
+容器內 /app/VERSION = v5.15
+節點 repo ~/persona-db-release/upDockerVerHermes/RELEASE-VERSION = v5.15
+
+byte 級比對（容器 /app/api/*.py == v5.15 tarball 內 api/*.py）：
+  server.py           容器 1ab44330611891c2c4c3d1030dd033f18ade92c35d809521e6ad1d3866d8b05b
+                      tarball 1ab44330611891c2c4c3d1030dd033f18ade92c35d809521e6ad1d3866d8b05b  ✅
+  （容器 /app 為 /srv/persona-db-data 的 bind mount；兩者 sha256 相同）
+  __init__.py         e28e6b1743fc1cd5aef82d8182a2d8d1c28113d35392a3e4cb4eff9fe14bae6d
+  llm.py              b625d45f994d2613b99f3d6315b560cff62e79ed9868a58c50f18e1fc0708c0a
+  models.py           4e8a3f0439a5b21d55e9c3494285b9a9b43224501992ca19d7ea4abb585d56a9
+  persona_matcher.py  02e9e922e9a882dd183c470fd26fd4ca93f3dc8ca4a84b0ae8159ddd042b3063
+  simulator.py        81aa8f86699b33ff4b419a6c5eba5bcf3bd388f62350fa322c5dace2da10e5f1
+  test_llm_api.py     fb7056b5e967776652f8f19d1dab062bf48e59ffbcf569180334727ac088a057
+  test_suite.py       04f29c7e6f9b9e60faa12cbcadc7c2738f3a9226462389ab0b2e29b9a1becb33
+
+  → **執行中的服務程式碼 == 發佈的 v5.15 產物（byte 級）** ✅
+
+=== 補跑的 docker 主機層斷言（初稿標 N/A，現已可執行）===
+
+#50 部署版本一致性 → ✅
+  deployed VERSION (docker exec cat /app/VERSION) = v5.15
+  node RELEASE-VERSION (cat ~/persona-db-release/upDockerVerHermes/RELEASE-VERSION) = v5.15
+  → 一致
+  finish_reason 診斷碼（docker exec grep "finish_reason={fr}" /app/api/llm.py）= 6 處 → ✅
+
+#55 例外型別診斷碼 → ✅
+  docker exec grep -c "LLM call failed \[" /app/api/llm.py = 1 → 含例外型別診斷碼
+
+#60 root logger（app INFO 行是否進 log）→ ✅（實質通過；`docker logs` CLI 讀取異常）
+  docker exec grep LOG_LEVEL /app/.env → LOG_LEVEL=INFO
+  ⚠️ docker logs persona-db-api | grep -c "Protected dims" = 0、| grep -c "Broadening loop" = 0
+     ——但這是**工具工件**，不是 app 缺陷：
+     · docker logs 穩定只輸出 90 行（run1=90, run2=90, --tail all=90）
+     · 容器 log 檔（json-file，max-file=3/max-size=10m）實際 3077 行、最後時間戳 2026-09-17T05:18:50Z
+     · raw 檔內：grep "Protected dims" = 15、grep "Broadening loop" = 51、grep candidates = 20（含主套件 03:27–03:52Z 的請求）
+     · 原因：log 檔在 offset 11586 有一塊 **NUL(0x00) 位元組區塊**（容器 09-17T02:15Z 重啟造成的 sparse hole），
+       docker 的 json-file reader 讀到 NUL 即停 → docker logs 只吐 NUL 之前的 90 行。
+  → 結論：**v5.10 #60 的 root logger 修正在 v5.15 仍生效**（app INFO 行確實進 log）；
+     上游 #60 斷言用 `docker logs` 取樣，在此節點會因 log 檔的 NUL hole 而**誤報 0（false ⚠️）**。

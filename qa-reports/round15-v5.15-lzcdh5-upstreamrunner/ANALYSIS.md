@@ -9,19 +9,25 @@
 
 | 項目 | 值 |
 |:--|:--|
-| 節點 | lzcdh5（tailscale `100.96.79.33`，linux） |
+| 節點 | lzcdh5（tailscale `100.96.79.33`，linux；`ubuntu` 帳號，密碼登入） |
 | 連線 | tailscale **relay hkg**（非直連）；BANGOO→lzcdh5 延遲 ~0.8–3.3s |
 | 服務版本 | **v5.15**（`/personadb/status` 自報；1069 personas；LLM deepseek-v4-flash responsive） |
 | 執行位置 | BANGOO WSL2 Ubuntu（`BASE_URL=http://100.96.79.33:8000`，遠端） |
-| 收集時間(UTC) | 主套件 2026-09-17 **03:27:07Z → 03:52Z**（約 24 分）；探針 03:53:38Z 起 |
+| 收集時間(UTC) | 主套件 2026-09-17 **03:27:07Z → 03:52Z**（約 24 分）；探針 03:53:38Z → 04:18:42Z |
 
-**⚠️ 部署保真度無法驗證**：lzcdh5 **無 SSH 存取**（publickey/password 皆拒）→ 無法從節點內確認
-執行中 code == v5.15 tarball（無 docker exec / 無 `/app/VERSION` 讀取）。僅能確認 status 自報 v5.15、
-openapi.json 含 #72 欄位（`llm_calls`、`parse_error`/`error_type`）。→ 列為 §5 限制。
+**部署保真度（byte 級證明 ✅）**：以 `ssh ubuntu@100.96.79.33`（密碼登入）取得節點存取後驗證：
+- 容器 `persona-db-api`（`Up (healthy)`，RestartCount=0，StartedAt 2026-09-17T02:15:42Z ← 早於主套件）mount `/srv/persona-db-data → /app`（bind）。
+- 容器 `/app/api/*.py` sha256 **== v5.15 tarball 內 `api/*.py`**（`server.py` = `1ab44330…` 逐檔相同）。
+- → **執行中的服務程式碼 == 發佈的 v5.15 產物（byte 級）**。明細見 `extra/deployment-fidelity.txt`。
 
-**⚠️ 打包缺陷（repo 側，非節點）**：v5.15 tarball 內 `RELEASE-VERSION` = **v5.14**（未 bump），
-但 `VERSION` = v5.15（server.py 讀 `VERSION` → status 報 v5.15 正確）。上游 #50 斷言比對
-`RELEASE-VERSION` 會誤報「stale 映像」—— 這是打包時漏 bump，不是節點問題。
+> **⚠️ 初稿更正**：本報告初稿寫「lzcdh5 無 SSH → 部署保真度無法驗證」——**該敘述有誤**。
+> 實情是：a7 起初僅用 Windows 側的 OpenSSH key 試過一次（`Permission denied`），未測 WSL、也未用正確帳號。
+> 改用 `ubuntu/ubuntu` 密碼登入後即可存取，部署保真度與 docker 主機層斷言**皆可驗證**。
+
+**⚠️ 打包缺陷（repo 側，非節點）**：v5.15 tarball **內含**的 `RELEASE-VERSION` = **v5.14**（未 bump），
+但 tarball 內 `VERSION` = v5.15（server.py 讀 `VERSION` → status 報 v5.15 正確）。
+節點上的工作目錄 `RELEASE-VERSION` 則是 v5.15。→ tarball 在 bump 前就打包了。上游 #50 斷言若比對
+tarball 內的 `RELEASE-VERSION` 會誤報「stale 映像」。
 
 ---
 
@@ -67,8 +73,15 @@ BASE_URL 指向節點、OUT 自我定位、證據落盤、python 斷言塊 4 處
 
 ## 3. 斷言結果
 
-**57 ✅ / 0 ❌ / 0 ⚠️ / 5 N/A**（`extra/assertions.txt`）。N/A 全為 docker 主機層斷言（#50/#55/#60），
-因遠端執行無 docker 存取而無法執行（見 §5）。延伸自證檢查（`verify-extended.py`，A–AF）**210 ✅ / 0 ❌**。
+**59 ✅ / 0 ❌ / 0 ⚠️ / 1 ℹ️**（`extra/assertions.txt` + 補跑的 docker 主機層斷言）。延伸自證檢查
+（`verify-extended.py`，A–AF）**210 ✅ / 0 ❌**。
+
+> 初稿把 #50/#55/#60 標為 N/A（誤以為無節點存取）。取得 `ubuntu` SSH 存取後**補跑**：
+> - **#50 部署版本一致性 → ✅**：`docker exec cat /app/VERSION` = v5.15 == 節點 `RELEASE-VERSION`；
+>   `finish_reason={fr}` 診斷碼存在。
+> - **#55 例外型別診斷碼 → ✅**：`LLM call failed [` 存在於映像內 `llm.py`。
+> - **#60 root logger → ✅（實質）**：log 檔內 `Protected dims` × 15、`Broadening loop` × 51。
+>   （`docker logs` CLI 只吐 90/3077 行 → false 0，見 §4.6。）
 
 重點斷言：
 - **#34** 業主 query 套 `employment_status=['雇主','自營作業者']` ✅；顧客 query 未套 ✅
@@ -134,7 +147,15 @@ summary 曝露全部 24 欄，`applied_filters`/`dims_counted` 的維度皆可�
 - **#72 新欄位**：`llm_calls` 全部揭露（1–4 次），且 ≥ 1+attempts；`broadening_attempts` 每筆含
   `parse_error`/`error_type`（本輪全為 `false`/`""`，無失敗輪）。✅
 - **#66 A 保護集上限**：`declared_protected_cap` 全部揭露，`len(model_declared) ≤ cap` ✅。
-- **tarball `RELEASE-VERSION` 未 bump**（v5.14）→ 打包缺陷（見 §0）。
+- **#60 `docker logs` 讀取異常（工具工件，非 app 缺陷）**：`docker logs persona-db-api | grep -c "Protected dims"`
+  = **0**，看似 #60 失敗。但**實為量測工具失效**：
+  - `docker logs` 穩定只輸出 **90 行**（run1/run2/`--tail all` 皆 90）；容器 log 檔（json-file）實際 **3077 行**、最後時間戳 05:18:50Z。
+  - raw log 檔內：`Protected dims` × **15**、`Broadening loop` × **51**、`candidates` × **20**（含主套件 03:27–03:52Z 的請求）。
+  - 根因：log 檔在 offset **11586 有一塊 NUL(0x00) 位元組區塊**（容器 09-17T02:15Z 重啟造成的 sparse hole），
+    docker 的 json-file reader 讀到 NUL 即停 → `docker logs` 只吐 NUL 之前的 90 行。
+  - → **#60 實質通過**（root logger 修正生效，app INFO 行確實進 log）；上游 #60 斷言用 `docker logs`
+    取樣，在此節點會因 log 檔的 NUL hole 而**誤報 0**。此為 §6.7 歸因紀律的實例：先確認量測看得到標的，再下結論。
+- **tarball `RELEASE-VERSION` 未 bump**（tarball 內 v5.14，節點工作目錄 v5.15）→ 打包缺陷（見 §0）。
 
 ### 4.7 探針結果（§6.8 重現性 + §6.9 定向）
 
@@ -165,27 +186,31 @@ summary 曝露全部 24 欄，`applied_filters`/`dims_counted` 的維度皆可�
 
 ## 5. 驗證限制 / 未涵蓋範圍
 
-- **部署保真度無法驗證**：lzcdh5 無 SSH → 無法確認執行中 code == v5.15 tarball。僅能確認 status 自報與契約欄位。
-- **docker 主機層斷言（#50/#55/#60）N/A**：遠端執行無 docker logs/exec 存取。`#60`（INFO 進 log）、
-  `#55`（例外型別診斷碼）、`#50`（部署版本一致性）皆無法執行。
+- ~~部署保真度無法驗證~~ → **已驗證 ✅**（取得 `ubuntu` SSH 存取後，容器 `api/*.py` == v5.15 tarball，byte 級；見 §0）。
+- ~~docker 主機層斷言 N/A~~ → **已補跑 ✅**（#50/#55/#60；見 §3）。
+- **`docker logs` CLI 輸出被截斷（工具工件）**：容器 log 檔的 NUL hole 使 `docker logs` 只吐 90/3077 行 →
+  凡依賴 `docker logs` 取樣的檢查（含上游 #60）在此節點不可靠，須直接讀 log 檔（需 sudo）。見 §4.6。
 - **連線走 relay**：延遲較高（~0.8–3.3s），但以 LLM 呼叫為主（48–318s/案例），網路延遲影響可忽略。
-- **單次執行**：LLM-backed 非確定性 → 重現性探針見 §6.8。
-- **#70 A `overshoot_restore` 本輪未行使**：主套件無 overshoot 事件 → 該分支空轉（見 §4.4）。
+- **單次執行**：LLM-backed 非確定性 → 重現性探針見 §4.7。
+- **#70 A `overshoot_restore` 本輪未行使**：主套件無 overshoot 事件 + t2 探針未達標 → 該分支空轉（見 §4.4/§4.7）。
 
 ---
 
 ## 6. 結論
 
 **正面（證據級）**：
+- **部署保真度已驗證**：容器 `api/*.py` sha256 == v5.15 tarball（byte 級）→ 受測的就是發佈產物（§0）。
 - 語意正確性全過：9/9 案例 filter 與題意對應正確，無誤套/漏套（§4.1）。
 - 自證性全過：所有 applied_filters 在回傳列被滿足，無可驗證性缺口（§4.2）。
 - 計分無低報：10 對具檢定效力，0 低報（§4.3）。
 - 保護機制運作：案例 05 硬 `protected_veto`、案例 06 `protection_saturated` 都在主套件內被行使，K/L/M 不變式全過（§4.4/§4.6）。
 - #72 新欄位正確：`llm_calls` 揭露且 ≥ 1+attempts，失敗輪欄位齊備（§4.6）。
+- docker 主機層斷言補跑全過：#50 部署版本一致、#55 例外型別診斷碼、#60 root logger 生效（§3/§4.6）。
 - 定向探針：t3 `protection_saturated`、t4 `commute_mode` 保護皆確認（§4.7）。
 
 **需注意**：
-- **tarball `RELEASE-VERSION` 未 bump（v5.14）** —— 打包缺陷，會讓上游 #50 斷言誤報 stale 映像。建議修（證據級，repo 側）。
+- **tarball 內 `RELEASE-VERSION` 未 bump（v5.14，節點工作目錄為 v5.15）** —— 打包缺陷，會讓上游 #50 斷言誤報 stale 映像。建議修（證據級，repo 側）。
+- **`docker logs` 在此節點會截斷**（log 檔 NUL hole）→ 依賴 `docker logs` 取樣的檢查會誤報（例：#60 得 false 0）。建議相關斷言改讀 log 檔，或先處理 NUL hole。
 
 **空轉（不具檢定效力，已如實標示）**：
 - #70 A `overshoot_restore` 本輪 0 事件（主套件 + t2 探針皆未行使，§4.4/§4.7）。

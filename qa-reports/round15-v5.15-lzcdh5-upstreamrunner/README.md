@@ -5,9 +5,10 @@
 
 - 主報告：**[ANALYSIS.md](ANALYSIS.md)** ← 先讀這個
 - 執行時間：主套件 2026-09-17 **03:27:07Z → 03:52Z**（約 24 分）；探針 **03:53:38Z → 04:18:42Z**
-- 結果總覽：主套件 **10/10 HTTP 200**、斷言 **57 ✅ / 0 ❌ / 0 ⚠️ / 5 N/A**（N/A 全為 docker 主機層）；
+- 結果總覽：主套件 **10/10 HTTP 200**、斷言 **59 ✅ / 0 ❌ / 0 ⚠️**（含補跑的 docker 主機層 #50/#55/#60）；
   延伸自證（A–AF）**210 ✅ / 0 ❌**；探針 **10/10 HTTP 200**
-- 受測節點：**lzcdh5**（tailscale `100.96.79.33`）；執行位置：BANGOO WSL2（遠端，無 SSH）
+- 受測節點：**lzcdh5**（tailscale `100.96.79.33`；`ubuntu` 帳號，密碼登入）；執行位置：BANGOO WSL2（遠端）
+- **部署保真度已驗證（byte 級）**：容器 `api/*.py` sha256 == v5.15 tarball → 見 `extra/deployment-fidelity.txt`
 
 ---
 
@@ -35,10 +36,11 @@
 | `meta/original-upstream-e3d83cd2.sh` | **原版腳本逐字留存**（sha256 `e3d83cd2…`，609 行） |
 | `run-test.sh` | 本輪 runner（sha256 `9cf5e88b…`，561 行；**執行前即記錄**） |
 | `meta/script-provenance.txt` | 環境、部署保真度、儀器 sha、忠實度證明、改動清單 |
-| `meta/harness-stub-server.py` / `meta/harness-out/` / `meta/harness-wsl/` | 執行時行為單元測試（stub 網路） |
-| `meta/launch-*.sh` / `meta/run-*-foreground.sh` | 啟動腳本（WSL 背景執行） |
-| `extra/assertions.txt` | 斷言輸出（57 ✅ / 5 N/A） |
+| `meta/harness-stub-server.py` / `meta/harness-out/` | 執行時行為單元測試（stub 網路） |
+| `meta/launch-*.sh` / `meta/run-*-foreground.sh` / `meta/install-key.sh` | 啟動腳本（WSL 背景執行；install-key 裝公鑰免密） |
+| `extra/assertions.txt` | 斷言輸出（runner 的 57 ✅ / 5 N/A） |
 | `extra/verify-extended.txt` | 延伸自證輸出（210 ✅） |
+| `extra/deployment-fidelity.txt` | **部署保真度 + 補跑的 docker 主機層斷言**（#50/#55/#60） |
 | `probe/` | §6.8 重現性（r08/r06 各 3 次）+ §6.9 定向（t1–t4）+ `run-probe.sh` |
 | `analyze.py` / `verify-extended.py` / `make-summaries.py` | 分析與檢查腳本 |
 
@@ -103,8 +105,23 @@ for c in ("01_kangshimei","05_role_banker","07_debt"):
 PY
 ```
 
-### 7. 打包缺陷：tarball RELEASE-VERSION 未 bump
+### 7. 部署保真度 + docker 主機層斷言（需 `ubuntu` SSH 存取）
 ```bash
-tar -xzf ../upDockerVerHermes/persona-db-rel-v5.15.tar.gz -O persona-db-rel-v5.15/RELEASE-VERSION
-# → v5.14（應為 v5.15）
+LZ="ssh ubuntu@100.96.79.33"   # 密碼登入（已裝公鑰後免密）
+# byte 級保真度：容器 api/*.py == tarball
+$LZ 'docker exec persona-db-api sha256sum /app/api/server.py'
+tar -xzf ~/repos/persona-db-release/upDockerVerHermes/persona-db-rel-v5.15.tar.gz \
+    -O persona-db-rel-v5.15/api/server.py | sha256sum      # → 應相同（1ab44330…）
+# #50 / #55 / #60
+$LZ 'docker exec persona-db-api cat /app/VERSION; cat ~/persona-db-release/upDockerVerHermes/RELEASE-VERSION'
+$LZ 'docker exec persona-db-api grep -c "LLM call failed \[" /app/api/llm.py'
+# ⚠️ docker logs 會截斷（log 檔 NUL hole）→ 直接讀 log 檔：
+$LZ 'CID=$(docker inspect persona-db-api --format "{{.Id}}"); sudo grep -c "Protected dims" \
+     /var/lib/docker/containers/$CID/$CID-json.log'    # → 15（非 0）
+```
+
+### 8. 打包缺陷：tarball 內 RELEASE-VERSION 未 bump
+```bash
+tar -xzf ~/repos/persona-db-release/upDockerVerHermes/persona-db-rel-v5.15.tar.gz \
+    -O persona-db-rel-v5.15/RELEASE-VERSION   # → v5.14（節點工作目錄為 v5.15）
 ```
