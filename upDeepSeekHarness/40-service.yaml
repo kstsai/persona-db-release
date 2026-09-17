@@ -1,6 +1,6 @@
 # dsh pod instance — Service (NodePort)
 # 暴露 dsh Web UI 3080 → http://lzc:<nodePort>/ 可直接連
-# nodePort 省略讓 k8s 自動分配（30000-32767）— 避免固定值衝突（30080 被 Gitea 佔用）
+# nodePort 省略讓 k8s 自動分配（30000-32767）— 避免與既有服務的固定 nodePort 衝突
 apiVersion: v1
 kind: Service
 metadata:
