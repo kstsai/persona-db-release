@@ -371,3 +371,28 @@ bash upDockerVerHermes/deploy-hermes-personadb-containers.sh
 - 若有多個，選 **版本號最高** 的那個
 - 顯示選擇的 tarball 名稱與版本標籤
 - 不再 hardcode VERSION — 版本完全由 tarball 內的資料決定
+
+---
+
+## QA 報告產物掃描（進 public repo 前必跑）
+
+```bash
+bash upDockerVerHermes/scan-report-artifacts.sh qa-reports/            # 全部輪次
+bash upDockerVerHermes/scan-report-artifacts.sh qa-reports/round15-... # 單一輪次
+# 退出碼 0 = 乾淨、1 = 有命中
+```
+
+**為什麼有這支**（#76，2026-09-17）：round15 的去識別化 commit 移除了節點名／IP，
+卻**留下**節點登入憑證（明文帳密）與 `meta/install-key.sh`（真公鑰＋操作者識別 `kstsai@bangoo`）。
+既有的「去識別化」只涵蓋節點名／IP，**未涵蓋認證資訊／操作者識別／instrument 殘留**。
+
+掃描類別：
+1. **機密**：`PRIVATE KEY`／`ghp_`／`github_pat_`／`AKIA`／`sk-`／`xox[baprs]-`／`password=`／`passwd=`
+2. **弱預設帳密**：`ubuntu/ubuntu`、`root/root`、`admin/admin`、`pi/pi`…（round15 的實際外洩形態）
+3. **基礎設施細節**：`ssh-rsa`／`ssh-ed25519`／`authorized_keys`／`install-key`／`ssh-copy-id`
+4. **操作者本機識別**：`user@host`（已排除 `users.noreply.github.com` 等公開信箱）
+5. **私網／tailnet IP**：`10.x`／`172.16-31.x`／`192.168.x`／`100.x`
+6. **instrument 殘留檔**：`install-key*`／`*.pem`／`id_*`／`*password*`
+
+> ⚠️ 「先 commit 再修」= 憑證仍留在 git 歷史 → **先修再 commit**。
+> ⚠️ 掃描要涵蓋**整個報告目錄（含 `meta/`）**，不能只看 `ANALYSIS.md`。
