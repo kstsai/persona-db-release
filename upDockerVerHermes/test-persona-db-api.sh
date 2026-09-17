@@ -574,14 +574,24 @@ print(f"  #70 A 過衝還原事件 {_n_restores} 筆"
 PYEOF
 
 # ── #60：app 的 INFO 行是否真的進 log（root logger 設定生效）──
-_n_info=$(sudo docker logs persona-db-api 2>&1 | grep -c "Protected dims")
-_n_broad=$(sudo docker logs persona-db-api 2>&1 | grep -c "Broadening loop")
+# ⚠️ 2026-09-17（round15 發現）：`docker logs` 遇到 log 檔的 NUL hole 會**只吐極少行**（實測 90/3103）
+# → 用 `docker logs` 取樣會**偽陰性誤報 0**。改為優先讀 raw log 檔，讀不到才退回 `docker logs`。
+_LOG_PATH=$(sudo docker inspect -f "{{.LogPath}}" persona-db-api 2>/dev/null)
+if [ -n "${_LOG_PATH}" ] && sudo test -r "${_LOG_PATH}"; then
+  _n_info=$(sudo cat "${_LOG_PATH}" 2>/dev/null | grep -c "Protected dims")
+  _n_broad=$(sudo cat "${_LOG_PATH}" 2>/dev/null | grep -c "Broadening loop")
+  _log_src="raw log 檔"
+else
+  _n_info=$(sudo docker logs persona-db-api 2>&1 | grep -c "Protected dims")
+  _n_broad=$(sudo docker logs persona-db-api 2>&1 | grep -c "Broadening loop")
+  _log_src="docker logs（raw 檔不可讀）"
+fi
 echo "  --- v5.10 (#60 root logger) ---"
-echo "  #60 app INFO 行：Protected dims=${_n_info} ｜ Broadening loop=${_n_broad}"
+echo "  #60 app INFO 行：Protected dims=${_n_info} ｜ Broadening loop=${_n_broad}（來源：${_log_src}）"
 if [ "${_n_info}" -gt 0 ] || [ "${_n_broad}" -gt 0 ]; then
   echo "  #60 INFO 行已進 log（root logger 設定生效）→ ✅"
 else
-  echo "  #60 INFO 行 0 筆 → ⚠️（檢查 LOG_LEVEL 是否為 WARNING，或映像為舊版）"
+  echo "  #60 INFO 行 0 筆（來源：${_log_src}）→ ⚠️（檢查 LOG_LEVEL／log 讀取是否被截斷，或映像為舊版）"
 fi
 printf "  #60 容器 LOG_LEVEL: "
 sudo docker exec persona-db-api sh -c 'grep LOG_LEVEL /app/.env' 2>/dev/null || echo "(未設定 → 預設 INFO)"
