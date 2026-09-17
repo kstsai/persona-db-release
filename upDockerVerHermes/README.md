@@ -10,10 +10,10 @@ Persona DB（台灣人口加權合成人設資料庫）的 Docker 容器化部�
 ```bash
 # 完整部署（含 Hermes 容器）
 cd upDockerVerHermes
-bash deploy-persona-db-compose.sh
+bash deploy-hermes-personadb-containers.sh
 
 # API-only 部署（無 Hermes，適合 edge VM 或空間不足）
-bash deploy-persona-db-compose.sh --skip-hermes
+bash deploy-hermes-personadb-containers.sh --skip-hermes
 
 # 測試 API
 bash test-persona-db-api.sh
@@ -27,14 +27,14 @@ bash test-persona-db-api.sh
 
 ```
 upDockerVerHermes/
-├── deploy-persona-db-compose.sh   # 主部署腳本
+├── deploy-hermes-personadb-containers.sh   # 主部署腳本（唯一支援的部署腳本）
 ├── docker-compose.yml             # Docker Compose（可選，腳本已內建邏輯）
 ├── test-persona-db-api.sh         # API 測試腳本
 ├── pocDemo.env                    # Demo 環境變數範本
 ├── persona-db.md                  # 產品文件（規格 + 版本演進）
 ├── persona-db-rel-v3.2.tar.gz      # Versioned release (persona-db-rel-<VERSION>.tar.gz)
 ├── RELEASE-VERSION                 # Current release tag (e.g., v3.2)
-└── deploy-persona-db-api.sh       # 舊版單容器部署腳本
+└── undeploy.sh                    # 移除容器（保留資料）
 ```
 
 ## 環境變數
@@ -97,7 +97,7 @@ API-only 模式只需 ~1GB，強烈建議 **edge VM 用 `--skip-hermes`**。
 **解法 A — 設定 SUDO_PASSWORD：**
 ```bash
 export SUDO_PASSWORD=your_password
-bash deploy-persona-db-compose.sh
+bash deploy-hermes-personadb-containers.sh
 ```
 
 **解法 B — 先手動建目錄：**
@@ -133,7 +133,7 @@ newgrp docker  # 或重新登入
 **解法：**
 ```bash
 # 改用 API-only 模式（跳過 hermes image pull）
-bash deploy-persona-db-compose.sh --skip-hermes
+bash deploy-hermes-personadb-containers.sh --skip-hermes
 
 # 事後想補 hermes 容器時，可從另一台機器拉好後 export/import：
 # 有 Docker 的機器上：

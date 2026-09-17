@@ -1,6 +1,7 @@
 #!/bin/bash
 # ============================================================
-# deploy-persona-db-compose.sh
+# deploy-hermes-personadb-containers.sh
+#（2026-09-17 更名自 deploy-persona-db-compose.sh；舊名與另兩支過期腳本已移除）
 # Deploy Hermes + Persona DB API with shared volume via docker compose
 #
 # Handles EVERYTHING automatically:
@@ -12,8 +13,8 @@
 #   - Container start + verification
 #
 # Usage:
-#   bash deploy-persona-db-compose.sh              # Full deploy (hermes + api)
-#   bash deploy-persona-db-compose.sh --skip-hermes # API only (no hermes container)
+#   bash deploy-hermes-personadb-containers.sh              # Full deploy (hermes + api)
+#   bash deploy-hermes-personadb-containers.sh --skip-hermes # API only (no hermes container)
 #
 # Environment variables:
 #   PERSONA_DB_DATA  — shared data directory (default: /srv/persona-db-data)
@@ -30,7 +31,7 @@ for arg in "$@"; do
   case "$arg" in
     --skip-hermes) SKIP_HERMES=true ;;
     --help|-h)
-      echo "Usage: bash deploy-persona-db-compose.sh [--skip-hermes]"
+      echo "Usage: bash $(basename "$0") [--skip-hermes]"   # 用自身檔名，避免再次漂移
       echo ""
       echo "  --skip-hermes    Deploy API only, skip Hermes container (~3.8GB pull)"
       exit 0
