@@ -99,6 +99,8 @@ Swagger 上會顯示 `Loading…`，**請不要關頁或重按**（重按 = 重�
 | HTTP 400 `INVALID_OPMODE` | `opMode` 填了三個值以外的字 | 用 `僅篩選` / `篩選+模擬` / `模擬詢問` |
 | `returned < top_k` | 符合條件者不足（`pool_exhausted=true`） | 放寬題目或降低 `top_k`（系統不會硬湊） |
 | `total_matched` 很大但 `summary` 很少 | 正常：`top_k` 只決定回傳幾筆 | 調高 `top_k`（≤100） |
+| **`status` = `too_strict`、`total_matched` = 0**、`summary` 空 | 你的題目 ＋ 系統推導出的條件**互相衝突或太窄**（例：罕見條件同時疊加多個限定）。系統**不會**為了湊數而放寬核心條件，故回 0 筆 | **拆題／放寬**：一次問一個主題、拿掉不必要的限定（年齡／收入等），或改用 `role` 描述情境；先讀 `llm_analysis.reasoning` 看系統套了哪些條件 |
+| `warnings` 出現「保護維度覆蓋 …」 | 系統保護了題目的核心維度（例：醫美題保護「有醫美經驗」）→ 可放寬空間受限 | 正常行為（保護＝不讓結果偏離題意）；若樣本不足請改寫題目，而非期待系統硬湊 |
 | 想確認版本 | Swagger 標題的版本欄位≠產品版號 | 看 `/personadb/status` 的 `version` |
 
 ---

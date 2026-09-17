@@ -235,7 +235,11 @@ print(f"  #53 掃描範圍: {len(_cases)}/9（刻意子集：這 4 案例涵蓋 
 for cname, cd in _cases.items():
     rows = cd.get("summary") or []
     if not rows:
-        print(f"  #53 {cname}: 無 summary（案例未產出？）→ ⚠️ 跳過")
+        _cst, _cm = (cd or {}).get("status"), (cd or {}).get("total_matched")
+        if _cm == 0:
+            print(f"  #53 {cname}: matched=0（status={_cst}）→ **空轉**：無 summary 可檢（系統標示過嚴，非缺陷）")
+        else:
+            print(f"  #53 {cname}: matched={_cm} 但無 summary → ⚠️ 異常（需查）")
         continue
     miss = [k for k in NEW_DIMS if k not in rows[0]]
     empty = [k for k in NEW_DIMS if k != "hobby" and any(not r.get(k) for r in rows)]
