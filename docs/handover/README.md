@@ -19,6 +19,7 @@
 | 5 | `skills/persona-db-release/SKILL.md` | **出貨**：打包、去識別化守門、部署、版本一致性 | 要交付新版本時 |
 | — | `../swagger-quickstart.md` | 用 Swagger 產出第一批人設（操作者用） | 第一次上手操作 API |
 | — | `../../upDockerVerHermes/test-persona-db-api.sh` | 出貨驗證套件（9 案例 + 60+ 斷言） | 每次出貨前 |
+| — | `../../THIRD-PARTY-DATA.md` | **第三方資料來源與授權清單**（22 維度逐一對照、哪些需授權） | 法務／授權 review 時 |
 | — | `../../../persona-db.md` | 產品全貌與版本演進 | 想了解歷史脈絡 |
 
 > 交付包內的 `concepts/`（設計知識 14 篇）、`sources/`（原始統計資料）、
