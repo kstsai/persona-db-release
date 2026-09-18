@@ -1,10 +1,10 @@
-> 產品文件（來源：kstsai/linkEazyCenter wiki `entities/persona-db.md`，更新 2026-09-17）
+> 產品文件（來源：kstsai/linkEazyCenter wiki `entities/persona-db.md`，更新 2026-09-18）
 > 進度看板：GitHub issues（kstsai/persona-db）為 ground truth。
 > 節點一律以代號表示（`NODE-A`／`NODE-B`／`NODE-C`）；對應關係留存內部。
 
 # Persona DB — 台灣人口加權合成人設資料庫
 
-> 1069 筆，25 個維度 key（filterable 19 / 計分 18），23 條 QA 規則。DGBAS 主計總處真實資料驅動，全自動生成 + 驗證 + 部署。
+> 1069 筆，25 個維度 key（**可見 21 ⊇ 可篩 20 ⊇ 計分 18**），23 條 QA 規則。DGBAS 主計總處真實資料驅動，全自動生成 + 驗證 + 部署。
 
 > 📊 進度追蹤：見 Persona-DB 進度看板（GitHub issues 對照）。
 
@@ -13,15 +13,15 @@
 | 項目 | 數值 |
 |------|:---:|
 | 總筆數 | 1069 |
-| 維度 | 25 keys（filterable 19 / 計分 18） |
+| 維度 | 25 keys（**可見 21 ⊇ 可篩 20 ⊇ 計分 18**） |
 | QA 規則 | 23（ALL PASS） |
 | 生成種子 | 42（可重現） |
 | 縣市覆蓋 | 22/22 |
 | 性別比 | 男 49.7% / 女 50.3% |
 | Repos | `kstsai/persona-db`（source）+ `kstsai/persona-db-release`（delivery） |
 | API | FastAPI `/personadb/candidates`（LLM 分析→篩選人設） |
-| 版本 | **v5.15**（`VERSION` / `RELEASE-VERSION` / `dim_weights._meta.version` 三者一致，由 `check_dim_weights.py` 守門；**出貨 tarball 的一致性另需守門** —— v5.15 tarball 曾因打包順序缺陷內含舊 `RELEASE-VERSION`（見 部署與交付）） |
-| 部署 | **NODE-A** = **v5.17**、**NODE-B** = **v5.17**（Docker containers；NODE-A 另含 hermes 容器）；部署保真度 byte 級驗證通過（容器 `api/*.py` sha256 == 出貨 tarball，2026-09-17） |
+| 版本 | **v5.18**（`VERSION` / `RELEASE-VERSION` / tag **四者一致**，出貨斷言守門；**版本單一來源自 v5.16 起**：`_product_version()` 讀容器 `VERSION` → `/openapi.json` `info.version`（Swagger 頁首）、`/health`、`/personadb/status` 三處共用） |
+| 部署 | **NODE-A** ／ **NODE-B**：**v5.17 部署驗證通過、v5.18 pre-release SOP 0 紅旗**（❌／⚠️／Traceback／FILTER_FAILED 全 0）；部署保真度 byte 級（出貨 tarball 與容器內 `api/server.py` sha256 相同，2026-09-18）（Docker containers；NODE-A 另含 hermes 容器） |
 | 主體判準（v5.12 #65 / v5.13 #67） | **機械化＋優先序**（只看題目原文）：① 明確業主標記 → `owner`；② 消費端名詞 → `customer`；③ 否則 `""`（不設限）；結果進**禁用集**並對外揭露 `subject`／`subject_basis`；**覆蓋率 2/9 → 7/9** |
 | 禁用集 | `FORBIDDEN_BY_SUBJECT = {"customer": {"employment_status"}}` —— **套用前剝除**、抑制兜底表該條目、**不得進保護集**（優先序 **`forbidden > protected`**） |
 | 核心維度保護集 | **六來源聯集**（凍結於請求開始，v5.14 起）：domain 關鍵字／分析 `reasoning` 必要性宣告（詞界比對）／分析 `core_dims` 結構化宣告／模型每輪 `protected_dims`（單調累積）／protect-only 語意表；**來源④有上限**（`max(1, min(3, 已套用維度數//2))`，實測值由 `declared_protected_cap` 揭露）；**全部已套用維度受保護 → `protection_saturated`**（停手不稀釋）；**來源⑥ `overshoot_restore`**（v5.14：移除維度致 ≥3× 過衝 → 還原該維度並納入保護集） |
@@ -103,6 +103,9 @@
 | **v5.13** | **#66** 保護集來源④**上限**（`max(1, min(3, 已套用維度數//2))`）＋回應揭露 **`protected_dims_sources`**＋**覆蓋警示**＋新停止原因 **`protection_saturated`**（全部維度受保護 → 不呼叫 LLM、不稀釋）；**#67** 主體判準**優先序擴充**（9 案例可判定率 **2/9 → 7/9**）＋揭露 **`subject_basis`** | 09/16 |
 | — | （安全）出貨 tarball 排除清單補 `.env`／`.env.*`／`*.env`；repo `.env` 停止追蹤並刪除；外洩 key 已撤銷（見 出貨產物必掃密鑰） | 09/16 |
 | **v5.15** | **#72** 失敗路徑**可稽核**（`llm_parse_error`／`llm_empty` 原本完全不留 log、失敗輪未記入 `broadening_attempts` → 修：WARNING ＋ 失敗輪記入 ＋ 回應新增 `llm_calls`）；**#73** `_normalize_filters()` 留痕**單一化**（移入函式本體、呼叫點去重）；出貨：`RELEASE-VERSION` 改在 **tar 之前**寫入 ＋ 版本一致性守門斷言（**#74**）；新增 QA 報告產物掃描 `scan-report-artifacts.sh`（6 類、雙向驗證）；**#60** log 取樣改讀 **raw log 檔**（避 `docker logs` 的 NUL hole 截斷偽陰性） | 09/17 |
+| **v5.16** | **版本單一來源**：`_product_version()` 讀容器 `VERSION` → `/openapi.json` `info.version`（Swagger 頁首）、`/health`、`/personadb/status` 三處共用；出貨斷言新增「openapi 版本 == 部署版本」（#74 打包順序、#77 Swagger 版號寫死 3.2.0） | 09-18 |
+| **v5.17** | **API 文件內建操作重點**：`info.description` 頂部 ⏱ 警告（查詢需 1–5 分鐘、**不要重複按**＝會重新計費）＋兩步驟指引＋參數速查＋常見狀況；端點 tag/summary/docstring | 09-18 |
+| **v5.18** | **#80 過衝還原倍率量測時機**：倍率改在**還原前**量測（原本在還原後量 → 誤報 1.0×，真值 5.1×）；`broadening_attempts[]` 新增 **`overshoot_ratio`** | 09-18 |
 
 ## API 品質演進（v4.3.2→v4.4.3）
 
@@ -263,8 +266,8 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 
 | 項目 | 狀態 |
 |:----|:----|
-| NODE-A | **v5.17**（第九～十五輪驗證執行處） |
-| NODE-B | **v5.17**（SOP 已驗；`--restart unless-stopped` 已生效） |
+| NODE-A | **v5.18**（第九～十八輪驗證執行處） |
+| NODE-B | **v5.18**（SOP 已驗；`--restart unless-stopped` 已生效） |
 | 交付包 | v5.3.1 起含 `concepts/`（設計知識）；`references/` 仍為內部；**v5.13 起打包排除 `.env` 變體並機械掃描密鑰**（出貨產物必掃密鑰） |
 | QA host 慣例 | 由 kstsai 指定進版的那台跑 SOP，**另一台保留 baseline** |
 
@@ -405,6 +408,15 @@ kstsai 逐筆審查發現 occupation=自營只有 4/1069（0.37%）→ 查證根
 2. **cap 邏輯先手算再 coding** — housing_cost cap 太緊，全部卡在 <5千
 3. **BG 短語與 QA 規則的相容性** — R3 擋「或」字，所有新短語要掃一遍
 4. **每次加維度都要測 LLM query** — 確認 LLM 知道怎麼用它來過濾
+
+## 交付面（v5.16 → v5.18 新增）
+
+- **打包守門三道防線**：①內容排除（`.env` 變體、agent profile／內部記憶、內部票據、第三方原始檔與報告原文）②對暫存目錄**去識別化**（主機名 → 節點代號、私網 IP、內部 git 服務名、URL 內嵌憑證）③**守門掃描（可中止打包）**：憑證樣式／內部識別／內部服務名。鐵則＝**只警告等於沒有防線**、掃描要比對「行」而非檔名、白名單每條要寫理由
+- **第三方資料分類（A/B/C/D）**：A 政府開放資料（可再散布，須註明出處與年度）／B **非開放授權**（未經同意不得再散布；**原始檔與報告原文自 v5.18 起不隨交付包**，只交付衍生結果）／C **無外部來源的假設值必須標明**／D 虛構姓名地名＋開源相依套件。交付文件三件套＝完整清單（逐維度來源／年度／使用數字）＋一頁摘要（法務開會用）＋交付包第三方聲明
+- **交付內容授權姿態**：目前**未附授權條款 ＝保留所有權利**（不是預設開放）；`LICENSE` 選項與交付 repo 可見性屬商業／法務決策（未決）
+- **歷史殘留（已接受＋文件化）**：早期版本 tarball 曾含第三方原始檔與交付方內部工作文件 → **不改寫歷史**（既有驗證紀錄引用版本識別）；已在第三方聲明中明列事實與決策
+- **客戶接手包** `docs/handover/`：前文（preamble）＋ 3 份技能（資料生產／驗證／出貨）＋ 資料契約 ＋ 一頁法務 memo ＋ PDF 產生器；同步一份進交付壓縮檔
+
 
 ## 相關頁面
 
